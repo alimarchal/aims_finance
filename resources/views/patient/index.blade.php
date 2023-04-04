@@ -1,0 +1,172 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight inline-block">
+            Patients
+        </h2>
+
+
+        <div class="flex justify-center items-center float-right">
+            <a href="{{route('patient.create')}}" class="float-right inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent
+                        rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900
+                        focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150" \>
+                Create New Patient
+            </a>
+
+            <a href="javascript:;" id="toggle"
+               class="flex items-center px-4 py-2 text-gray-600 bg-white border rounded-lg focus:outline-none hover:bg-gray-100 transition-colors duration-200 transform dark:text-gray-200 dark:border-gray-200  dark:hover:bg-gray-700 ml-2"
+               title="Members List">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                </svg>
+                <span class="hidden md:inline-block ml-2" style="font-size: 14px;">Search Filters</span>
+            </a>
+        </div>
+
+
+    </x-slot>
+
+
+    <div class="max-w-7xl mx-auto mt-12 px-4 sm:px-6 lg:px-8" style="display: none" id="filters">
+        <div class="rounded-xl p-4 bg-white shadow-lg">
+            <form action="">
+
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="name" class="block text-gray-700 font-bold mb-2">Name</label>
+                        <input type="text" name="filter[name]" value="{{ request('filter.name') }}" id="name" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter name">
+                    </div>
+                    <div>
+                        <label for="father_son_do" class="block text-gray-700 font-bold mb-2">Father/Son/Do</label>
+                        <input type="text" name="filter[father_son_do]" value="{{ request('filter.father_son_do') }}" id="father_son_do" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500"
+                               placeholder="Enter father/son/do">
+
+
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Sex</label>
+                        <div class="mt-2">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="filter[sex]" id="male" value="1" >
+                                <span class="ml-2">Male</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="filter[sex]" id="female" value="0" >
+                                <span class="ml-2">Female</span>
+                            </label>
+
+                        </div>
+                    </div>
+                    <div>
+                        <label for="cnic" class="block text-gray-700 font-bold mb-2">CNIC</label>
+                        <input type="text" name="filter[cnic]" id="cnic" value="{{ request('filter.cnic') }}" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter CNIC (00000-0000000-0)">
+                    </div>
+                    <div>
+                        <label for="mobile_no" class="block text-gray-700 font-bold mb-2">Mobile No.</label>
+                        <input type="text" name="filter[mobile_no]" id="mobile_no" value="{{ request('filter.mobile_no') }}" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500"
+                               placeholder="Enter mobile no. (0000-0000000)">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Government/Non-Government</label>
+                        <div class="mt-2">
+                            <label class="inline-flex items-center">
+                                <input type="radio" class="form-radio" name="filter[government_non_gov]" value="1">
+                                <span class="ml-2">Government</span>
+                            </label>
+                            <label class="inline-flex items-center ml-6">
+                                <input type="radio" class="form-radio" name="filter[government_non_gov]" value="0">
+                                <span class="ml-2">Non-Government</span>
+                            </label>
+                        </div>
+                    </div>
+
+
+                    <div class="flex items-center justify-between">
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                            Search
+                        </button>
+                    </div>
+
+
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+
+    <div class="py-12">
+
+
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <x-validation-errors class="mb-4"/>
+            <x-success-message class="mb-4"/>
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4">
+                <div class="overflow-x-auto">
+                    <table class="table-auto w-full border-collapse border border-black">
+                        <thead>
+                        <tr class="border-black">
+                            <th class="border-black border px-4 py-2 text-left">P.#</th>
+                            <th class="border-black border px-4 py-2 text-left">Name</th>
+                            <th class="border-black border px-4 py-2 text-left">F/S/Do</th>
+                            <th class="border-black border px-4 py-2 text-left">Mobile No.</th>
+                            <th class="border-black border px-4 py-2 text-left">CNIC</th>
+                            <th class="border-black border px-4 py-2">Type</th>
+                            <th class="border-black border px-4 py-2">New</th>
+                            <th class="border-black border px-4 py-2">History</th>
+                            {{--                            <th class="border-black border px-4 py-2">Delete</th>--}}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($patients as $patient)
+                            <tr class="border-black">
+                                <td class="border-black border px-4 py-2">{{$loop->iteration}}</td>
+                                <td class="border-black border px-4 py-2">
+                                    <a href="{{ route('patient.edit', $patient->id) }}" class="text-indigo-600 hover:text-indigo-900 hover:underline">
+                                        {{$patient->name}}
+                                    </a>
+                                </td>
+                                <td class="border-black border px-4 py-2">{{$patient->father_son_do}}</td>
+                                <td class="border-black border px-4 py-2">{{$patient->mobile_no}}</td>
+                                <td class="border-black border px-4 py-2">{{$patient->cnic}}</td>
+                                <td class="border-black border px-4 py-2 text-center">
+                                    @if($patient->government_non_gov == 1)
+                                        Government
+                                    @else
+                                        Non-Government
+                                    @endif
+                                </td>
+
+                                <td class="border-black border px-4 py-2">
+                                    <a href="{{ route('patient.show', $patient->id) }}" class="text-indigo-600 hover:text-indigo-900 hover:underline">
+                                        Proceed
+                                    </a>
+                                </td>
+                                <td class="border-black border px-4 py-2 text-center">
+                                    <a href="{{ route('patient.history', $patient->id) }}" class="text-indigo-600 hover:text-indigo-900 hover:underline">View</a>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @section('custom_script')
+        <script>
+            const targetDiv = document.getElementById("filters");
+            const btn = document.getElementById("toggle");
+            btn.onclick = function () {
+                if (targetDiv.style.display !== "none") {
+                    targetDiv.style.display = "none";
+                } else {
+                    targetDiv.style.display = "block";
+                }
+            };
+        </script>
+    @endsection
+</x-app-layout>
