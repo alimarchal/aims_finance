@@ -5,22 +5,37 @@ namespace App\Models;
 use App\Http\Controllers\PatientController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Patient extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'user_id',
-        'name',
-        'father_son_do',
+        'title',
+        'first_name',
+        'last_name',
+        'father_husband_name',
+        'age',
+        'years_months',
+        'dob',
         'sex',
+        'blood_group',
+        'registration_date',
+        'phone',
+        'email',
+        'mobile',
+        'email_alert',
+        'mobile_alert',
         'cnic',
-        'mobile_no',
         'government_non_gov',
-        'department_name',
+        'government_department_id',
+        'designation',
         'government_card_no',
     ];
 
@@ -28,5 +43,15 @@ class Patient extends Model
     public function patient_test_cart()
     {
         return $this->hasMany(PatientTestCart::class);
+    }
+
+    public function government_department(): BelongsTo
+    {
+        return $this->belongsTo(GovernmentDepartment::class);
+    }
+
+    public function chits(): HasMany
+    {
+        return $this->hasMany(Chit::class);
     }
 }

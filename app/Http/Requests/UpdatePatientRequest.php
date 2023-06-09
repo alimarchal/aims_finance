@@ -22,8 +22,8 @@ class UpdatePatientRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'mobile_no' => 'required',
+            'first_name' => 'required',
+            'mobile' => 'required',
             'government_non_gov' => 'required',
         ];
     }

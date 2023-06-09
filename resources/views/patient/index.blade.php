@@ -35,15 +35,17 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label for="name" class="block text-gray-700 font-bold mb-2">Name</label>
-                        <input type="text" name="filter[name]" value="{{ request('filter.name') }}" id="name" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter name">
+                        <label for="id" class="block text-gray-700 font-bold mb-2">Patient ID</label>
+                        <input type="text" name="filter[id]" value="{{ request('filter.id') }}" id="id" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Patient ID Type here">
+                    </div>
+
+                    <div>
+                        <label for="first_name" class="block text-gray-700 font-bold mb-2">Name</label>
+                        <input type="text" name="filter[first_name]" value="{{ request('filter.first_name') }}" id="first_name" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter name">
                     </div>
                     <div>
-                        <label for="father_son_do" class="block text-gray-700 font-bold mb-2">Father/Son/Do</label>
-                        <input type="text" name="filter[father_son_do]" value="{{ request('filter.father_son_do') }}" id="father_son_do" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500"
-                               placeholder="Enter father/son/do">
-
-
+                        <label for="father_husband_name" class="block text-gray-700 font-bold mb-2">Father/Son/Do</label>
+                        <input type="text" name="filter[father_husband_name]" value="{{ request('filter.father_husband_name') }}" id="father_husband_name" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter father/son/do">
                     </div>
                     <div>
                         <label class="block text-gray-700 font-bold mb-2">Sex</label>
@@ -64,8 +66,8 @@
                         <input type="text" name="filter[cnic]" id="cnic" value="{{ request('filter.cnic') }}" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter CNIC (00000-0000000-0)">
                     </div>
                     <div>
-                        <label for="mobile_no" class="block text-gray-700 font-bold mb-2">Mobile No.</label>
-                        <input type="text" name="filter[mobile_no]" id="mobile_no" value="{{ request('filter.mobile_no') }}" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500"
+                        <label for="mobile" class="block text-gray-700 font-bold mb-2">Mobile No.</label>
+                        <input type="text" name="filter[mobile]" id="mobile_no" value="{{ request('filter.mobile') }}" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500"
                                placeholder="Enter mobile no. (0000-0000000)">
                     </div>
                     <div>
@@ -110,12 +112,12 @@
                         <tr class="border-black">
                             <th class="border-black border px-4 py-2 text-left">P.#</th>
                             <th class="border-black border px-4 py-2 text-left">Name</th>
-                            <th class="border-black border px-4 py-2 text-left">F/S/Do</th>
+                            <th class="border-black border px-4 py-2 text-left">F/S/D/W</th>
                             <th class="border-black border px-4 py-2 text-left">Mobile No.</th>
-                            <th class="border-black border px-4 py-2 text-left">CNIC</th>
+                            <th class="border-black border px-4 py-2 text-left">Age</th>
                             <th class="border-black border px-4 py-2">Type</th>
-                            <th class="border-black border px-4 py-2">New</th>
-                            <th class="border-black border px-4 py-2">History</th>
+                            <th class="border-black border px-4 py-2">Actions</th>
+{{--                            <th class="border-black border px-4 py-2">History</th>--}}
                             {{--                            <th class="border-black border px-4 py-2">Delete</th>--}}
                         </tr>
                         </thead>
@@ -125,28 +127,45 @@
                                 <td class="border-black border px-4 py-2">{{$loop->iteration}}</td>
                                 <td class="border-black border px-4 py-2">
                                     <a href="{{ route('patient.edit', $patient->id) }}" class="text-indigo-600 hover:text-indigo-900 hover:underline">
-                                        {{$patient->name}}
+                                        {{ $patient->title }} {{$patient->first_name . ' ' . $patient->last_name}}
                                     </a>
                                 </td>
-                                <td class="border-black border px-4 py-2">{{$patient->father_son_do}}</td>
-                                <td class="border-black border px-4 py-2">{{$patient->mobile_no}}</td>
-                                <td class="border-black border px-4 py-2">{{$patient->cnic}}</td>
+                                <td class="border-black border px-4 py-2">{{$patient->father_husband_name}}</td>
+                                <td class="border-black border px-4 py-2">{{$patient->mobile}}</td>
+                                <td class="border-black border px-4 py-2">
+                                    {{$patient->age}} {{$patient->years_months}}
+                                </td>
                                 <td class="border-black border px-4 py-2 text-center">
                                     @if($patient->government_non_gov == 1)
-                                        Government
+                                        Entitiled
                                     @else
-                                        Non-Government
+                                        Non-Entitiled
                                     @endif
                                 </td>
 
                                 <td class="border-black border px-4 py-2">
-                                    <a href="{{ route('patient.show', $patient->id) }}" class="text-indigo-600 hover:text-indigo-900 hover:underline">
-                                        Proceed
+
+
+                                    <a href="{{ route('patient.actions', $patient->id) }}">
+                                        <img src="{{ Storage::url('settings.png') }}" alt="actions" class="w-8 inline">
                                     </a>
+
+                                    <a href="{{ route('patient.issue-new-chit', $patient->id) }}">
+                                        <img src="{{ Storage::url('new_2.png') }}" alt="actions" class="w-6 inline">
+                                    </a>
+
+
+
+
                                 </td>
-                                <td class="border-black border px-4 py-2 text-center">
-                                    <a href="{{ route('patient.history', $patient->id) }}" class="text-indigo-600 hover:text-indigo-900 hover:underline">View</a>
-                                </td>
+{{--                                <td class="border-black border px-4 py-2">--}}
+{{--                                    <a href="{{ route('patient.show', $patient->id) }}" class="text-indigo-600 hover:text-indigo-900 hover:underline">--}}
+{{--                                        Proceed--}}
+{{--                                    </a>--}}
+{{--                                </td>--}}
+{{--                                <td class="border-black border px-4 py-2 text-center">--}}
+{{--                                    <a href="{{ route('patient.history', $patient->id) }}" class="text-indigo-600 hover:text-indigo-900 hover:underline">View</a>--}}
+{{--                                </td>--}}
                             </tr>
                         @endforeach
                         </tbody>

@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
+use App\Models\Chit;
+use App\Models\FeeType;
 use App\Models\Patient;
 use App\Models\PatientTest;
 use App\Models\PatientTestCart;
+use Illuminate\Support\Facades\DB;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 
@@ -18,8 +22,8 @@ class PatientController extends Controller
     public function index()
     {
         $patients = QueryBuilder::for(Patient::class)
-            ->allowedFilters(['name', 'father_son_do', 'sex', 'cnic', 'mobile_no', 'government_non_gov'])
-            ->get();
+            ->allowedFilters(['first_name', 'last_name', 'father_husband_name', 'sex', 'cnic', 'mobile', 'government_non_gov',AllowedFilter::exact('id')],)
+            ->orderByDesc('created_at','DSEC')->get();
         return view('patient.index', compact('patients'));
     }
 
@@ -38,14 +42,57 @@ class PatientController extends Controller
     {
         // login user id capture
         $request->merge(['user_id' => auth()->user()->id]);
-        $patient = Patient::create($request->all());
-        foreach ($request->patient_test as $pt) {
-            PatientTestCart::create([
+        $patient = null;
+        $chit = null;
+
+        DB::beginTransaction();
+
+        try {
+            $patient = Patient::create($request->all());
+
+            $amount = null;
+            if ($request->input('government_department_id')) {
+                $amount = 0.00;
+            } else {
+                $amount = FeeType::find(107)->amount;
+            }
+
+            // this is for opd
+            $chit = Chit::create([
+                'user_id' => auth()->user()->id,
+                'department_id' => $request->department_id,
                 'patient_id' => $patient->id,
-                'lab_test_id' => $pt,
+                'government_non_gov' => $patient->government_non_gov,
+                'government_department_id' => $patient->government_department_id,
+                'government_card_no' => $patient->government_card_no,
+                'designation' => $patient->designation,
+                'fee_type_id' => 107,
+                'issued_date' => now(),
+                'amount' => $amount,
+                'ipd_opd' => 1,
+                'payment_status' => 1,
             ]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            // something went wrong
         }
-        return to_route('patient.proceed', $patient->id)->with('message', 'Patient created successfully!');
+
+//        foreach ($request->patient_test as $pt) {
+//            PatientTestCart::create([
+//                'patient_id' => $patient->id,
+//                'lab_test_id' => $pt,
+//            ]);
+//        }
+
+//        return to_route('chit.print', [$patient->id, $chit->id]);
+        if (!empty($chit) && !empty($patient))
+        {
+            return to_route('chit.print', [$patient->id, $chit->id]);
+        } else {
+            return to_route('patient.index')->with('message', 'There is an error occurred for creating patient and chit');
+        }
+
     }
 
     public function proceed(Patient $patient)
@@ -164,6 +211,20 @@ class PatientController extends Controller
      */
     public function update(UpdatePatientRequest $request, Patient $patient)
     {
+        if ($request->input('mobile_alert')) {
+            $request->merge(['mobile_alert' => 1]);
+        } else {
+            $request->merge(['mobile_alert' => 0]);
+        }
+
+
+        if ($request->input('email_alert')) {
+            $request->merge(['email_alert' => 1]);
+        } else {
+            $request->merge(['email_alert' => 0]);
+        }
+
+//        dd($request->all());
         $patient->update($request->all());
         return redirect()->route('patient.index')->with('message', 'Patient updated successfully!');
     }
@@ -174,5 +235,11 @@ class PatientController extends Controller
     public function destroy(Patient $patient)
     {
         //
+    }
+
+
+    public function patient_actions(Patient $patient)
+    {
+        return view('patient.actions', compact('patient'));
     }
 }

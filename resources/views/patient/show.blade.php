@@ -22,52 +22,84 @@
             <x-validation-errors class="mb-4"/>
             <x-success-message class="mb-4"/>
             <div class="bg-white overflow-hidden  sm:rounded-lg p-4 ">
-                {{--                <div class="text-center">--}}
-                {{--                    <img class="h-24 w-24 m-auto rounded-lg" src="{{\Illuminate\Support\Facades\Storage::url('Aimsa8.jpg')}}" alt="{{\Illuminate\Support\Facades\Storage::url('Aimsa8-removebg-preview.png')}}">--}}
-                {{--                </div>--}}
-                <h1 class="text-3xl text-black font-bold text-center">
-                    Patient Test Invoice Generating <br>
-                    Abbas Institute of Medical Sciences (AIMS)
-                </h1>
 
 
-                <div class="flex justify-center mt-4">
-                    <table class="table-auto w-full border-collapse border border-black ">
-                        <tr>
-                            <td class="border-black border px-4 py-2 font-bold text-black">Name:</td>
-                            <td class="border-black border px-4 py-2">{{ $patient->name }}</td>
-                        </tr>
-                        <tr>
-                            <td class="border-black border px-4 py-2 font-bold text-black">Father/Son/Do:</td>
-                            <td class="border-black border px-4 py-2">{{ $patient->father_son_do }}</td>
-                        </tr>
-                        <tr>
-                            <td class="border-black border px-4 py-2 font-bold text-black">Sex:</td>
-                            <td class="border-black border px-4 py-2">{{ $patient->sex ? 'Male' : 'Female' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="border-black border px-4 py-2 font-bold text-black">CNIC:</td>
-                            <td class="border-black border px-4 py-2">{{ $patient->cnic }}</td>
-                        </tr>
-                        <tr>
-                            <td class="border-black border px-4 py-2 font-bold text-black">Mobile No:</td>
-                            <td class="border-black border px-4 py-2">{{ $patient->mobile_no }}</td>
-                        </tr>
-                        <tr>
-                            <td class="border-black border px-4 py-2 font-bold text-black">Government/Non-Government:</td>
-                            <td class="border-black border px-4 py-2">{{ $patient->government_non_gov ? 'Government' : 'Non-Government' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="border-black border px-4 py-2 font-bold text-black">Department Name:</td>
-                            <td class="border-black border px-4 py-2">{{ $patient->department_name }}</td>
-                        </tr>
-                        <tr>
-                            <td class="border-black border px-4 py-2 font-bold text-black">Government Card No:</td>
-                            <td class="border-black border px-4 py-2">{{ $patient->government_card_no }}</td>
-                        </tr>
-                    </table>
 
-                </div>
+
+                <img src="{{\Illuminate\Support\Facades\Storage::url('Aimsa8.png')}}" alt="Logo" class="w-16 h-16 m-auto">
+                <h1 class="text-center text-2xl font-bold">Abbas Institute of Medical Sciences (AIMS)</h1>
+                <h2 class="text-1xl text-center font-bold ">Muzaffarabad, Azad Jammu & Kashmir</h2>
+                <h2 class="text-1xl text-center font-bold mb-2">Patient Test Invoice Generating</h2>
+                <table class="table-auto w-full">
+                    <tr class="border-none">
+                        <td class="font-extrabold">Patient Name:</td>
+                        <td class="">{{ $patient->first_name . ' ' . $patient->last_name }}</td>
+                        <td class="font-extrabold">Age/Sex</td>
+                        <td class="">{{ $patient->age . ' ' . $patient->years_months }}/{{ ($patient->sex == 1?'Male':'Female') }}
+                        </td>
+                        {{--                                        <td class="border-black border">{{ \Carbon\Carbon::parse($patient->created_at)->format('d-M-y h:i:s') }}</td>--}}
+                    </tr>
+                    <tr>
+                        <td class=" font-extrabold">Father/Husband Name:</td>
+                        <td class="">{{ $patient->father_husband_name }}</td>
+                        <td class=" font-extrabold">Registration Date:</td>
+                        <td class="">{{ \Carbon\Carbon::parse($patient->registration_date)->format('d-M-y h:i:s') }}</td>
+                    </tr>
+                    <tr>
+                        <td class=" font-extrabold">Mobile:</td>
+                        <td class="">{{$patient->mobile}}</td>
+                        <td class=" font-extrabold">
+{{--                            @if($chit->ipd_opd == 1)--}}
+{{--                                OPD--}}
+{{--                            @else--}}
+{{--                                IPD--}}
+{{--                            @endif--}}
+                        </td>
+                        <td class="">
+{{--                            @if(!empty($chit->department))--}}
+{{--                                {{$chit->department->name}}--}}
+{{--                            @else--}}
+{{--                                Emergency--}}
+{{--                            @endif--}}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class=" font-extrabold">Reference No:</td>
+                        <td class="">
+                            {{'P' . $patient->id}}-{{date('ymd')}}
+                        </td>
+                        <td class=" font-extrabold">Entitlement:</td>
+                        <td class="">
+{{--                            @if($chit->amount == 0)--}}
+{{--                                Government Servant--}}
+{{--                            @else--}}
+{{--                                Private--}}
+{{--                            @endif--}}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class=" font-extrabold">Amount Payable:</td>
+                        <td class="font-extrabold">
+{{--                            Rs. {{$chit->amount}}--}}
+                        </td>
+                        <td class="">
+{{--                            @if($patient->government_non_gov == 1)--}}
+{{--                                Department--}}
+{{--                            @endif--}}
+
+                        </td>
+                        <td class="font-extrabold">
+{{--                            @if($patient->government_non_gov == 1)--}}
+{{--                                {{ $patient->government_department->name }}--}}
+{{--                            @endif--}}
+
+
+                        </td>
+                    </tr>
+                </table>
+                <hr class="border-black h-2">
 
                 <br>
                 @if($patient->government_non_gov == 1)

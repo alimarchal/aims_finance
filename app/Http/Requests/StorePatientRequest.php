@@ -22,9 +22,13 @@ class StorePatientRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'mobile_no' => 'required',
+            'first_name' => 'required',
+            'mobile' => 'required',
             'government_non_gov' => 'required',
+            'department_id' => 'required',
+            'government_department_id' => 'required_with:government_card_no,designation',
+            'government_card_no' => 'required_with:government_department_id',
+            'designation' => 'required_with:government_department_id',
         ];
     }
 }

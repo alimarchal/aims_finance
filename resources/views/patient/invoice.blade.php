@@ -27,7 +27,7 @@
             <x-success-message class="mb-4"/>
             <div class="bg-white overflow-hidden  sm:rounded-lg p-4 ">
                     <div class="text-center pb-3">
-                        <img class="w-24 m-auto rounded-lg" src="{{\Illuminate\Support\Facades\Storage::url('Aimsa8.jpg')}}" alt="{{\Illuminate\Support\Facades\Storage::url('Aimsa8-removebg-preview.png')}}">
+                        <img class="w-24 m-auto rounded-lg" src="{{\Illuminate\Support\Facades\Storage::url('Aimsa8.png')}}" alt="{{\Illuminate\Support\Facades\Storage::url('Aimsa8.png')}}">
                     </div>
                 <h1 class="text-1xl text-black font-bold text-center">
                     PAID Invoice #: {{$patient_test_id}} <br>
