@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateChitRequest;
 use App\Models\Chit;
 use App\Models\FeeType;
 use App\Models\Patient;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -89,9 +90,16 @@ class ChitController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function today()
     {
-        //
+        $user = \Auth::user();
+        if ($user->hasRole('OPD Front Desk')) {
+            $issued_chits = Chit::where('user_id', $user->id)->whereDate('issued_date', Carbon::today())->paginate(100);
+        } elseif ($user->hasRole(['Super-Admin', 'admin'])) {
+            $issued_chits = Chit::whereDate('issued_date', Carbon::today())->paginate(100);
+        }
+
+        return view('chit.today',compact('issued_chits'));
     }
 
     /**

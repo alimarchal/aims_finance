@@ -31,8 +31,6 @@
     <div class="max-w-7xl mx-auto mt-12 px-4 sm:px-6 lg:px-8" style="display: none" id="filters">
         <div class="rounded-xl p-4 bg-white shadow-lg">
             <form action="">
-
-
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label for="id" class="block text-gray-700 font-bold mb-2">Patient ID</label>
@@ -143,29 +141,19 @@
                                     @endif
                                 </td>
 
-                                <td class="border-black border px-4 py-2">
+                                <td class="border-black border px-4 py-2 text-center">
 
 
                                     <a href="{{ route('patient.actions', $patient->id) }}">
-                                        <img src="{{ Storage::url('settings.png') }}" alt="actions" class="w-8 inline">
+                                        <img src="{{ Storage::url('settings.png') }}" alt="actions" class="w-8 inline  hover:scale-110">
                                     </a>
 
                                     <a href="{{ route('patient.issue-new-chit', $patient->id) }}">
-                                        <img src="{{ Storage::url('new_2.png') }}" alt="actions" class="w-6 inline">
+                                        <img src="{{ Storage::url('new_2.png') }}" alt="actions" class="w-6 inline  hover:scale-110">
                                     </a>
 
 
-
-
                                 </td>
-{{--                                <td class="border-black border px-4 py-2">--}}
-{{--                                    <a href="{{ route('patient.show', $patient->id) }}" class="text-indigo-600 hover:text-indigo-900 hover:underline">--}}
-{{--                                        Proceed--}}
-{{--                                    </a>--}}
-{{--                                </td>--}}
-{{--                                <td class="border-black border px-4 py-2 text-center">--}}
-{{--                                    <a href="{{ route('patient.history', $patient->id) }}" class="text-indigo-600 hover:text-indigo-900 hover:underline">View</a>--}}
-{{--                                </td>--}}
                             </tr>
                         @endforeach
                         </tbody>

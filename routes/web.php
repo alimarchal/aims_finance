@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,9 +20,19 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::resource('roles',\App\Http\Controllers\RoleController::class);
+    Route::resource('permissions',\App\Http\Controllers\PermissionController::class);
+
+
+    Route::resource('roles',\App\Http\Controllers\RoleController::class);
+    Route::resource('permissions',\App\Http\Controllers\PermissionController::class);
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+
 
     Route::resource('department', \App\Http\Controllers\DepartmentController::class);
     Route::resource('labTest', \App\Http\Controllers\LabTestController::class);
@@ -37,5 +49,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('patient/{patient}/issued-chits', [\App\Http\Controllers\ChitController::class, 'issued_chits'])->name('patient.issued-chits');
     Route::get('patient/{patient}/issue-new-chit', [\App\Http\Controllers\ChitController::class, 'issue_new_chit'])->name('patient.issue-new-chit');
     Route::post('patient/{patient}/issue-new-chit', [\App\Http\Controllers\ChitController::class, 'issue_new_chit_store'])->name('patient.issue-new-chitStore');
+
+    Route::get('chits/issued-today', [\App\Http\Controllers\ChitController::class, 'today'])->name('chits.issued-today');
 
 });

@@ -1,4 +1,15 @@
 <x-app-layout>
+    @section('custom_header')
+
+        <style>
+            @media print {
+                @page {
+                    margin: 30px;
+                }
+            }
+
+        </style>
+    @endsection
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             Patient Chit
@@ -15,35 +26,25 @@
     </x-slot>
 
     <div class="py-0">
-
-
-        <div class="max-w-7xl mx-auto  bg:whit bg-white overflow-hidden sm:rounded-lg ">
+        <div class="max-w-7xl mx-auto  bg:whit bg-white sm:rounded-lg ">
             <div class="grid grid-cols-3 gap-4">
                 <div></div> <!-- Empty column for spacing -->
                 <div class="flex items-center justify-center">
-                    <img src="{{ \Illuminate\Support\Facades\Storage::url('Aimsa8.png') }}" alt="Logo" class="w-16 h-16">
+                    <img src="{{ \Illuminate\Support\Facades\Storage::url('Aimsa8 copy 2.png') }}" alt="Logo" style="width: 200px;">
                 </div>
                 <div class="flex flex-col items-end">
                     @php $patient_id = (string) $patient->id; @endphp
                     {!! DNS2D::getBarcodeSVG($patient_id, 'QRCODE',3,3) !!}
                 </div>
             </div>
-            {{--            <img src="{{\Illuminate\Support\Facades\Storage::url('Aimsa8.png')}}" alt="Logo" class="w-16 h-16 m-auto">--}}
-            {{--            {!! DNS2D::getBarcodeSVG('4445645656', 'QRCODE',3,3) !!}--}}
-            <h1 class="text-center text-2xl font-bold">Abbas Institute of Medical Sciences (AIMS)</h1>
-            <h2 class="text-1xl text-center font-bold">Muzaffarabad, Azad Jammu & Kashmir</h2>
-            <h2 class="text-1xl text-center font-extrabold mb-2">Serving the Humanity</h2>
-            {{--                @php--}}
-            {{--                    echo DNS2D::getBarcodeSVG('4445645656', 'QRCODE',3,3);;--}}
-            {{--                @endphp--}}
-            <table class="table-auto w-full">
+
+            <table class="table-auto w-full" style="font-size: 11px;">
                 <tr class="border-none">
                     <td class="font-extrabold">Patient Name:</td>
                     <td class="">{{ $patient->first_name . ' ' . $patient->last_name }}</td>
                     <td class="font-extrabold">Age/Sex</td>
                     <td class="">{{ $patient->age . ' ' . $patient->years_months }}/{{ ($patient->sex == 1?'Male':'Female') }}
                     </td>
-                    {{--                                        <td class="border-black border">{{ \Carbon\Carbon::parse($patient->created_at)->format('d-M-y h:i:s') }}</td>--}}
                 </tr>
                 <tr>
                     <td class=" font-extrabold">Father/Husband Name:</td>
@@ -63,8 +64,12 @@
                     <tr>
                         <td class="font-extrabold">Entitlement:</td>
                         <td>Private</td>
-                        <td class=" font-extrabold">Amount Payable:</td>
-                        <td class="font-extrabold">Rs. {{$chit->amount}}</td>
+                        {{--                        <td class=" font-extrabold">Amount Payable:</td>--}}
+                        {{--                        <td class="font-extrabold">Rs. {{$chit->amount}}</td>--}}
+                        <td class=" font-extrabold">Printed By:</td>
+                        <td>
+                            {{ auth()->user()->name }}
+                        </td>
                     </tr>
                 @endif
 
@@ -78,8 +83,6 @@
                         </td>
                     </tr>
                 @endif
-
-
 
                 @if($chit->government_non_gov)
                     <tr>
@@ -100,23 +103,34 @@
                     </tr>
 
                     <tr>
-                        <td class=" font-extrabold">Amount Payable:</td>
-                        <td class=" font-extrabold"> {{ $chit->amount }}</td>
                         <td class="font-extrabold">Designation:</td>
                         <td class="">{{$chit->designation}}</td>
+                        <td class=" font-extrabold">Printed By:</td>
+                        <td class="font-extrabold">
+                            {{ auth()->user()->name }}
+                        </td>
+                        {{--                        <td class=" font-extrabold">Amount Payable:</td>--}}
+                        {{--                        <td class=" font-extrabold"> {{ $chit->amount }}</td>--}}
+
                     </tr>
                 @endif
 
 
+                <tr style="border-bottom: 1px solid black;">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+
+                </tr>
+
                 <tr>
-                    <td class="text-2xl font-bold">
+                    <td class="font-bold text-center" colspan="4" style="font-size: 16px;">
                         @if($chit->ipd_opd == 1)
                             OPD:
                         @else
                             IPD:
                         @endif
-                    </td>
-                    <td class="text-2xl font-bold">
 
                         @if($chit->ipd_opd == 1)
                             @if(!empty($chit->department))
@@ -125,17 +139,11 @@
                                 Emergency
                             @endif
                         @endif
-
                     </td>
-
-                    <td class=" font-extrabold">Printed By:</td>
-                    <td class="font-extrabold">
-                        {{ auth()->user()->name }}
-                    </td>
-
                 </tr>
+
+
             </table>
-            <hr class="border-black h-2">
 
 
             @if(\Carbon\Carbon::parse($chit->issued_date)->format('d-M-y') == \Carbon\Carbon::now()->format('d-M-y'))
@@ -157,11 +165,37 @@
         </div>
     </div>
 
+
+
+
     @section('custom_script')
-        <script>
-            window.onload = function () {
-                window.print();
-            };
-        </script>
+            <script>
+                // Execute this code on page load
+                document.addEventListener("DOMContentLoaded", function () {
+                    // Store the current window height before opening the print dialog
+                    const initialHeight = window.innerHeight;
+
+                    // Show the print dialog when the page loads
+                    window.print();
+
+                    // Wait for a short period (e.g., 1 second) and then check the window height again
+                    setTimeout(function () {
+                        const currentHeight = window.innerHeight;
+
+                        // If the window height decreased, it indicates that the print dialog is open
+                        // If the window height remains the same, it means the user pressed "Cancel"
+                        if (currentHeight === initialHeight) {
+                            // Redirect to the specified route
+                            redirectToLink("{{ route('patient.index') }}");
+                        }
+                    }, 1000); // Adjust the delay time as needed
+                });
+
+                // Define the redirectToLink function
+                function redirectToLink(url) {
+                    window.location.href = url;
+                }
+            </script>
+
     @endsection
 </x-app-layout>

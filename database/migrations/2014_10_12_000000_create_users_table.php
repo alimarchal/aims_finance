@@ -25,11 +25,11 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        User::create([
-            'name' => "Ali Raza Marchal",
-            'email' => "kh.marchal@gmail.com",
-            'password' => Hash::make('123456'),
-        ]);
+//        User::create([
+//            'name' => "Ali Raza Marchal",
+//            'email' => "kh.marchal@gmail.com",
+//            'password' => Hash::make('123456'),
+//        ]);
     }
 
     /**

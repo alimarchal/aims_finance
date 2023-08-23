@@ -87,7 +87,7 @@
                         </div>
                         <div>
                             <label for="registration_date" class="block text-gray-700 font-bold mb-2">Registration Date</label>
-                            <input type="date" name="registration_date" id="registration_date" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter registration date" value="{{ old('registration_date') }}">
+                            <input type="date" name="registration_date" id="registration_date" max="{{date('Y-m-d')}}" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter registration date" value="{{ date('Y-m-d') }}">
                         </div>
                         <div>
                             <label for="phone" class="block text-gray-700 font-bold mb-2">Phone</label>

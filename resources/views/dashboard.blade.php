@@ -5,17 +5,20 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+{{--            <h2 class="text-2xl text-center">Total Chit </h2>--}}
             <div class="grid grid-cols-12 gap-6 ">
-                <a href="#" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
+                <a href="{{ route('chits.issued-today') }}" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
                     <div class="p-5">
                         <div class="grid grid-cols-3 gap-1">
                             <div class="col-span-2">
-                                <div class="text-3xl font-bold leading-8">0</div>
+                                <div class="text-3xl font-bold leading-8">
+                                    {{ $issued_chits }}
+                                </div>
 
                                 <div class="mt-1 text-base  font-bold text-gray-600">
-                                    Today Revenue
+                                    Issued Chits
                                 </div>
                             </div>
                             <div class="col-span-1 flex items-center justify-end">
@@ -30,10 +33,10 @@
                         <div class="grid grid-cols-3 gap-1">
                             <div class="col-span-2">
                                 <div class="text-3xl font-bold leading-8">
-                                    0
+                                    {{ number_format($today_revenue,0) }}
                                 </div>
                                 <div class="mt-1 text-base  font-bold text-gray-600">
-                                    Total Revenue This Month
+                                    Today Revenue (PKR)
                                 </div>
                             </div>
                             <div class="col-span-1 flex items-center justify-end">
@@ -48,10 +51,10 @@
                         <div class="grid grid-cols-3 gap-1">
                             <div class="col-span-2">
                                 <div class="text-3xl font-bold leading-8">
-                                    0
+                                    {{ $non_entitled }}
                                 </div>
                                 <div class="mt-1 text-base  font-bold text-gray-600">
-                                    Today Test Performed
+                                    Non-Entitled
                                 </div>
                             </div>
                             <div class="col-span-1 flex items-center justify-end">
@@ -66,15 +69,15 @@
                         <div class="grid grid-cols-3 gap-1">
                             <div class="col-span-2">
                                 <div class="text-3xl font-bold leading-8">
-                                    0
+                                    {{ $entitled }}
                                 </div>
                                 <div class="mt-1 text-base font-bold text-gray-600">
-                                    Monthly Test Performed
+                                    Entitled
                                 </div>
                             </div>
                             <div class="col-span-1 flex items-center justify-end">
 
-                                    <img src="https://cdn-icons-png.flaticon.com/512/2906/2906361.png" alt="legal case" class="h-12 w-12">
+                                <img src="https://cdn-icons-png.flaticon.com/512/2906/2906361.png" alt="legal case" class="h-12 w-12">
                             </div>
                         </div>
                     </div>
@@ -82,30 +85,80 @@
             </div>
 
 
-            <br>
-{{--            <div class="grid grid-cols-12 gap-6 ">--}}
-{{--                <div class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white p-5">--}}
-{{--                    <div class="grid grid-cols-3 gap-1">--}}
-{{--                        <div class="col-span-2">--}}
-{{--                            <div class="text-3xl font-bold leading-8">0</div>--}}
-{{--                            <div class="mt-1 text-base  font-bold text-gray-600">--}}
-{{--                                Today Revenue--}}
+
+{{--            <div class="grid grid-cols-12 gap-6 mt-8">--}}
+{{--                <a href="#" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">--}}
+{{--                    <div class="p-5">--}}
+{{--                        <div class="grid grid-cols-3 gap-1">--}}
+{{--                            <div class="col-span-2">--}}
+{{--                                <div class="text-3xl font-bold leading-8">0</div>--}}
+
+{{--                                <div class="mt-1 text-base  font-bold text-gray-600">--}}
+{{--                                    Today Revenue--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                            <div class="col-span-1 flex items-center justify-end">--}}
+{{--                                <img src="https://cdn-icons-png.flaticon.com/512/1728/1728946.png" alt="employees on leave" class="h-12 w-12">--}}
+
 {{--                            </div>--}}
 {{--                        </div>--}}
-{{--                        <div class="col-span-1 flex items-center justify-end">--}}
-{{--                            <img src="https://cdn-icons-png.flaticon.com/512/1728/1728946.png" alt="employees on leave" class="h-12 w-12">--}}
+{{--                    </div>--}}
+{{--                </a>--}}
+{{--                <a href="#" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">--}}
+{{--                    <div class="p-5">--}}
+{{--                        <div class="grid grid-cols-3 gap-1">--}}
+{{--                            <div class="col-span-2">--}}
+{{--                                <div class="text-3xl font-bold leading-8">--}}
+{{--                                    0--}}
+{{--                                </div>--}}
+{{--                                <div class="mt-1 text-base  font-bold text-gray-600">--}}
+{{--                                    Total Revenue This Month--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                            <div class="col-span-1 flex items-center justify-end">--}}
+
+{{--                                <img src="https://cdn-icons-png.flaticon.com/512/817/817729.png" alt="legal case" class="h-12 w-12">--}}
+{{--                            </div>--}}
 {{--                        </div>--}}
 {{--                    </div>--}}
-{{--                </div>--}}
-{{--           </div>--}}
+{{--                </a>--}}
+{{--                <a href="#" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">--}}
+{{--                    <div class="p-5">--}}
+{{--                        <div class="grid grid-cols-3 gap-1">--}}
+{{--                            <div class="col-span-2">--}}
+{{--                                <div class="text-3xl font-bold leading-8">--}}
+{{--                                    0--}}
+{{--                                </div>--}}
+{{--                                <div class="mt-1 text-base  font-bold text-gray-600">--}}
+{{--                                    Today Test Performed--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                            <div class="col-span-1 flex items-center justify-end">--}}
+{{--                                <img src="https://cdn-icons-png.flaticon.com/512/3127/3127109.png" alt="legal case" class="h-12 w-12">--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </a>--}}
+{{--                <a href="#" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">--}}
 
+{{--                    <div class="p-5">--}}
+{{--                        <div class="grid grid-cols-3 gap-1">--}}
+{{--                            <div class="col-span-2">--}}
+{{--                                <div class="text-3xl font-bold leading-8">--}}
+{{--                                    0--}}
+{{--                                </div>--}}
+{{--                                <div class="mt-1 text-base font-bold text-gray-600">--}}
+{{--                                    Monthly Test Performed--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                            <div class="col-span-1 flex items-center justify-end">--}}
 
-
-
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-
-{{--                <x-welcome />--}}
-            </div>
+{{--                                <img src="https://cdn-icons-png.flaticon.com/512/2906/2906361.png" alt="legal case" class="h-12 w-12">--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </a>--}}
+{{--            </div>--}}
         </div>
     </div>
     @section('custom_script')

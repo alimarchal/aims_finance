@@ -102,6 +102,11 @@
             mobile = mobile.replace(/(\d{4})(\d{7})/, "$1-$2"); // Add hyphen
             event.target.value = mobile;
         });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Set focus on the "first_name" input field
+            document.getElementById("first_name").focus();
+        });
     </script>
 @endsection
 
