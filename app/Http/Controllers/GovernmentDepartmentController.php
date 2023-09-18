@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreGovernmentDepartmentRequest;
 use App\Http\Requests\UpdateGovernmentDepartmentRequest;
+use App\Models\Department;
 use App\Models\GovernmentDepartment;
 
 class GovernmentDepartmentController extends Controller
@@ -13,7 +14,8 @@ class GovernmentDepartmentController extends Controller
      */
     public function index()
     {
-        //
+        $departments = GovernmentDepartment::all();
+        return view('government-departments.index', compact('departments'));
     }
 
     /**
@@ -21,7 +23,7 @@ class GovernmentDepartmentController extends Controller
      */
     public function create()
     {
-        //
+        return view('government-departments.create');
     }
 
     /**
@@ -29,7 +31,8 @@ class GovernmentDepartmentController extends Controller
      */
     public function store(StoreGovernmentDepartmentRequest $request)
     {
-        //
+        $department = GovernmentDepartment::create($request->all());
+        return to_route('governmentDepartment.index')->with('message', 'Government department created successfully!');
     }
 
     /**
@@ -45,7 +48,8 @@ class GovernmentDepartmentController extends Controller
      */
     public function edit(GovernmentDepartment $governmentDepartment)
     {
-        //
+        $department = $governmentDepartment;
+        return view('government-departments.edit', compact('department'));
     }
 
     /**
@@ -53,7 +57,9 @@ class GovernmentDepartmentController extends Controller
      */
     public function update(UpdateGovernmentDepartmentRequest $request, GovernmentDepartment $governmentDepartment)
     {
-        //
+        $governmentDepartment->update($request->all());
+        return redirect()->route('governmentDepartment.index')
+            ->with('message', 'Government department updated successfully!');
     }
 
     /**
@@ -61,6 +67,9 @@ class GovernmentDepartmentController extends Controller
      */
     public function destroy(GovernmentDepartment $governmentDepartment)
     {
-        //
+        $governmentDepartment->delete();
+
+        return redirect()->route('governmentDepartment.index')
+            ->with('message', 'Government department deleted successfully!');
     }
 }

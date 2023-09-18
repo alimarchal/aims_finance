@@ -4,7 +4,7 @@
         <style>
             @media print {
                 @page {
-                    margin: 10px;
+                    margin: 20px;
                 }
             }
 
@@ -42,7 +42,7 @@
             <table class="table-auto w-full" style="font-size: 11px;">
                 <tr class="border-none">
                     <td class="font-extrabold">Patient Name:</td>
-                    <td class="">{{ $patient->first_name . ' ' . $patient->last_name }}</td>
+                    <td class="">{{ $patient->title . ' ' .$patient->first_name . ' ' . $patient->last_name }}</td>
                     <td class="font-extrabold">Age/Sex</td>
                     <td class="">{{ $patient->age . ' ' . $patient->years_months }}/{{ ($patient->sex == 1?'Male':'Female') }}
                     </td>
@@ -138,7 +138,7 @@
                 @endif
 
                 <tr style="border-bottom: 1px solid black; margin: 0px; padding: 0px; font-size: 7px; text-align: center">
-                    <td colspan="4">Developed By Ali Raza Marchal - Tel: 0300-8169924</td>
+                    <td colspan="4">Developed By IRIS Tech - 0300-8169924</td>
                 </tr>
 
 {{--                <tr>--}}
@@ -203,15 +203,15 @@
                         // If the window height remains the same, it means the user pressed "Cancel"
                         if (currentHeight === initialHeight) {
                             // Redirect to the specified route
-                            redirectToLink("{{ route('patient.index') }}");
+                            redirectToLink("{{ route('patient.create') }}");
                         }
                     }, 1000); // Adjust the delay time as needed
                 });
 
                 // Define the redirectToLink function
-                // function redirectToLink(url) {
-                //     window.location.href = url;
-                // }
+                function redirectToLink(url) {
+                    window.location.href = url;
+                }
             </script>
 
     @endsection

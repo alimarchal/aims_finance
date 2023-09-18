@@ -34,7 +34,12 @@
 {{--                    </x-nav-link>--}}
 
                     <x-nav-link href="{{ route('department.index') }}" :active="request()->routeIs('department.*')">
-                        {{ __('Departments') }}
+                        {{ __('OPDs') }}
+                    </x-nav-link>
+
+
+                    <x-nav-link href="{{ route('governmentDepartment.index') }}" :active="request()->routeIs('governmentDepartment.*')">
+                        {{ __('Government Departments') }}
                     </x-nav-link>
 
                     <x-nav-link href="{{ route('feeType.index') }}" :active="request()->routeIs('feeType.*')">

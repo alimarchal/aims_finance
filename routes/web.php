@@ -35,6 +35,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
 
     Route::resource('department', \App\Http\Controllers\DepartmentController::class);
+    Route::resource('governmentDepartment', \App\Http\Controllers\GovernmentDepartmentController::class);
+
     Route::resource('labTest', \App\Http\Controllers\LabTestController::class);
     Route::get('patient/{patient}/proceed', [\App\Http\Controllers\PatientController::class, 'proceed'])->name('patient.proceed');
     Route::delete('patient/{patientTestCart}', [\App\Http\Controllers\PatientController::class, 'proceed_cart_destroy'])->name('patient_cart.destroy');
