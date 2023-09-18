@@ -25,6 +25,10 @@
                                 <option value="Mrs." {{ $patient->title === 'Mrs.' ? 'selected' : '' }}>Mrs.</option>
                                 <option value="Miss" {{ $patient->title === 'Miss' ? 'selected' : '' }}>Miss</option>
                                 <option value="Ms." {{ $patient->title === 'Ms.' ? 'selected' : '' }}>Ms.</option>
+                                <option value="S/O"  {{ $patient->title === 'S/O' ? 'selected' : '' }}>S/O.</option>
+                                <option value="D/O"  {{ $patient->title === 'D/O' ? 'selected' : '' }}>D/O.</option>
+                                <option value="M/O"  {{ $patient->title === 'M/O' ? 'selected' : '' }}>M/O.</option>
+                                <option value="F/O"  {{ $patient->title === 'F/O' ? 'selected' : '' }}>F/O.</option>
                             </select>
                         </div>
                         <div>

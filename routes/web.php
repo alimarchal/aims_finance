@@ -52,4 +52,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('chits/issued-today', [\App\Http\Controllers\ChitController::class, 'today'])->name('chits.issued-today');
 
+    // Reports
+    Route::get('reports-daily', [\App\Http\Controllers\ReportsController::class, 'reportDaily'])->name('reportDaily');
+
+
 });

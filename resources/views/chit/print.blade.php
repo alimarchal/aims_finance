@@ -4,7 +4,7 @@
         <style>
             @media print {
                 @page {
-                    margin: 30px;
+                    margin: 10px;
                 }
             }
 
@@ -33,7 +33,8 @@
                     <img src="{{ \Illuminate\Support\Facades\Storage::url('Aimsa8 copy 2.png') }}" alt="Logo" style="width: 200px;">
                 </div>
                 <div class="flex flex-col items-end">
-                    @php $patient_id = (string) $patient->id; @endphp
+                    @php $patient_id = (string)  "RS.". $chit->amount . "\nC$chit->id" . "\nDeveloped By Ali Raza Marchal"; @endphp
+{{--                    @php $patient_id = (string)  "RS.". $chit->amount . "\nC$chit->id" . "\n$chit->issued_date\nDeveloped By Ali Raza Marchal\nTel: 0300-8169924"; @endphp--}}
                     {!! DNS2D::getBarcodeSVG($patient_id, 'QRCODE',3,3) !!}
                 </div>
             </div>
@@ -47,16 +48,39 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class=" font-extrabold">Father/Husband Name:</td>
-                    <td class="">{{ $patient->father_husband_name }}</td>
+                    <td class=" font-extrabold" style="font-weight: bolder;">
+                        @if($chit->ipd_opd == 1)
+                            OPD:
+                        @else
+                            IPD:
+                        @endif
+                    </td>
+                    <td  style="font-weight: bolder;">
+                        @if($chit->ipd_opd == 1)
+                            @if(!empty($chit->department))
+                                {{$chit->department->name}} - ({{ $chitNumber }})
+                            @else
+                                Emergency
+                            @endif
+                        @endif
+                    </td>
+
+{{--                    <td class=" font-extrabold">Father/Husband Name::</td>--}}
+{{--                    <td class="">{{ $patient->father_husband_name }}</td>--}}
+
                     <td class=" font-extrabold">Issue Date:</td>
                     <td class="">{{ \Carbon\Carbon::parse($chit->issued_date)->format('d-M-y h:i:s') }}</td>
                 </tr>
                 <tr>
                     <td class=" font-extrabold">Mobile:</td>
-                    <td class="">{{$patient->mobile}}</td>
+                    <td class="">
+{{--                        @if($patient->mobile == "0300-1234567")--}}
+{{--                            N/A--}}
+{{--                        @endif--}}
+                        {{ $patient->mobile }}
+                    </td>
                     <td class=" font-extrabold">Reference No:</td>
-                    <td class="">C{{$chit->id .'/P' . $chit->patient_id}}-{{date('ymd')}}</td>
+                    <td class="">C{{$chit->id .'/P' . $chit->patient_id}}</td>
                 </tr>
 
 
@@ -98,8 +122,6 @@
                                 @endif
                             @endif
                         </td>
-
-
                     </tr>
 
                     <tr>
@@ -115,32 +137,27 @@
                     </tr>
                 @endif
 
-
-                <tr style="border-bottom: 1px solid black;">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-
+                <tr style="border-bottom: 1px solid black; margin: 0px; padding: 0px; font-size: 7px; text-align: center">
+                    <td colspan="4">Developed By Ali Raza Marchal - Tel: 0300-8169924</td>
                 </tr>
 
-                <tr>
-                    <td class="font-bold text-center" colspan="4" style="font-size: 16px;">
-                        @if($chit->ipd_opd == 1)
-                            OPD:
-                        @else
-                            IPD:
-                        @endif
+{{--                <tr>--}}
+{{--                    <td class="font-bold text-center" colspan="4" style="font-size: 16px;">--}}
+{{--                        @if($chit->ipd_opd == 1)--}}
+{{--                            OPD:--}}
+{{--                        @else--}}
+{{--                            IPD:--}}
+{{--                        @endif--}}
 
-                        @if($chit->ipd_opd == 1)
-                            @if(!empty($chit->department))
-                                {{$chit->department->name}}
-                            @else
-                                Emergency
-                            @endif
-                        @endif
-                    </td>
-                </tr>
+{{--                        @if($chit->ipd_opd == 1)--}}
+{{--                            @if(!empty($chit->department))--}}
+{{--                                {{$chit->department->name}}--}}
+{{--                            @else--}}
+{{--                                Emergency--}}
+{{--                            @endif--}}
+{{--                        @endif--}}
+{{--                    </td>--}}
+{{--                </tr>--}}
 
 
             </table>
@@ -169,33 +186,33 @@
 
 
     @section('custom_script')
-{{--            <script>--}}
-{{--                // Execute this code on page load--}}
-{{--                document.addEventListener("DOMContentLoaded", function () {--}}
-{{--                    // Store the current window height before opening the print dialog--}}
-{{--                    const initialHeight = window.innerHeight;--}}
+            <script>
+                // Execute this code on page load
+                document.addEventListener("DOMContentLoaded", function () {
+                    // Store the current window height before opening the print dialog
+                    const initialHeight = window.innerHeight;
 
-{{--                    // Show the print dialog when the page loads--}}
-{{--                    window.print();--}}
+                    // Show the print dialog when the page loads
+                    window.print();
 
-{{--                    // Wait for a short period (e.g., 1 second) and then check the window height again--}}
-{{--                    setTimeout(function () {--}}
-{{--                        const currentHeight = window.innerHeight;--}}
+                    // Wait for a short period (e.g., 1 second) and then check the window height again
+                    setTimeout(function () {
+                        const currentHeight = window.innerHeight;
 
-{{--                        // If the window height decreased, it indicates that the print dialog is open--}}
-{{--                        // If the window height remains the same, it means the user pressed "Cancel"--}}
-{{--                        if (currentHeight === initialHeight) {--}}
-{{--                            // Redirect to the specified route--}}
-{{--                            redirectToLink("{{ route('patient.index') }}");--}}
-{{--                        }--}}
-{{--                    }, 1000); // Adjust the delay time as needed--}}
-{{--                });--}}
+                        // If the window height decreased, it indicates that the print dialog is open
+                        // If the window height remains the same, it means the user pressed "Cancel"
+                        if (currentHeight === initialHeight) {
+                            // Redirect to the specified route
+                            redirectToLink("{{ route('patient.index') }}");
+                        }
+                    }, 1000); // Adjust the delay time as needed
+                });
 
-{{--                // Define the redirectToLink function--}}
-{{--                function redirectToLink(url) {--}}
-{{--                    window.location.href = url;--}}
-{{--                }--}}
-{{--            </script>--}}
+                // Define the redirectToLink function
+                // function redirectToLink(url) {
+                //     window.location.href = url;
+                // }
+            </script>
 
     @endsection
 </x-app-layout>

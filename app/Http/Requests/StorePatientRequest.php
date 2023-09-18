@@ -23,7 +23,12 @@ class StorePatientRequest extends FormRequest
     {
         return [
             'first_name' => 'required',
-            'mobile' => 'required',
+            'mobile' => 'required|regex:/^03\d{2}-\d{7}$/',
+
+            'age' => 'required|integer|min:0',
+            'years_months' => 'required_if:age,!=,null|in:Year(s),Month(s)',
+
+
             'government_non_gov' => 'required',
             'department_id' => 'required',
             'government_department_id' => 'required_with:government_card_no,designation',
@@ -31,4 +36,18 @@ class StorePatientRequest extends FormRequest
             'designation' => 'required_with:government_department_id',
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'mobile.required' => 'The mobile number is required.',
+            'mobile.regex' => 'The mobile number must be in the format 0300-1234567.',
+
+            'age.required' => 'The Age field is required.',
+            'age.integer' => 'The Age must be an integer.',
+            'age.min' => 'The Age must be at least 0.',
+            'years_months.required_if' => 'The Years/Months field is required when Age is provided.',
+        ];
+    }
+
 }

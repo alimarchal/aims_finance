@@ -22,13 +22,13 @@
                                 </div>
                             </div>
                             <div class="col-span-1 flex items-center justify-end">
-                                <img src="https://cdn-icons-png.flaticon.com/512/1728/1728946.png" alt="employees on leave" class="h-12 w-12">
+                                <img src="{{ Storage::url('images/1728946.png') }}" alt="employees on leave" class="h-12 w-12">
 
                             </div>
                         </div>
                     </div>
                 </a>
-                <a href="#" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
+                <a href="{{ route('chits.issued-today',['filter[government_non_gov]=0']) }}" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
                     <div class="p-5">
                         <div class="grid grid-cols-3 gap-1">
                             <div class="col-span-2">
@@ -41,12 +41,12 @@
                             </div>
                             <div class="col-span-1 flex items-center justify-end">
 
-                                <img src="https://cdn-icons-png.flaticon.com/512/817/817729.png" alt="legal case" class="h-12 w-12">
+                                <img src="{{ Storage::url('images/817729.png') }}" alt="legal case" class="h-12 w-12">
                             </div>
                         </div>
                     </div>
                 </a>
-                <a href="#" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
+                <a href="{{ route('chits.issued-today',['filter[government_non_gov]=0']) }}" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
                     <div class="p-5">
                         <div class="grid grid-cols-3 gap-1">
                             <div class="col-span-2">
@@ -58,12 +58,12 @@
                                 </div>
                             </div>
                             <div class="col-span-1 flex items-center justify-end">
-                                <img src="https://cdn-icons-png.flaticon.com/512/3127/3127109.png" alt="legal case" class="h-12 w-12">
+                                <img src="{{ Storage::url('images/3127109.png') }}" alt="legal case" class="h-12 w-12">
                             </div>
                         </div>
                     </div>
                 </a>
-                <a href="#" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
+                <a href="{{ route('chits.issued-today',['filter[government_non_gov]=1']) }}" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
 
                     <div class="p-5">
                         <div class="grid grid-cols-3 gap-1">
@@ -77,7 +77,7 @@
                             </div>
                             <div class="col-span-1 flex items-center justify-end">
 
-                                <img src="https://cdn-icons-png.flaticon.com/512/2906/2906361.png" alt="legal case" class="h-12 w-12">
+                                <img src="{{ Storage::url('images/2906361.png') }}" alt="legal case" class="h-12 w-12">
                             </div>
                         </div>
                     </div>

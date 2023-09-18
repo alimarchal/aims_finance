@@ -23,11 +23,15 @@
                     </x-nav-link>
 
 
-                    @role('Super-Admin')
+                    @role('Super-Admin|admin')
 
-                    <x-nav-link href="{{ route('labTest.index') }}" :active="request()->routeIs('labTest.*')">
-                        {{ __('Lab Test') }}
+                    <x-nav-link href="{{ route('reportDaily') }}" :active="request()->routeIs('reportDaily')">
+                        {{ __('Reports') }}
                     </x-nav-link>
+
+{{--                    <x-nav-link href="{{ route('labTest.index') }}" :active="request()->routeIs('labTest.*')">--}}
+{{--                        {{ __('Lab Test') }}--}}
+{{--                    </x-nav-link>--}}
 
                     <x-nav-link href="{{ route('department.index') }}" :active="request()->routeIs('department.*')">
                         {{ __('Departments') }}
@@ -43,19 +47,17 @@
                     </x-nav-link>
 
 
-                    <x-nav-link href="{{ route('roles.index') }}" :active="request()->routeIs('roles.*')">
-                        {{ __('Roles') }}
-                    </x-nav-link>
+{{--                    <x-nav-link href="{{ route('roles.index') }}" :active="request()->routeIs('roles.*')">--}}
+{{--                        {{ __('Roles') }}--}}
+{{--                    </x-nav-link>--}}
 
 
-                    <x-nav-link href="{{ route('permissions.index') }}" :active="request()->routeIs('permissions.*')">
-                        {{ __('Permissions') }}
-                    </x-nav-link>
+{{--                    <x-nav-link href="{{ route('permissions.index') }}" :active="request()->routeIs('permissions.*')">--}}
+{{--                        {{ __('Permissions') }}--}}
+{{--                    </x-nav-link>--}}
 
 
-                    <x-nav-link href="#">
-                        {{ __('Reports') }}
-                    </x-nav-link>
+
                     @endrole
 
                 </div>

@@ -158,6 +158,12 @@
                         @endforeach
                         </tbody>
                     </table>
+
+
+                </div>
+
+                <div class="mt-4">
+                    {{ $patients->links() }}
                 </div>
 
             </div>
