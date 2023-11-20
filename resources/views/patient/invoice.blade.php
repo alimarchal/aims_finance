@@ -43,7 +43,7 @@
         <table class="table-auto w-full" style="font-size: 11px;">
             <tr class="border-none">
                 <td class="font-extrabold">Patient Name:</td>
-                <td class="">{{ $patient->first_name . ' ' . $patient->last_name }}</td>
+                <td class="">{{ $patient->title . ' ' .$patient->first_name . ' ' . $patient->last_name }}</td>
                 <td class="font-extrabold">Age/Sex</td>
                 <td class="">{{ $patient->age . ' ' . $patient->years_months }}/{{ ($patient->sex == 1?'Male':'Female') }}
                 </td>
