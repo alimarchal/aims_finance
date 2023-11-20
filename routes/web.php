@@ -52,6 +52,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('patient/ipd/create', [\App\Http\Controllers\PatientController::class, 'createIPD'])->name('patient.create-ipd');
     Route::get('patient/opd/create', [\App\Http\Controllers\PatientController::class, 'createOPD'])->name('patient.create-opd');
     Route::post('patient/opd', [\App\Http\Controllers\PatientController::class, 'storeOPD'])->name('patient.store-opd');
+    Route::post('patient/ipd', [\App\Http\Controllers\PatientController::class, 'storeIPD'])->name('patient.store-ipd');
 
 
     Route::resource('feeType', \App\Http\Controllers\FeeTypeController::class);

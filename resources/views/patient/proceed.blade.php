@@ -139,6 +139,8 @@
                         @endforeach
 
 
+                        @if($patient->patient_test_cart->isEmpty())
+
                         <form method="post" action="{{ route('patient.add-to-cart', $patient->id) }}">
                             @csrf
                             <tr class="border-black">
@@ -159,6 +161,9 @@
                                 </td>
                             </tr>
                         </form>
+                        @endif
+
+
 
                         <tr class="border-black">
                             <td class="border-black border px-4 py-2 text-right font-bold text-2xl" colspan="2">Total Amount:</td>

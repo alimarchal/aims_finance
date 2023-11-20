@@ -15,6 +15,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Http\Request;
+
 
 
 class PatientController extends Controller
@@ -72,6 +74,8 @@ class PatientController extends Controller
                     $dateOfBirth = now()->subYears($age)->format('Y-m-d');
                 } elseif ($yearsMonths === 'Month(s)') {
                     $dateOfBirth = now()->subMonths($age)->format('Y-m-d');
+                } elseif ($yearsMonths === 'Day(s)') {
+                    $dateOfBirth = now()->subDay($age)->format('Y-m-d');
                 } else {
                     // Handle an invalid selection or provide a default value
                     $dateOfBirth = null;
@@ -94,8 +98,23 @@ class PatientController extends Controller
     }
 
 
-    public function storeOPD(StorePatientRequest $request)
+    public function storeOPD(Request $request)
     {
+
+        $request->validate([
+            'first_name' => 'required',
+            'department_id' => 'required',
+            'mobile' => 'required|regex:/^03\d{2}-\d{7}$/',
+
+            'age' => 'required|integer|min:0',
+            'years_months' => 'required_if:age,!=,null|in:Year(s),Month(s),Day(s)',
+
+
+            'government_non_gov' => 'required',
+            'government_department_id' => 'required_with:government_card_no,designation',
+            'government_card_no' => 'required_with:government_department_id',
+            'designation' => 'required_with:government_department_id',
+        ]);
         // login user id capture
         $request->merge(['user_id' => auth()->user()->id]);
         $patient = null;
@@ -126,8 +145,126 @@ class PatientController extends Controller
             if (!$dateOfBirth) {
                 if ($yearsMonths === 'Year(s)') {
                     $dateOfBirth = now()->subYears($age)->format('Y-m-d');
+                } elseif ($yearsMonths === 'Day(s)') {
+                    $dateOfBirth = now()->subDay($age)->format('Y-m-d');
                 } elseif ($yearsMonths === 'Month(s)') {
                     $dateOfBirth = now()->subMonths($age)->format('Y-m-d');
+                } else {
+                    // Handle an invalid selection or provide a default value
+                    $dateOfBirth = null;
+                }
+            }
+            // Merge the calculated date of birth into the request data
+            $request->merge(['dob' => $dateOfBirth])->all();
+
+            $patient = Patient::create($request->all());
+
+            $amount = null;
+            if ($request->input('government_department_id')) {
+                $amount = 0.00;
+            } else {
+                if ($request->department_id == 7) {
+                    $amount = FeeType::find(108)->amount;
+                    $fee_type_id = 108;
+                } else if ($request->department_id == 1) {
+                    // For emergency
+                    $amount = FeeType::find(1)->amount;
+                    $fee_type_id = 1;
+                } else if ($request->department_id == 16) {
+                    // For Cardiology
+                    $amount = FeeType::find(19)->amount;
+                    $fee_type_id = 1;
+                } else {
+                    $fee_type_id = 107;
+                    $amount = FeeType::find(107)->amount;
+                }
+            }
+
+            if ($request->has('ipd_opd')) {
+                $ipd_opd = 0;
+            } else {
+                $ipd_opd = 1;
+            }
+            // this is for opd
+            $chit = Chit::create([
+                'user_id' => auth()->user()->id,
+                'department_id' => $request->department_id,
+                'patient_id' => $patient->id,
+                'government_non_gov' => $patient->government_non_gov,
+                'government_department_id' => $patient->government_department_id,
+                'government_card_no' => $patient->government_card_no,
+                'designation' => $patient->designation,
+                'fee_type_id' => $fee_type_id,
+                'issued_date' => now(),
+                'amount' => $amount,
+                'ipd_opd' => $ipd_opd,
+                'payment_status' => 1,
+            ]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            // something went wrong
+        }
+
+        if (!empty($chit) && !empty($patient)) {
+            return to_route('chit.print', [$patient->id, $chit->id]);
+        } else {
+            return to_route('patient.index')->with('message', 'There is an error occurred for creating patient and chit');
+        }
+
+    }
+
+    public function storeIPD(Request $request)
+    {
+
+        $request->validate([
+            'first_name' => 'required',
+            'department_id' => 'required',
+            'mobile' => 'required|regex:/^03\d{2}-\d{7}$/',
+
+            'age' => 'required|integer|min:0',
+            'years_months' => 'required_if:age,!=,null|in:Year(s),Month(s),Day(s)',
+
+
+            'government_non_gov' => 'required',
+            'government_department_id' => 'required_with:government_card_no,designation',
+            'government_card_no' => 'required_with:government_department_id',
+            'designation' => 'required_with:government_department_id',
+        ]);
+        // login user id capture
+        $request->merge(['user_id' => auth()->user()->id]);
+        $patient = null;
+        $chit = null;
+        $fee_type_id = null;
+        // 1 for opd 0 for ipd
+        $ipd_opd = null;
+
+        $count_chit_of_today = Chit::where('department_id', $request->department_id)->where('issued_date', '>=', Carbon::today())->count();
+        $count_chit_of_today_limit = Department::where('id', $request->department_id)->first()->daily_patient_limit;
+        $count_chit_of_today++;
+
+        if ($count_chit_of_today_limit <= $count_chit_of_today) {
+            return to_route('patient.create-ipd')->with('error', 'Today\'s limit has been reached to ' . $count_chit_of_today_limit);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $request->merge(['sex' => $this->getAutoGender($request->input('title'))])->all();
+
+            $age = $request->age;
+            $yearsMonths = $request->years_months;
+            $dateOfBirth = $request->dob; // Get the provided date of birth from the request
+
+            // Check if the user has already provided a date of birth
+            if (!$dateOfBirth) {
+                if ($yearsMonths === 'Year(s)') {
+                    $dateOfBirth = now()->subYears($age)->format('Y-m-d');
+                } elseif ($yearsMonths === 'Month(s)') {
+                    $dateOfBirth = now()->subMonths($age)->format('Y-m-d');
+                } elseif ($yearsMonths === 'Day(s)') {
+                    $dateOfBirth = now()->subDay($age)->format('Y-m-d');
                 } else {
                     // Handle an invalid selection or provide a default value
                     $dateOfBirth = null;
@@ -276,21 +413,31 @@ class PatientController extends Controller
     public function patient_invoice(Patient $patient, Invoice $invoice)
     {
 
-//        $date_of_day = Carbon::parse($chit->issued_date)->format('Y-m-d');
-//
-//        $result = DB::table('chits')
-//            ->where('department_id', $chit->department_id)
-//            ->whereDate('issued_date', $date_of_day)
-//            ->orderByDesc('issued_date')
-//            ->select('*', DB::raw('ROW_NUMBER() OVER (ORDER BY created_at) AS count_no'))
-//            ->get();
-//
-//        $chitNumber = $result->where('id',$chit->id)->first()->count_no;
+        $date_of_day = Carbon::parse($invoice->created_at)->format('Y-m-d');
+        $fee_type_id = $invoice->patient_test_latest->fee_type_id;
+        $patient_test_latest_id = $invoice->patient_test_latest->id;
 
 
-        $total_amount  = $invoice->patient_test->sum('total_amount');
+        $result = DB::table('patient_tests')
+            ->where('fee_type_id', $fee_type_id)
+            ->whereDate('created_at', $date_of_day)
+            ->orderByDesc('created_at')
+            ->select('*', DB::raw('ROW_NUMBER() OVER (ORDER BY created_at) AS count_no'))
+            ->get();
 
-        return view('patient.invoice', compact('patient', 'patient', 'invoice','total_amount'));
+        $chitNumber = $result->where('id', $patient_test_latest_id)->first()->count_no;
+
+
+        $total_amount = $invoice->patient_test->sum('total_amount');
+        $department = null;
+        $fee_category = null;
+        if (!empty($invoice->patient_test_latest->fee_type->feeCategory)) {
+            $department = $invoice->patient_test_latest->fee_type->feeCategory->name;
+        }
+        if (!empty($invoice->patient_test_latest->fee_type)) {
+            $fee_category = $invoice->patient_test_latest->fee_type->type;
+        }
+        return view('patient.invoice', compact('patient', 'patient', 'invoice', 'total_amount', 'department', 'fee_category','chitNumber'));
     }
 
 
@@ -379,7 +526,7 @@ class PatientController extends Controller
         $maleTitles = ['Mr.', 'S/O', 'F/O'];
 
         // List of titles considered as female
-        $femaleTitles = ['Mrs.', 'Miss', 'Ms.', 'D/O', 'M/O'];
+        $femaleTitles = ['H/O', 'W/O', 'Miss', 'D/O', 'M/O'];
 
         if (in_array($title, $maleTitles)) {
             return '1';

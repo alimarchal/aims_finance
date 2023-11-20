@@ -32,9 +32,8 @@
                             <select name="title" id="title" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
                                 <option value="">Select Title</option>
                                 <option value="Mr." {{ old('title') === 'Mr.' ? 'selected' : '' }} selected>Mr.</option>
-                                <option value="Mrs." {{ old('title') === 'Mrs.' ? 'selected' : '' }}>Mrs.</option>
-                                <option value="Miss" {{ old('title') === 'Miss' ? 'selected' : '' }}>Miss.</option>
-                                <option value="Ms." {{ old('title') === 'Ms.' ? 'selected' : '' }}>Ms.</option>
+                                <option value="H/O" {{ old('title') === 'H/O.' ? 'selected' : '' }}>H/O.</option>
+                                <option value="W/O" {{ old('title') === 'W/O' ? 'selected' : '' }}>W/O.</option>
                                 <option value="S/O" {{ old('title') === 'S/O' ? 'selected' : '' }}>S/O.</option>
                                 <option value="D/O" {{ old('title') === 'D/O' ? 'selected' : '' }}>D/O.</option>
                                 <option value="M/O" {{ old('title') === 'M/O' ? 'selected' : '' }}>M/O.</option>
@@ -61,6 +60,7 @@
                             <x-label for="years_months" value="Years/Months" :required="true"/>
                             <select name="years_months" id="years_months" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
                                 <option value="">Select Year(s)</option>
+                                <option value="Day(s)" {{ old('years_months') === 'Day(s)' ? 'selected' : '' }} selected>Days</option>
                                 <option value="Year(s)" {{ old('years_months') === 'Year(s)' ? 'selected' : '' }} selected>Years</option>
                                 <option value="Month(s)" {{ old('years_months') === 'Month(s)' ? 'selected' : '' }}>Months</option>
                             </select>

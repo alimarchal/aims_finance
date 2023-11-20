@@ -50,43 +50,30 @@
             </tr>
             <tr>
                 <td class=" font-extrabold">Medical Record No:</td>
-                <td class="">{{ \Carbon\Carbon::now()->format('y') . '-' .$patient->id }}</td>
-                <td class=" font-extrabold">DOB:</td>
-                <td class="">
-                    @if(!empty($patient->dob))
-                        {{ \Carbon\Carbon::parse($patient->dob)->format('d-M-Y') }}
-                    @endif
-
-                </td>
-            </tr>
-            <tr>
-                <td class="font-extrabold">Gender:</td>
-                <td class="">
-                    @if($patient->sex == 1)
-                        Male
-                    @else
-                        Female
-                    @endif
-                </td>
-                <td class="font-extrabold">Blood Group:</td>
-                <td class="">{{$patient->blood_group}}</td>
-            </tr>
-            <tr>
-
-                <td class="font-extrabold">
-                    Collect Report At:
-                </td>
-                <td class="">
-                    {{ \Carbon\Carbon::now()->addDay(1)->format('d-M-Y') }}
-                </td>
+                <td class="">{{ \Carbon\Carbon::now()->format('y') . '-' .$patient->id }}-{{ $invoice->id }}</td>
                 <td class=" font-extrabold">Mobile:</td>
                 <td class="">{{$patient->mobile}}</td>
             </tr>
-
             <tr>
                 <td class=" font-extrabold">Issue Date:</td>
                 <td class="">
                     {{ \Carbon\Carbon::parse($invoice->created_at)->format('d-M-Y h:i:sa') }}
+                </td>
+                <td class="font-extrabold">Blood Group:</td>
+                <td class="">{{$patient->blood_group}}</td>
+            </tr>
+
+            <tr>
+                <td class="font-extrabold">
+                    Category
+                </td>
+                <td>
+                    @if($patient->government_non_gov == 1)
+                        Entitled
+                    @else
+                        Non-Entitled
+                    @endif
+
                 </td>
                 <td class=" font-extrabold">Issued By:</td>
                 <td class="">
@@ -95,60 +82,67 @@
             </tr>
 
             <tr>
-                <td class="font-extrabold">
-                    Entitled
+                <td class="font-extrabold" >
+                    Department
                 </td>
-                <td>
-                    @if($patient->government_non_gov == 1)
-                        Government Servant
-                    @else
-                        Private
+                <td style="font-size: 13px;">
+                    @if(!empty($department))
+                        {{ $department }} <br>
+
                     @endif
-
                 </td>
 
                 <td class="font-extrabold">
-                    Invoice No
+                   Head
                 </td>
-                <td>
-                    {{ $invoice->id }}
+
+                <td >
+                    @if(!empty($department))
+                        {{ $fee_category }}
+                    @endif
                 </td>
             </tr>
+
+            <tr style="font-size: 16px; text-align: center" class="font-extrabold">
+                <td colspan="4"> آپ کا نمبر ہے ({{$chitNumber}})</td>
+            </tr>
+
+
             <tr style="border-bottom: 1px solid black; margin: 0px; padding: 0px; font-size: 7px; text-align: center">
                 <td colspan="4">Developed By Ali Raza Marchal - 0300-8169924</td>
             </tr>
         </table>
 
-        <h1 style="text-align: center;font-weight: bold">Patient Invoice</h1>
+{{--        <h1 style="text-align: center;font-weight: bold">Patient Invoice</h1>--}}
 
 
 
 
-        <div class="overflow-x-auto" style="font-size: 12px;">
-            <table class="table-auto w-full border-collapse border border-black ">
-                <thead>
-                <tr class="border-black lightgray" >
-                    <th class="border-black border text-center">S.No</th>
-                    <th class="border-black border px-2 text-left">Test Name</th>
-                    <th class="border-black border">Amount</th>
-                </tr>
-                </thead>
-                <tbody>
+{{--        <div class="overflow-x-auto" style="font-size: 12px;">--}}
+{{--            <table class="table-auto w-full border-collapse border border-black ">--}}
+{{--                <thead>--}}
+{{--                <tr class="border-black lightgray" >--}}
+{{--                    <th class="border-black border text-center">S.No</th>--}}
+{{--                    <th class="border-black border px-2 text-left">Test Name</th>--}}
+{{--                    <th class="border-black border">Amount</th>--}}
+{{--                </tr>--}}
+{{--                </thead>--}}
+{{--                <tbody>--}}
 
-                @foreach($invoice->patient_test as $test)
-                    <tr class="border-black">
-                        <td class="border-black border text-center">{{ $loop->iteration }}</td>
-                        <td class="border-black border px-2 text-left">{{ $test->fee_type->type }}</td>
-                        <td class="border-black border text-center">{{ $test->total_amount }}</td>
-                    </tr>
-                @endforeach
+{{--                @foreach($invoice->patient_test as $test)--}}
+{{--                    <tr class="border-black">--}}
+{{--                        <td class="border-black border text-center">{{ $loop->iteration }}</td>--}}
+{{--                        <td class="border-black border px-2 text-left">{{ $test->fee_type->type }}</td>--}}
+{{--                        <td class="border-black border text-center">{{ $test->total_amount }}</td>--}}
+{{--                    </tr>--}}
+{{--                @endforeach--}}
 
-                <tr class="border-black">
-                    <td class="border-black border text-right px-2 font-bold" colspan="2">Total Amount:</td>
-                    <td class="border-black border text-center font-bold" colspan="2">Rs.{{number_format($total_amount,2)}}</td>
-                </tr>
-                </tbody>
-            </table>
+{{--                <tr class="border-black">--}}
+{{--                    <td class="border-black border text-right px-2 font-bold" colspan="2">Total Amount:</td>--}}
+{{--                    <td class="border-black border text-center font-bold" colspan="2">Rs.{{number_format($total_amount,2)}}</td>--}}
+{{--                </tr>--}}
+{{--                </tbody>--}}
+{{--            </table>--}}
 
 
 
@@ -165,12 +159,12 @@
 
 
 
-        <div class="text-center">
+{{--        <div class="text-center">--}}
 
-            <img class="m-auto rounded-lg" style="width: 150px;" src="{{\Illuminate\Support\Facades\Storage::url('paid-5025785_1280.png')}}" alt="{{\Illuminate\Support\Facades\Storage::url('Aimsa8-removebg-preview.png')}}">
-            <p>This is a computer generated receipt and does not need signature or stamp</p>
+{{--            <img class="m-auto rounded-lg" style="width: 150px;" src="{{\Illuminate\Support\Facades\Storage::url('paid-5025785_1280.png')}}" alt="{{\Illuminate\Support\Facades\Storage::url('Aimsa8-removebg-preview.png')}}">--}}
+{{--            <p>This is a computer generated receipt and does not need signature or stamp</p>--}}
 
-        </div>
+{{--        </div>--}}
 
         <br>
         <br>

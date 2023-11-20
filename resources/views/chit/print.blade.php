@@ -48,17 +48,17 @@
                 </td>
             </tr>
             <tr>
-                <td class=" font-extrabold" style="font-weight: bolder;">
+                <td class=" font-extrabold" style="font-weight: bolder;font-size: 14px;">
                     @if($chit->ipd_opd == 1)
                         OPD:
                     @else
                         IPD:
                     @endif
                 </td>
-                <td style="font-weight: bolder;">
+                <td style="font-weight: bolder; font-size: 14px;">
                     @if($chit->ipd_opd == 1)
                         @if(!empty($chit->department))
-                            {{$chit->department->name}} - ({{ $chitNumber }})
+                            {{$chit->department->name}} - No ({{ $chitNumber }})
                         @endif
                     @else
                         @if(!empty($chit->department))
@@ -103,36 +103,48 @@
                 <tr>
                     <td class="font-extrabold">Entitlement:</td>
                     <td class="">Government Servant</td>
-                    <td class=" font-extrabold">Card No:</td>
-                    <td class="">
-                        {{$chit->government_card_no}}
-                    </td>
-                </tr>
-            @endif
 
-            @if($chit->government_non_gov)
-                <tr>
-                    <td class="font-extrabold">
-                        Department
-                    </td>
-                    <td colspan="3">
-                        @if(!empty($chit->government_department_id))
-                            {{ \App\Models\GovernmentDepartment::find($chit->government_department_id)->name }}
-                        @else
-                            @if($patient->government_non_gov == 1)
-                                {{ $patient->government_department->name }}
-                            @endif
-                        @endif
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="font-extrabold">Designation:</td>
-                    <td class="">{{$chit->designation}}</td>
                     <td class=" font-extrabold">Printed By:</td>
                     <td class="font-extrabold">
                         {{ auth()->user()->name }}
                     </td>
+
+
+{{--                    <td class=" font-extrabold">--}}
+{{--                        Card No:--}}
+{{--                    </td>--}}
+{{--                    <td class="">--}}
+{{--                        {{$chit->government_card_no}}--}}
+{{--                    </td>--}}
+                </tr>
+            @endif
+
+            @if($chit->government_non_gov)
+{{--                <tr>--}}
+{{--                    <td class="font-extrabold">--}}
+{{--                        Department--}}
+{{--                    </td>--}}
+{{--                    <td colspan="3">--}}
+{{--                        @if(!empty($chit->government_department_id))--}}
+{{--                            {{ \App\Models\GovernmentDepartment::find($chit->government_department_id)->name }}--}}
+{{--                        @else--}}
+{{--                            @if($patient->government_non_gov == 1)--}}
+{{--                                {{ $patient->government_department->name }}--}}
+{{--                            @endif--}}
+{{--                        @endif--}}
+{{--                    </td>--}}
+{{--                </tr>--}}
+
+                <tr>
+{{--                    <td class="font-extrabold">Designation:</td>--}}
+{{--                    <td class="">{{$chit->designation}}</td>--}}
+
+{{--                    <td class="font-extrabold"></td>--}}
+{{--                    <td class=""></td>--}}
+{{--                    <td class=" font-extrabold">Printed By:</td>--}}
+{{--                    <td class="font-extrabold">--}}
+{{--                        {{ auth()->user()->name }}--}}
+{{--                    </td>--}}
                     {{--                        <td class=" font-extrabold">Amount Payable:</td>--}}
                     {{--                        <td class=" font-extrabold"> {{ $chit->amount }}</td>--}}
 
@@ -214,7 +226,7 @@
                         if (flag == true) {
                             redirectToLink("{{ route('patient.create-opd') }}");
                         } else {
-                            redirectToLink("{{ route('patient.index') }}");
+                            redirectToLink("{{ route('patient.create-ipd') }}");
                         }
                     }
                 }, 1000); // Adjust the delay time as needed

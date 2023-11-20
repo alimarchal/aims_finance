@@ -26,7 +26,7 @@ class StorePatientRequest extends FormRequest
             'mobile' => 'required|regex:/^03\d{2}-\d{7}$/',
 
             'age' => 'required|integer|min:0',
-            'years_months' => 'required_if:age,!=,null|in:Year(s),Month(s)',
+            'years_months' => 'required_if:age,!=,null|in:Year(s),Month(s),Day(s)',
 
 
             'government_non_gov' => 'required',
@@ -41,6 +41,7 @@ class StorePatientRequest extends FormRequest
         return [
             'mobile.required' => 'The mobile number is required.',
             'mobile.regex' => 'The mobile number must be in the format 0300-1234567.',
+            'department_id.required' => 'Please select the OPD Department.',
 
             'age.required' => 'The Age field is required.',
             'age.integer' => 'The Age must be an integer.',
