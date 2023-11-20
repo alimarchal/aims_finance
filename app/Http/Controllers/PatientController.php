@@ -7,6 +7,7 @@ use App\Http\Requests\UpdatePatientRequest;
 use App\Models\Chit;
 use App\Models\Department;
 use App\Models\FeeType;
+use App\Models\Invoice;
 use App\Models\Patient;
 use App\Models\PatientTest;
 use App\Models\PatientTestCart;
@@ -38,6 +39,17 @@ class PatientController extends Controller
         return view('patient.create');
     }
 
+
+    public function createOPD()
+    {
+        return view('patient.create-opd');
+    }
+
+    public function createIPD()
+    {
+        return view('patient.create-ipd');
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -46,23 +58,65 @@ class PatientController extends Controller
         // login user id capture
         $request->merge(['user_id' => auth()->user()->id]);
         $patient = null;
+        DB::beginTransaction();
+        try {
+
+            $request->merge(['sex' => $this->getAutoGender($request->input('title'))])->all();
+            $age = $request->age;
+            $yearsMonths = $request->years_months;
+            $dateOfBirth = $request->dob; // Get the provided date of birth from the request
+
+            // Check if the user has already provided a date of birth
+            if (!$dateOfBirth) {
+                if ($yearsMonths === 'Year(s)') {
+                    $dateOfBirth = now()->subYears($age)->format('Y-m-d');
+                } elseif ($yearsMonths === 'Month(s)') {
+                    $dateOfBirth = now()->subMonths($age)->format('Y-m-d');
+                } else {
+                    // Handle an invalid selection or provide a default value
+                    $dateOfBirth = null;
+                }
+            }
+            // Merge the calculated date of birth into the request data
+            $request->merge(['dob' => $dateOfBirth])->all();
+            $patient = Patient::create($request->all());
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+        }
+
+        if (!empty($patient)) {
+            return to_route('patient.actions', [$patient->id]);
+        } else {
+            return to_route('patient.index')->with('message', 'There is an error occurred for creating patient');
+        }
+
+    }
+
+
+    public function storeOPD(StorePatientRequest $request)
+    {
+        // login user id capture
+        $request->merge(['user_id' => auth()->user()->id]);
+        $patient = null;
         $chit = null;
+        $fee_type_id = null;
+        // 1 for opd 0 for ipd
+        $ipd_opd = null;
 
         $count_chit_of_today = Chit::where('department_id', $request->department_id)->where('issued_date', '>=', Carbon::today())->count();
         $count_chit_of_today_limit = Department::where('id', $request->department_id)->first()->daily_patient_limit;
         $count_chit_of_today++;
-        // 46 >= 51
-        if ($count_chit_of_today_limit <= $count_chit_of_today) {
-            return to_route('patient.create')->with('error', 'OPD today\'s limit has been reached to ' . $count_chit_of_today_limit );
-        }
 
+        if ($count_chit_of_today_limit <= $count_chit_of_today) {
+            return to_route('patient.create-opd')->with('error', 'Today\'s limit has been reached to ' . $count_chit_of_today_limit);
+        }
 
         DB::beginTransaction();
 
         try {
 
             $request->merge(['sex' => $this->getAutoGender($request->input('title'))])->all();
-
 
             $age = $request->age;
             $yearsMonths = $request->years_months;
@@ -90,11 +144,26 @@ class PatientController extends Controller
             } else {
                 if ($request->department_id == 7) {
                     $amount = FeeType::find(108)->amount;
+                    $fee_type_id = 108;
+                } else if ($request->department_id == 1) {
+                    // For emergency
+                    $amount = FeeType::find(1)->amount;
+                    $fee_type_id = 1;
+                } else if ($request->department_id == 16) {
+                    // For Cardiology
+                    $amount = FeeType::find(19)->amount;
+                    $fee_type_id = 1;
                 } else {
+                    $fee_type_id = 107;
                     $amount = FeeType::find(107)->amount;
                 }
             }
 
+            if ($request->has('ipd_opd')) {
+                $ipd_opd = 0;
+            } else {
+                $ipd_opd = 1;
+            }
             // this is for opd
             $chit = Chit::create([
                 'user_id' => auth()->user()->id,
@@ -104,10 +173,10 @@ class PatientController extends Controller
                 'government_department_id' => $patient->government_department_id,
                 'government_card_no' => $patient->government_card_no,
                 'designation' => $patient->designation,
-                'fee_type_id' => 107,
+                'fee_type_id' => $fee_type_id,
                 'issued_date' => now(),
                 'amount' => $amount,
-                'ipd_opd' => 1,
+                'ipd_opd' => $ipd_opd,
                 'payment_status' => 1,
             ]);
             DB::commit();
@@ -116,14 +185,6 @@ class PatientController extends Controller
             // something went wrong
         }
 
-//        foreach ($request->patient_test as $pt) {
-//            PatientTestCart::create([
-//                'patient_id' => $patient->id,
-//                'lab_test_id' => $pt,
-//            ]);
-//        }
-
-//        return to_route('chit.print', [$patient->id, $chit->id]);
         if (!empty($chit) && !empty($patient)) {
             return to_route('chit.print', [$patient->id, $chit->id]);
         } else {
@@ -132,16 +193,23 @@ class PatientController extends Controller
 
     }
 
+
     public function proceed(Patient $patient)
     {
-
         return view('patient.proceed', compact('patient'));
     }
 
-
-    public function proceed_cart_destroy(PatientTestCart $patientTestCart)
+    public function add_to_cart(\Illuminate\Http\Request $request, Patient $patient)
     {
+        $add_to_cart = PatientTestCart::create([
+            'patient_id' => $request->patient_id,
+            'fee_type_id' => $request->fee_type_id,
+        ]);
+        return to_route('patient.proceed', $patient->id);
+    }
 
+    public function proceed_cart_destroy(\Illuminate\Http\Request $request, PatientTestCart $patientTestCart)
+    {
         $patient_id = $patientTestCart->patient_id;
         $patientTestCart->delete();
         return to_route('patient.proceed', $patient_id)->with('message', 'Lab test deleted successfully!');
@@ -152,52 +220,77 @@ class PatientController extends Controller
     {
 
         $request->validate([
-            'terms' => 'required',
+            'terms' => 'required'
         ]);
-        $patientTestCart = PatientTestCart::where('patient_id', $patient->id)->get();
-        $patient_test_id = $patient->id . '-' . date('d-m-Y-His');
 
-        if ($patient->government_non_gov == 1) {
-
-            foreach ($patientTestCart as $ptc) {
-                PatientTest::create([
-                    'patient_test_id' => $patient_test_id,
-                    'user_id' => auth()->user()->id,
-                    'department_id' => auth()->user()->department_id,
-                    'patient_id' => $ptc->patient_id,
-                    'lab_test_id' => $ptc->lab_test_id,
-                    'hif_amount' => 0.00,
-                    'government_amount' => 0.00,
-                    'total_amount' => 0.00,
-                    'government_non_gov' => 1
-                ]);
+        $flag = false;
+        DB::beginTransaction();
+        $user_id = auth()->user()->id;
+        $patient_id = $patient->id;
+        $patient_tests_in_carts = PatientTestCart::where('patient_id', $patient->id)->get();
+        $total_all_amount = 0;
+        $invoice = Invoice::create([
+            'user_id' => $user_id,
+            'patient_id' => $patient_id,
+            'government_non_government' => $patient->government_non_gov,
+        ]);
+        foreach ($patient_tests_in_carts as $ptc) {
+            $total_amount = 0;
+            if ($patient->government_non_gov == 1) {
+                $total_amount = 0;
+                $total_all_amount = $total_all_amount + $total_amount;
+            } else {
+                $total_amount = FeeType::find($ptc->fee_type_id)->amount;
+                $total_all_amount = $total_all_amount + $total_amount;
             }
-        } else {
-            foreach ($patientTestCart as $ptc) {
-                PatientTest::create([
-                    'patient_test_id' => $patient_test_id,
-                    'user_id' => auth()->user()->id,
-                    'department_id' => auth()->user()->department_id,
-                    'patient_id' => $ptc->patient_id,
-                    'lab_test_id' => $ptc->lab_test_id,
-                    'hif_amount' => $ptc->lab_test->hif_fee,
-                    'government_amount' => $ptc->lab_test->government_fee,
-                    'total_amount' => $ptc->lab_test->total_fee,
-                    'government_non_gov' => 0
-                ]);
-            }
+            PatientTest::create([
+                'patient_id' => $ptc->patient_id,
+                'fee_type_id' => $ptc->fee_type_id,
+                'invoice_id' => $invoice->id,
+                'government_non_gov' => $patient->government_non_gov,
+                'total_amount' => $total_amount,
+            ]);
         }
-        foreach ($patientTestCart as $ptc) {
+        $invoice->total_amount = $total_all_amount;
+        $invoice->save();
+        foreach ($patient_tests_in_carts as $ptc) {
             $ptc->delete();
         }
-        return to_route('patient.patient_invoice', [$patient->id, $patient_test_id])->with('message', 'Lab test invoice generated successfully!');
+        try {
+            $flag = true;
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            // something went wrong
+        }
+
+        if ($flag) {
+            return to_route('patient.patient_invoice', [$patient->id, $invoice->id]);
+        } else {
+            return to_route('patient.proceed', $patient->id)->with('message', 'Something went wrong, please try again.');
+        }
+
     }
 
 
-    public function patient_invoice(Patient $patient, $patient_test_id)
+    public function patient_invoice(Patient $patient, Invoice $invoice)
     {
-        $patient_test = PatientTest::where('patient_test_id', $patient_test_id)->get();
-        return view('patient.invoice', compact('patient', 'patient_test_id', 'patient_test'));
+
+//        $date_of_day = Carbon::parse($chit->issued_date)->format('Y-m-d');
+//
+//        $result = DB::table('chits')
+//            ->where('department_id', $chit->department_id)
+//            ->whereDate('issued_date', $date_of_day)
+//            ->orderByDesc('issued_date')
+//            ->select('*', DB::raw('ROW_NUMBER() OVER (ORDER BY created_at) AS count_no'))
+//            ->get();
+//
+//        $chitNumber = $result->where('id',$chit->id)->first()->count_no;
+
+
+        $total_amount  = $invoice->patient_test->sum('total_amount');
+
+        return view('patient.invoice', compact('patient', 'patient', 'invoice','total_amount'));
     }
 
 

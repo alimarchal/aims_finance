@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name')->nullable();
             $table->integer('daily_patient_limit')->nullable();
+            $table->string('category')->default('OPD');
             $table->softDeletes();
             $table->timestamps();
         });

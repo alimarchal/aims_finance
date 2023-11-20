@@ -1,17 +1,14 @@
 <x-app-layout>
     @section('custom_header')
-
         <style>
             @media print {
                 @page {
                     margin-top: -30px;
                 }
-
                 table {
                     font-size: 12px!important;
                 }
             }
-
         </style>
     @endsection
     <x-slot name="header">
@@ -85,7 +82,7 @@
                         <div class="grid grid-cols-3 gap-4">
                             <div></div> <!-- Empty column for spacing -->
                             <div class="flex items-center justify-center">
-                                <img src="{{ \Illuminate\Support\Facades\Storage::url('Aimsa8 copy 2.png') }}" alt="Logo" style="width: 200px;">
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url('Aimsa8 copy 2.png') }}" alt="Logo" style="width: 300px;">
                             </div>
                             <div class="flex flex-col items-end">
                                 @php
@@ -99,14 +96,16 @@
                         </div>
 
                         @if(request()->has('date'))
-                            <p class="text-center font-extrabold">Report as of {{ \Carbon\Carbon::parse(request('date'))->format('d-M-Y') }}
+                            <p class="text-center font-extrabold mb-4">
+                                Report as of {{ \Carbon\Carbon::parse(request('date'))->format('d-M-Y h:m:s') }} - OPD Issued Chits
                                 <br>
-                                <span style="font-size: 8px;">Software Developed By Ali Raza Marchal - Mobile: 0300-8169924</span>
+                                <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
                             </p>
                         @else
-                            <p class="text-center font-extrabold">Report as of {{ now()->format('d-M-Y h:m:s') }}
+                            <p class="text-center font-extrabold mb-4">
+                                Report as of {{ now()->format('d-M-Y h:m:s') }}  - OPD Issued Chits
                                 <br>
-                                <span style="font-size: 8px;">Software Developed By Ali Raza Marchal - Mobile: 0300-8169924</span>
+                                <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
                             </p>
                         @endif
                     <table class="table-auto w-full border-collapse border border-black">

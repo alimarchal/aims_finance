@@ -11,25 +11,28 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PatientTest extends Model
 {
     use HasFactory;
+
     protected $fillable = [
-        'patient_test_id',
-        'user_id',
-        'department_id',
         'patient_id',
-        'lab_test_id',
-        'hif_amount',
-        'government_amount',
-        'total_amount',
+        'fee_type_id',
+        'invoice_id',
         'government_non_gov',
+        'total_amount',
     ];
 
-    public function lab_test(): BelongsTo
+    public function invoice(): BelongsTo
     {
-        return $this->belongsTo(LabTest::class,'lab_test_id');
+        return $this->belongsTo(Invoice::class, 'invoice_id');
     }
 
     public function patient(): BelongsTo
     {
-        return $this->belongsTo(Patient::class,'patient_id');
+        return $this->belongsTo(Patient::class, 'patient_id');
+    }
+
+
+    public function fee_type(): BelongsTo
+    {
+        return $this->belongsTo(FeeType::class,'fee_type_id');
     }
 }

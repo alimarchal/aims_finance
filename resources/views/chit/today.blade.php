@@ -28,7 +28,7 @@
                         <thead>
                         <tr class="border-black">
                             <th class="border-black border px-4 py-2">No</th>
-                            <th class="border-black border px-4 py-2">Reference No</th>
+                            <th class="border-black border px-4 py-2">MR Number</th>
                             <th class="border-black border px-4 py-2">Department</th>
                             <th class="border-black border px-4 py-2">Age/Sex</th>
                             <th class="border-black border px-4 py-2">Issue Date</th>
@@ -41,7 +41,7 @@
                         @foreach($issued_chits->sortByDesc('issued_date') as $chit)
                             <tr class="border-black">
                                 <td class="border-black border px-4 py-2">{{$loop->iteration}}</td>
-                                <td class="border-black border px-4 py-2">C{{ $chit->id .'/P' . $chit->patient_id}}-{{date('ymd')}}</td>
+                                <td class="border-black border px-4 py-2">{{date('y')}}-{{ $chit->id .'-' . $chit->patient_id}}</td>
                                 <td class="border-black border px-4 py-2 text-center">
                                     @if(!empty($chit->department))
                                         {{$chit->department->name}}

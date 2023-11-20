@@ -23,9 +23,9 @@
                     </x-nav-link>
 
 
-                    @role('Super-Admin|admin')
+                    @role('Administrator')
 
-                    <x-nav-link href="{{ route('reportDaily') }}" :active="request()->routeIs('reportDaily')">
+                    <x-nav-link href="{{ route('reports.index') }}" :active="request()->routeIs('reports.*')">
                         {{ __('Reports') }}
                     </x-nav-link>
 

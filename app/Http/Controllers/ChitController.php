@@ -35,6 +35,7 @@ class ChitController extends Controller
             'government_department_id' => 'required_with:government_card_no,designation',
             'government_card_no' => 'required_with:government_department_id',
             'designation' => 'required_with:government_department_id',
+            'department_id' => 'required',
         ]);
 
         // login user id capture
@@ -106,14 +107,16 @@ class ChitController extends Controller
     public function today()
     {
         $user = \Auth::user();
-        if ($user->hasRole('OPD Front Desk')) {
+        $issued_chits = null;
+        if ($user->hasRole('Front Desk/Receptionist')) {
             $issued_chits = QueryBuilder::for(Chit::class)
                 ->allowedFilters(['patient_id', 'fee_type_id', 'government_department_id', 'issued_date', 'ipd_opd', 'government_card_no',AllowedFilter::exact('government_non_gov'), AllowedFilter::exact('id'),  AllowedFilter::exact('department_id')],)
                 ->where('user_id', $user->id)->whereDate('issued_date', Carbon::today())
+//                ->where('user_id', $user->id)->where('ipd_opd', 1)->whereDate('issued_date', Carbon::today())
 //                ->orderByDesc('created_at') // Corrected 'DSEC' to 'DESC'
                 ->paginate(500);
 
-        } elseif ($user->hasRole(['Super-Admin', 'admin'])) {
+        } elseif ($user->hasRole(['Administrator'])) {
             $issued_chits = QueryBuilder::for(Chit::class)
                 ->allowedFilters(['patient_id', 'fee_type_id', 'government_department_id', 'issued_date', 'ipd_opd', 'government_card_no',AllowedFilter::exact('government_non_gov'), AllowedFilter::exact('id'),  AllowedFilter::exact('department_id')],)
                 ->whereDate('issued_date', Carbon::today())

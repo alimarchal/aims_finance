@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('patient_test_carts', function (Blueprint $table) {
+        Schema::create('patient_tests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('patient_id')->constrained();
-            $table->foreignId('lab_test_id')->constrained();
+            $table->foreignId('fee_type_id')->constrained();
+            $table->foreignId('invoice_id')->constrained();
+            $table->boolean('government_non_gov')->default(0);
+            $table->decimal('total_amount',15,2);
             $table->timestamps();
         });
     }
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('patient_test_carts');
+        Schema::dropIfExists('patient_tests');
     }
 };

@@ -22,11 +22,6 @@
 
                 <form action="{{ route('patient.issue-new-chitStore', $patient->id) }}" method="POST" class="pr-8 pl-8 pb-8 pt-4">
                     @csrf
-
-{{--                    <img src="{{\Illuminate\Support\Facades\Storage::url('patient.png')}}" alt="Patient Image" class="m-auto w-24">--}}
-{{--                    <h1 class="text-2xl text-center font-bold">OPD Patient Information</h1>--}}
-{{--                    <p class="text-bold text-center">Enter Patient Informaiton to register new patient</p>--}}
-
                     <div class="grid grid-cols-3 gap-4">
                         <div></div> <!-- Empty column for spacing -->
                         <div class="flex items-center justify-center">
@@ -98,26 +93,8 @@
                     </table>
                     <hr class="border-black h-2 mt-4">
 
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
-                        <div>
-                            <label for="ipd_opd" class="block text-gray-700 font-bold mb-2">IPD/OPD</label>
-                            <select name="ipd_opd" id="ipd_opd" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
-                                <option value="">Select Department</option>
-                                <option value="1">OPD</option>
-                                <option value="0">IPD</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="department_id" class="block text-gray-700 font-bold mb-2">OPD Department</label>
-                            <select name="department_id" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
-                                <option value="">Select Department</option>
-                                @foreach(\App\Models\Department::orderBy('name', 'ASC')->get() as $dept)
-                                    <option value="{{$dept->id}}"  {{ old('department_id') === $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
 
+                    <livewire:ipd-opd />
 
                     <livewire:government-details/>
                     <div class="flex items-center justify-between">

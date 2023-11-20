@@ -32,6 +32,8 @@
                         <tr class="border-black">
                             <th class="border-black border px-4 py-2">No</th>
                             <th class="border-black border px-4 py-2">Name</th>
+                            <th class="border-black border px-4 py-2">Limit</th>
+                            <th class="border-black border px-4 py-2">Category</th>
                             <th class="border-black border px-4 py-2">Edit</th>
                             <th class="border-black border px-4 py-2">Delete</th>
                         </tr>
@@ -41,6 +43,8 @@
                             <tr class="border-black">
                                 <td class="border-black border px-4 py-2">{{$loop->iteration}}</td>
                                 <td class="border-black border px-4 py-2">{{$department->name}}</td>
+                                <td class="border-black border px-4 py-2 text-center">{{$department->daily_patient_limit}}</td>
+                                <td class="border-black border px-4 py-2 text-center">{{$department->category}}</td>
                                 <td class="border-black border px-4 py-2 text-center">
                                     <a href="{{ route('department.edit', $department->id) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
 

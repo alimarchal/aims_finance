@@ -16,7 +16,7 @@
 
 
                     <div class="mb-4">
-                        <label for="name" class="block text-gray-700 font-bold mb-2">Test Name</label>
+                        <label for="name" class="block text-gray-700 font-bold mb-2">Fee Category</label>
                         <select name="fee_category_id" style="width: 100%" class="js-example-basic-multiple w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
                             <option value="">None</option>
                             @foreach(\App\Models\FeeCategory::orderBy('name','ASC')->get() as $labTest)

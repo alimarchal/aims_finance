@@ -10,11 +10,11 @@ class PatientTestCart extends Model
     use HasFactory;
     protected $fillable = [
         'patient_id',
-        'lab_test_id',
+        'fee_type_id',
     ];
 
-    public function lab_test()
+    public function fee_type()
     {
-        return $this->belongsTo(LabTest::class);
+        return $this->belongsTo(FeeType::class);
     }
 }

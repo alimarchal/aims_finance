@@ -50,15 +50,15 @@
                         </div>
                     </div>
                 </a>
-                <a href="#" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
+                <a href="{{ route('patient.proceed', $patient->id) }}" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
                     <div class="p-5">
                         <div class="grid grid-cols-3 gap-1">
                             <div class="col-span-2">
                                 <div class="text-3xl font-bold leading-8">
-                                    0
+                                    {{ \App\Models\Invoice::where('patient_id',$patient->id)->count() }}
                                 </div>
                                 <div class="mt-1 text-base  font-bold text-gray-600">
-                                    Today Test
+                                    Make Invoice / Bill
                                 </div>
                             </div>
                             <div class="col-span-1 flex items-center justify-end">
