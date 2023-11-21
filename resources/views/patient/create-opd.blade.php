@@ -23,6 +23,7 @@
                             <select name="title" id="title" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
                                 <option value="">Select Title</option>
                                 <option value="Mr." {{ old('title') === 'Mr.' ? 'selected' : '' }} selected>Mr.</option>
+                                <option value="Miss" {{ old('title') === 'Miss' ? 'selected' : '' }} selected>Miss.</option>
                                 <option value="H/O" {{ old('title') === 'H/O.' ? 'selected' : '' }}>H/O.</option>
                                 <option value="W/O" {{ old('title') === 'W/O' ? 'selected' : '' }}>W/O.</option>
                                 <option value="S/O" {{ old('title') === 'S/O' ? 'selected' : '' }}>S/O.</option>
