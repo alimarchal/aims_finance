@@ -35,4 +35,9 @@ class Invoice extends Model
         return $this->hasOne(PatientTest::class)->latestOfMany();
     }
 
+    public function admission(): HasOne
+    {
+        return $this->hasOne(Admission::class);
+    }
+
 }

@@ -13,14 +13,6 @@
             </a>
 
 
-            <a href="{{route('patient.create-ipd')}}" class="mx-2 float-right inline-flex items-center px-4 py-2 bg-green-800 border border-transparent
-            rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900
-            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150" \>
-                Issue Chit IPD
-            </a>
-
-
-
             <a href="{{ route('patient.create') }}"
                class="flex items-center px-4 py-2 text-gray-600 bg-white border rounded-lg focus:outline-none hover:bg-gray-100 transition-colors duration-200 transform dark:text-gray-200 dark:border-gray-200  dark:hover:bg-gray-700 ml-2"
                title="Members List">
@@ -128,9 +120,9 @@
                         <tr class="border-black">
                             <th class="border-black border px-4 py-2 text-left">P.#</th>
                             <th class="border-black border px-4 py-2 text-left">Name</th>
-                            <th class="border-black border px-4 py-2 text-left">F/S/D/W</th>
-                            <th class="border-black border px-4 py-2 text-left">Mobile No.</th>
-                            <th class="border-black border px-4 py-2 text-left">Age</th>
+{{--                            <th class="border-black border px-4 py-2 text-left">F/S/D/W</th>--}}
+                            <th class="border-black border px-4 py-2 text-center">Mobile No.</th>
+                            <th class="border-black border px-4 py-2 text-center">Age</th>
                             <th class="border-black border px-4 py-2">Type</th>
                             <th class="border-black border px-4 py-2">Actions</th>
 {{--                            <th class="border-black border px-4 py-2">History</th>--}}
@@ -146,9 +138,9 @@
                                         {{ $patient->title }} {{$patient->first_name . ' ' . $patient->last_name}}
                                     </a>
                                 </td>
-                                <td class="border-black border px-4 py-2">{{$patient->father_husband_name}}</td>
-                                <td class="border-black border px-4 py-2">{{$patient->mobile}}</td>
-                                <td class="border-black border px-4 py-2">
+{{--                                <td class="border-black border px-4 py-2">{{$patient->father_husband_name}}</td>--}}
+                                <td class="border-black border px-4 py-2 text-center">{{$patient->mobile}}</td>
+                                <td class="border-black border px-4 py-2 text-center">
                                     {{$patient->age}} {{$patient->years_months}}
                                 </td>
                                 <td class="border-black border px-4 py-2 text-center">
@@ -166,9 +158,9 @@
                                         <img src="{{ Storage::url('settings.png') }}" alt="actions" class="w-8 inline  hover:scale-110">
                                     </a>
 
-                                    <a href="{{ route('patient.issue-new-chit', $patient->id) }}">
-                                        <img src="{{ Storage::url('new_2.png') }}" alt="actions" class="w-6 inline  hover:scale-110">
-                                    </a>
+{{--                                    <a href="{{ route('patient.issue-new-chit', $patient->id) }}">--}}
+{{--                                        <img src="{{ Storage::url('new_2.png') }}" alt="actions" class="w-6 inline  hover:scale-110">--}}
+{{--                                    </a>--}}
 
 
                                 </td>

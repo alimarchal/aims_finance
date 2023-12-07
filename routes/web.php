@@ -26,7 +26,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::resource('roles',\App\Http\Controllers\RoleController::class);
     Route::resource('permissions',\App\Http\Controllers\PermissionController::class);
 
-
     Route::resource('roles',\App\Http\Controllers\RoleController::class);
     Route::resource('permissions',\App\Http\Controllers\PermissionController::class);
     Route::get('/users', [UserController::class, 'index'])->name('users.index');

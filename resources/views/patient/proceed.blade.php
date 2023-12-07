@@ -119,7 +119,7 @@
                             @endphp
                             <tr class="border-black">
                                 <td class="border-black border px-4 py-2 text-center">{{$loop->iteration}}</td>
-                                <td class="border-black border px-4 py-2">{{$patient_test_card->fee_type->type}}</td>
+                                <td class="border-black border px-4 py-2">{{$patient_test_card->fee_type->type}} - {{ $patient_test_card->fee_type->id }}</td>
                                 <td class="border-black border px-4 py-2 text-center font-bold">
                                     @if($patient->government_non_gov == 1)
                                         0.00
@@ -175,6 +175,54 @@
 
                     <form action="{{route('patient.proceed_to_invoice',$patient->id)}}" method="post" id="payment-form">
                         @csrf
+
+
+                        @foreach($patient->patient_test_cart as $patient_test_card)
+
+                            @if($patient_test_card->fee_type->id == 2)
+
+                                <div class="grid grid-cols-3 md:grid-cols-3 px-4 py-4 gap-3">
+                                    <div>
+                                        <x-label for="unit_ward" value="Unit/Ward" :required="true" />
+                                        <input type="text" required name="unit_ward" id="unit_ward" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter Unit/Ward" value="{{ old('unit_ward') }}">
+                                    </div>
+                                    <div>
+                                        <x-label for="disease" value="Disease" :required="true" />
+                                        <input type="text" required name="disease" id="disease" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter Disease" value="{{ old('disease') }}">
+                                    </div>
+                                    <div>
+                                        <x-label for="category" value="Category" :required="true" />
+                                        <input type="text" required name="category" id="category" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter Category" value="{{ old('category') }}">
+                                    </div>
+                                    <div>
+                                        <x-label for="nok_name" value="Next of Kin Name" :required="true" />
+                                        <input type="text" required name="nok_name" id="nok_name" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter Next of Kin Name" value="{{ old('nok_name') }}">
+                                    </div>
+                                    <div>
+                                        <x-label for="relation_with_patient" value="Relation with Patient" :required="true" />
+                                        <input type="text" required name="relation_with_patient" id="relation_with_patient" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter Relation with Patient" value="{{ old('relation_with_patient') }}">
+                                    </div>
+                                    <div>
+                                        <x-label for="address" value="Address" :required="true" />
+                                        <input type="text" required name="address" id="address" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter Address" value="{{ old('address') }}">
+                                    </div>
+                                    <div>
+                                        <x-label for="cell_no" value="Cell No" :required="true" />
+                                        <input type="text" required name="cell_no" id="cell_no" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter Cell No" value="{{ old('cell_no') }}">
+                                    </div>
+                                    <div>
+                                        <x-label for="cnic_no" value="CNIC No" :required="true" />
+                                        <input type="text" required name="cnic_no" id="cnic_no" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter CNIC No" value="{{ old('cnic_no') }}">
+                                    </div>
+                                    <input type="hidden" name="admission_form" value="1">
+                                </div>
+                            @endif
+
+                        @endforeach
+
+
+
+
                         <div class="flex justify-end m-4">
                             <div class="flex items-center space-x-2">
                                 <label class="flex items-center">

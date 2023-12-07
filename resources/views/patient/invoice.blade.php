@@ -6,7 +6,10 @@
                     size: 5.85in 8.5in;
                     margin-top: -1.4in;
                 }
-                .lightgray { background-color:  lightgray; }
+
+                .lightgray {
+                    background-color: lightgray;
+                }
             }
         </style>
     @endsection
@@ -82,7 +85,7 @@
             </tr>
 
             <tr>
-                <td class="font-extrabold" >
+                <td class="font-extrabold">
                     Department
                 </td>
                 <td style="font-size: 13px;">
@@ -93,10 +96,10 @@
                 </td>
 
                 <td class="font-extrabold">
-                   Head
+                    Head
                 </td>
 
-                <td >
+                <td>
                     @if(!empty($department))
                         {{ $fee_category }}
                     @endif
@@ -113,114 +116,166 @@
             </tr>
         </table>
 
-{{--        <h1 style="text-align: center;font-weight: bold">Patient Invoice</h1>--}}
+
+        @if(!empty($invoice->admission))
+            <br>
+            <br>
+            <h1 style="text-align: center;font-weight: bold" class="mt-2">Hospital Admission Slip <br> A&D No: {{ $invoice->admission->id }}</h1>
+
+            <br>
+            <br>
+
+            <div class="overflow-x-auto" style="font-size: 12px;">
+                <table class="table-auto w-full border-collapse border border-black ">
+                    <tbody>
+
+
+                    <tr class="border-black">
+                        <td class="border-black border text-left px-2 py-2"  width="30%">Unit/Ward</td>
+                        <td class="border-black border text-center" colspan="3"  width="80%">{{ $invoice->admission->unit_ward }}</td>
+                    </tr>
+
+                    <tr class="border-black">
+                        <td class="border-black border text-left px-2 py-2">Disease</td>
+                        <td class="border-black border text-center" colspan="3">{{ $invoice->admission->disease }}</td>
+                    </tr>
+
+
+                    <tr class="border-black">
+                        <td class="border-black border text-left px-2 py-2">Referred By</td>
+                        <td class="border-black border text-center" colspan="3">{{ $invoice->admission->category }}</td>
+                    </tr>
+
+
+                    <tr class="border-black">
+                        <td class="border-black border text-center font-extrabold px-2 py-2" colspan="4">Patient Attendant Details</td>
+                    </tr>
+
+
+                    <tr class="border-black">
+                        <td class="border-black border text-left px-2 py-2">Attendant Name</td>
+                        <td class="border-black border text-center" colspan="3">{{ $invoice->admission->nok_name }}</td>
+                    </tr>
+
+
+                    <tr class="border-black">
+                        <td class="border-black border text-left px-2 py-2">Relation With Patient</td>
+                        <td class="border-black border text-center" colspan="3">{{ $invoice->admission->relation_with_patient }}</td>
+                    </tr>
+
+
+                    <tr class="border-black">
+                        <td class="border-black border text-left px-2 py-2">Address</td>
+                        <td class="border-black border text-center" colspan="3">{{ $invoice->admission->address }}</td>
+                    </tr>
+
+
+                    <tr class="border-black">
+                        <td class="border-black border text-left px-2 py-2">CNIC</td>
+                        <td class="border-black border text-center" colspan="3">{{ $invoice->admission->cnic_no }}</td>
+                    </tr>
+
+                    <tr class="border-black">
+                        <td class="border-black border text-left px-2 py-2">Cell</td>
+                        <td class="border-black border text-center" colspan="3">{{ $invoice->admission->cell_no }}</td>
+                    </tr>
 
 
 
-
-{{--        <div class="overflow-x-auto" style="font-size: 12px;">--}}
-{{--            <table class="table-auto w-full border-collapse border border-black ">--}}
-{{--                <thead>--}}
-{{--                <tr class="border-black lightgray" >--}}
-{{--                    <th class="border-black border text-center">S.No</th>--}}
-{{--                    <th class="border-black border px-2 text-left">Test Name</th>--}}
-{{--                    <th class="border-black border">Amount</th>--}}
-{{--                </tr>--}}
-{{--                </thead>--}}
-{{--                <tbody>--}}
-
-{{--                @foreach($invoice->patient_test as $test)--}}
-{{--                    <tr class="border-black">--}}
-{{--                        <td class="border-black border text-center">{{ $loop->iteration }}</td>--}}
-{{--                        <td class="border-black border px-2 text-left">{{ $test->fee_type->type }}</td>--}}
-{{--                        <td class="border-black border text-center">{{ $test->total_amount }}</td>--}}
-{{--                    </tr>--}}
-{{--                @endforeach--}}
-
-{{--                <tr class="border-black">--}}
-{{--                    <td class="border-black border text-right px-2 font-bold" colspan="2">Total Amount:</td>--}}
-{{--                    <td class="border-black border text-center font-bold" colspan="2">Rs.{{number_format($total_amount,2)}}</td>--}}
-{{--                </tr>--}}
-{{--                </tbody>--}}
-{{--            </table>--}}
+                    <tr class="border-black">
+                        <td class="border-black border text-center">MOIC Signature</td>
+                        <td class="border-black border text-center" colspan="3">
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                        </td>
+                    </tr>
 
 
 
-            <script>
-                const paymentForm = document.querySelector('#payment-form');
-                const payNowButton = document.querySelector('#pay-now-button');
-
-                paymentForm.addEventListener('submit', (event) => {
-                    // Disable the Pay Now button to prevent double submission
-                    payNowButton.disabled = true;
-                });
-            </script>
-        </div>
+                    </tbody>
+                </table>
+            </div>
+        @endif
 
 
+        <script>
+            const paymentForm = document.querySelector('#payment-form');
+            const payNowButton = document.querySelector('#pay-now-button');
 
-{{--        <div class="text-center">--}}
-
-{{--            <img class="m-auto rounded-lg" style="width: 150px;" src="{{\Illuminate\Support\Facades\Storage::url('paid-5025785_1280.png')}}" alt="{{\Illuminate\Support\Facades\Storage::url('Aimsa8-removebg-preview.png')}}">--}}
-{{--            <p>This is a computer generated receipt and does not need signature or stamp</p>--}}
-
-{{--        </div>--}}
-
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
+            paymentForm.addEventListener('submit', (event) => {
+                // Disable the Pay Now button to prevent double submission
+                payNowButton.disabled = true;
+            });
+        </script>
     </div>
 
 
-        @section('custom_script')
-            <script>
-                // Execute this code on page load
-                document.addEventListener("DOMContentLoaded", function () {
-                    // Store the current window height before opening the print dialog
-                    const initialHeight = window.innerHeight;
+    {{--        <div class="text-center">--}}
 
-                    // Show the print dialog when the page loads
-                    window.print();
+    {{--            <img class="m-auto rounded-lg" style="width: 150px;" src="{{\Illuminate\Support\Facades\Storage::url('paid-5025785_1280.png')}}" alt="{{\Illuminate\Support\Facades\Storage::url('Aimsa8-removebg-preview.png')}}">--}}
+    {{--            <p>This is a computer generated receipt and does not need signature or stamp</p>--}}
 
-                    // Wait for a short period (e.g., 1 second) and then check the window height again
-                    setTimeout(function () {
-                        const currentHeight = window.innerHeight;
+    {{--        </div>--}}
 
-                        // If the window height decreased, it indicates that the print dialog is open
-                        // If the window height remains the same, it means the user pressed "Cancel"
-                        if (currentHeight === initialHeight) {
-                            // Redirect to the specified route
-                            var flag = false;
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    </div>
 
-                            {{--redirectToLink("{{ route('patient.index') }}");--}}
-                            @if(1)
-                                flag = true
-                            @else
-                                flag = false;
-                            @endif
 
-                            if (flag == true) {
-                                redirectToLink("{{ route('patient.index') }}");
-                            } else {
-                                redirectToLink("{{ route('patient.index') }}");
-                            }
+    @section('custom_script')
+        <script>
+            // Execute this code on page load
+            document.addEventListener("DOMContentLoaded", function () {
+                // Store the current window height before opening the print dialog
+                const initialHeight = window.innerHeight;
+
+                // Show the print dialog when the page loads
+                window.print();
+
+                // Wait for a short period (e.g., 1 second) and then check the window height again
+                setTimeout(function () {
+                    const currentHeight = window.innerHeight;
+
+                    // If the window height decreased, it indicates that the print dialog is open
+                    // If the window height remains the same, it means the user pressed "Cancel"
+                    if (currentHeight === initialHeight) {
+                        // Redirect to the specified route
+                        var flag = false;
+
+                        {{--redirectToLink("{{ route('patient.index') }}");--}}
+                                @if(1)
+                            flag = true
+                        @else
+                            flag = false;
+                        @endif
+
+                        if (flag == true) {
+                            redirectToLink("{{ route('patient.index') }}");
+                        } else {
+                            redirectToLink("{{ route('patient.index') }}");
                         }
-                    }, 1000); // Adjust the delay time as needed
-                });
+                    }
+                }, 1000); // Adjust the delay time as needed
+            });
 
-                // Define the redirectToLink function
-                function redirectToLink(url) {
-                    window.location.href = url;
-                }
-            </script>
+            // Define the redirectToLink function
+            function redirectToLink(url) {
+                window.location.href = url;
+            }
+        </script>
 
-        @endsection
+    @endsection
 </x-app-layout>
 

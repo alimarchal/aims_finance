@@ -88,8 +88,8 @@
 
             @if($chit->amount != 0 && $chit->government_non_gov == 0)
                 <tr>
-                    <td class="font-extrabold">Entitlement:</td>
-                    <td>Private</td>
+                    <td class="font-extrabold">Category:</td>
+                    <td>Non-Entitled</td>
                     {{--                        <td class=" font-extrabold">Amount Payable:</td>--}}
                     {{--                        <td class="font-extrabold">Rs. {{$chit->amount}}</td>--}}
                     <td class=" font-extrabold">Printed By:</td>
@@ -101,8 +101,8 @@
 
             @if($chit->amount == 0 && $chit->government_non_gov == 1)
                 <tr>
-                    <td class="font-extrabold">Entitlement:</td>
-                    <td class="">Government Servant</td>
+                    <td class="font-extrabold">Category:</td>
+                    <td class="">Entitled</td>
 
                     <td class=" font-extrabold">Printed By:</td>
                     <td class="font-extrabold">

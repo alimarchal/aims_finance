@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
+use App\Models\Admission;
 use App\Models\Chit;
 use App\Models\Department;
 use App\Models\FeeType;
@@ -105,11 +106,8 @@ class PatientController extends Controller
             'first_name' => 'required',
             'department_id' => 'required',
             'mobile' => 'required|regex:/^03\d{2}-\d{7}$/',
-
             'age' => 'required|integer|min:0',
             'years_months' => 'required_if:age,!=,null|in:Year(s),Month(s),Day(s)',
-
-
             'government_non_gov' => 'required',
             'government_department_id' => 'required_with:government_card_no,designation',
             'government_card_no' => 'required_with:government_department_id',
@@ -356,44 +354,73 @@ class PatientController extends Controller
     public function proceed_to_invoice(\Illuminate\Http\Request $request, Patient $patient)
     {
 
+
         $request->validate([
             'terms' => 'required'
         ]);
 
-        $flag = false;
-        DB::beginTransaction();
-        $user_id = auth()->user()->id;
-        $patient_id = $patient->id;
         $patient_tests_in_carts = PatientTestCart::where('patient_id', $patient->id)->get();
-        $total_all_amount = 0;
-        $invoice = Invoice::create([
-            'user_id' => $user_id,
-            'patient_id' => $patient_id,
-            'government_non_government' => $patient->government_non_gov,
-        ]);
-        foreach ($patient_tests_in_carts as $ptc) {
-            $total_amount = 0;
-            if ($patient->government_non_gov == 1) {
-                $total_amount = 0;
-                $total_all_amount = $total_all_amount + $total_amount;
-            } else {
-                $total_amount = FeeType::find($ptc->fee_type_id)->amount;
-                $total_all_amount = $total_all_amount + $total_amount;
-            }
-            PatientTest::create([
-                'patient_id' => $ptc->patient_id,
-                'fee_type_id' => $ptc->fee_type_id,
-                'invoice_id' => $invoice->id,
-                'government_non_gov' => $patient->government_non_gov,
-                'total_amount' => $total_amount,
-            ]);
+        if ($patient_tests_in_carts->isEmpty())
+        {
+            return to_route('patient.proceed', $patient->id)->with('error', 'You must select and then press the add button for a specific invoice.');
         }
-        $invoice->total_amount = $total_all_amount;
-        $invoice->save();
-        foreach ($patient_tests_in_carts as $ptc) {
-            $ptc->delete();
-        }
+        $flag = false;
+        $admission = null;
+        DB::beginTransaction();
+
         try {
+
+
+            $user_id = auth()->user()->id;
+            $patient_id = $patient->id;
+            $total_all_amount = 0;
+            $invoice = Invoice::create([
+                'user_id' => $user_id,
+                'patient_id' => $patient_id,
+                'government_non_government' => $patient->government_non_gov,
+            ]);
+            foreach ($patient_tests_in_carts as $ptc) {
+                $total_amount = 0;
+                if ($patient->government_non_gov == 1) {
+                    $total_amount = 0;
+                    $total_all_amount = $total_all_amount + $total_amount;
+                } else {
+                    $total_amount = FeeType::find($ptc->fee_type_id)->amount;
+                    $total_all_amount = $total_all_amount + $total_amount;
+                }
+                PatientTest::create([
+                    'patient_id' => $ptc->patient_id,
+                    'fee_type_id' => $ptc->fee_type_id,
+                    'invoice_id' => $invoice->id,
+                    'government_non_gov' => $patient->government_non_gov,
+                    'total_amount' => $total_amount,
+                ]);
+            }
+            $invoice->total_amount = $total_all_amount;
+            $invoice->save();
+            foreach ($patient_tests_in_carts as $ptc) {
+                $ptc->delete();
+            }
+
+
+            if ($request->has('admission_form') && $request->admission_form == 1)
+            {
+                $admission = Admission::create([
+                    'user_id' => $user_id,
+                    'invoice_id' => $invoice->id,
+                    'patient_id' => $patient_id,
+                    'unit_ward' => $request->unit_ward,
+                    'disease' => $request->disease,
+                    'category' => $request->category,
+                    'nok_name' => $request->nok_name,
+                    'relation_with_patient' => $request->relation_with_patient,
+                    'address' => $request->address,
+                    'cell_no' => $request->cell_no,
+                    'cnic_no' => $request->cnic_no,
+                ]);
+            }
+
+
             $flag = true;
             DB::commit();
         } catch (\Exception $e) {
@@ -412,6 +439,7 @@ class PatientController extends Controller
 
     public function patient_invoice(Patient $patient, Invoice $invoice)
     {
+
 
         $date_of_day = Carbon::parse($invoice->created_at)->format('Y-m-d');
         $fee_type_id = $invoice->patient_test_latest->fee_type_id;
@@ -437,6 +465,8 @@ class PatientController extends Controller
         if (!empty($invoice->patient_test_latest->fee_type)) {
             $fee_category = $invoice->patient_test_latest->fee_type->type;
         }
+
+
         return view('patient.invoice', compact('patient', 'patient', 'invoice', 'total_amount', 'department', 'fee_category','chitNumber'));
     }
 

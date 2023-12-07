@@ -30,6 +30,7 @@ class DepartmentController extends Controller
      */
     public function store(StoreDepartmentRequest $request)
     {
+        $request->merge(['daily_patient_limit' => 200, 'category' => 'OPD']);
         $department = Department::create($request->all());
         return to_route('department.index')->with('message', 'Department created successfully!');
     }
