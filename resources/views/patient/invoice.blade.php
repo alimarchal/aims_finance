@@ -89,10 +89,10 @@
                     Department
                 </td>
                 <td style="font-size: 13px;">
-                    @if(!empty($department))
-                        {{ $department }} <br>
-
-                    @endif
+                    CRP
+{{--                    @if(!empty($department))--}}
+{{--                        {{ $department }} <br>--}}
+{{--                    @endif--}}
                 </td>
 
                 <td class="font-extrabold">
@@ -100,8 +100,8 @@
                 </td>
 
                 <td>
-                    @if(!empty($department))
-                        {{ $fee_category }}
+                    @if(!empty($fee_category_main))
+                        {{ $fee_category_main }}
                     @endif
                 </td>
             </tr>
@@ -117,120 +117,149 @@
         </table>
 
 
-        @if(!empty($invoice->admission))
-            <br>
-            <br>
-            <h1 style="text-align: center;font-weight: bold" class="mt-2">Hospital Admission Slip <br> A&D No: {{ $invoice->admission->id }}</h1>
+        @if(empty($invoice->admission))
+        <h1 style="text-align: center;font-weight: bold">Patient Invoice</h1>
+        <div class="overflow-x-auto" style="font-size: 12px;">
+            <table class="table-auto w-full border-collapse border border-black ">
+                <thead>
+                <tr class="border-black lightgray">
+                    <th class="border-black border text-center">S.No</th>
+                    <th class="border-black border px-2 text-left">Test Name</th>
+                    <th class="border-black border">Quantity</th>
+                </tr>
+                </thead>
+                <tbody>
 
-            <br>
-            <br>
-
-            <div class="overflow-x-auto" style="font-size: 12px;">
-                <table class="table-auto w-full border-collapse border border-black ">
-                    <tbody>
-
-
+                @foreach($invoice->patient_test->groupBy('fee_type_id') as $test)
                     <tr class="border-black">
-                        <td class="border-black border text-left px-2 py-2"  width="30%">Unit/Ward</td>
-                        <td class="border-black border text-center" colspan="3"  width="80%">{{ $invoice->admission->unit_ward }}</td>
-                    </tr>
-
-                    <tr class="border-black">
-                        <td class="border-black border text-left px-2 py-2">Disease</td>
-                        <td class="border-black border text-center" colspan="3">{{ $invoice->admission->disease }}</td>
-                    </tr>
-
-
-                    <tr class="border-black">
-                        <td class="border-black border text-left px-2 py-2">Referred By</td>
-                        <td class="border-black border text-center" colspan="3">{{ $invoice->admission->category }}</td>
-                    </tr>
-
-
-                    <tr class="border-black">
-                        <td class="border-black border text-center font-extrabold px-2 py-2" colspan="4">Patient Attendant Details</td>
-                    </tr>
-
-
-                    <tr class="border-black">
-                        <td class="border-black border text-left px-2 py-2">Attendant Name</td>
-                        <td class="border-black border text-center" colspan="3">{{ $invoice->admission->nok_name }}</td>
-                    </tr>
-
-
-                    <tr class="border-black">
-                        <td class="border-black border text-left px-2 py-2">Relation With Patient</td>
-                        <td class="border-black border text-center" colspan="3">{{ $invoice->admission->relation_with_patient }}</td>
-                    </tr>
-
-
-                    <tr class="border-black">
-                        <td class="border-black border text-left px-2 py-2">Address</td>
-                        <td class="border-black border text-center" colspan="3">{{ $invoice->admission->address }}</td>
-                    </tr>
-
-
-                    <tr class="border-black">
-                        <td class="border-black border text-left px-2 py-2">CNIC</td>
-                        <td class="border-black border text-center" colspan="3">{{ $invoice->admission->cnic_no }}</td>
-                    </tr>
-
-                    <tr class="border-black">
-                        <td class="border-black border text-left px-2 py-2">Cell</td>
-                        <td class="border-black border text-center" colspan="3">{{ $invoice->admission->cell_no }}</td>
-                    </tr>
-
-
-
-                    <tr class="border-black">
-                        <td class="border-black border text-center">MOIC Signature</td>
-                        <td class="border-black border text-center" colspan="3">
-                            <br>
-                            <br>
-                            <br>
-                            <br>
-                            <br>
-                            <br>
+                        <td class="border-black border text-center">{{ $loop->iteration }}</td>
+                        <td class="border-black border px-2 text-left">
+                            @if(count($test) > 1)
+                                {{ $test[0]->fee_type->type }}
+                            @else
+                                {{ $test[0]->fee_type->type }}
+                            @endif
                         </td>
+                        <td class="border-black border text-center">{{ count($test) }}</td>
                     </tr>
+                @endforeach
+                </tbody>
+            </table>
+            @endif
 
 
+            @if(!empty($invoice->admission))
+                <br>
+                <br>
+                <h1 style="text-align: center;font-weight: bold" class="mt-2">Hospital Admission Slip <br> A&D No: {{ $invoice->admission->id }}</h1>
 
-                    </tbody>
-                </table>
-            </div>
-        @endif
+                <br>
+                <br>
 
-
-        <script>
-            const paymentForm = document.querySelector('#payment-form');
-            const payNowButton = document.querySelector('#pay-now-button');
-
-            paymentForm.addEventListener('submit', (event) => {
-                // Disable the Pay Now button to prevent double submission
-                payNowButton.disabled = true;
-            });
-        </script>
-    </div>
+                <div class="overflow-x-auto" style="font-size: 12px;">
+                    <table class="table-auto w-full border-collapse border border-black ">
+                        <tbody>
 
 
-    {{--        <div class="text-center">--}}
+                        <tr class="border-black">
+                            <td class="border-black border text-left px-2 py-2" width="30%">Unit/Ward</td>
+                            <td class="border-black border text-center" colspan="3" width="80%">{{ $invoice->admission->unit_ward }}</td>
+                        </tr>
 
-    {{--            <img class="m-auto rounded-lg" style="width: 150px;" src="{{\Illuminate\Support\Facades\Storage::url('paid-5025785_1280.png')}}" alt="{{\Illuminate\Support\Facades\Storage::url('Aimsa8-removebg-preview.png')}}">--}}
-    {{--            <p>This is a computer generated receipt and does not need signature or stamp</p>--}}
+                        <tr class="border-black">
+                            <td class="border-black border text-left px-2 py-2">Disease</td>
+                            <td class="border-black border text-center" colspan="3">{{ $invoice->admission->disease }}</td>
+                        </tr>
 
-    {{--        </div>--}}
 
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+                        <tr class="border-black">
+                            <td class="border-black border text-left px-2 py-2">Referred By</td>
+                            <td class="border-black border text-center" colspan="3">{{ $invoice->admission->category }}</td>
+                        </tr>
+
+
+                        <tr class="border-black">
+                            <td class="border-black border text-center font-extrabold px-2 py-2" colspan="4">Patient Attendant Details</td>
+                        </tr>
+
+
+                        <tr class="border-black">
+                            <td class="border-black border text-left px-2 py-2">Attendant Name</td>
+                            <td class="border-black border text-center" colspan="3">{{ $invoice->admission->nok_name }}</td>
+                        </tr>
+
+
+                        <tr class="border-black">
+                            <td class="border-black border text-left px-2 py-2">Relation With Patient</td>
+                            <td class="border-black border text-center" colspan="3">{{ $invoice->admission->relation_with_patient }}</td>
+                        </tr>
+
+
+                        <tr class="border-black">
+                            <td class="border-black border text-left px-2 py-2">Address</td>
+                            <td class="border-black border text-center" colspan="3">{{ $invoice->admission->address }}</td>
+                        </tr>
+
+
+                        <tr class="border-black">
+                            <td class="border-black border text-left px-2 py-2">CNIC</td>
+                            <td class="border-black border text-center" colspan="3">{{ $invoice->admission->cnic_no }}</td>
+                        </tr>
+
+                        <tr class="border-black">
+                            <td class="border-black border text-left px-2 py-2">Cell</td>
+                            <td class="border-black border text-center" colspan="3">{{ $invoice->admission->cell_no }}</td>
+                        </tr>
+
+
+                        <tr class="border-black">
+                            <td class="border-black border text-center">MOIC Signature</td>
+                            <td class="border-black border text-center" colspan="3">
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                            </td>
+                        </tr>
+
+
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+
+
+            <script>
+                const paymentForm = document.querySelector('#payment-form');
+                const payNowButton = document.querySelector('#pay-now-button');
+
+                paymentForm.addEventListener('submit', (event) => {
+                    // Disable the Pay Now button to prevent double submission
+                    payNowButton.disabled = true;
+                });
+            </script>
+        </div>
+
+
+        {{--            <div class="text-center">--}}
+
+        {{--                <img class="m-auto rounded-lg" style="width: 150px;" src="{{\Illuminate\Support\Facades\Storage::url('paid-5025785_1280.png')}}" alt="{{\Illuminate\Support\Facades\Storage::url('Aimsa8-removebg-preview.png')}}">--}}
+        {{--                <p>This is a computer generated receipt and does not need signature or stamp</p>--}}
+
+        {{--            </div>--}}
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
     </div>
 
 

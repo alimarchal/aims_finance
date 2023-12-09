@@ -35,4 +35,5 @@ class PatientTest extends Model
     {
         return $this->belongsTo(FeeType::class,'fee_type_id');
     }
+
 }

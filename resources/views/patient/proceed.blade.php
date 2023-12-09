@@ -139,7 +139,7 @@
                         @endforeach
 
 
-                        @if($patient->patient_test_cart->isEmpty())
+{{--                        @if($patient->patient_test_cart->isEmpty())--}}
 
                         <form method="post" action="{{ route('patient.add-to-cart', $patient->id) }}">
                             @csrf
@@ -161,7 +161,7 @@
                                 </td>
                             </tr>
                         </form>
-                        @endif
+{{--                        @endif--}}
 
 
 

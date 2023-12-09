@@ -7,6 +7,7 @@ use App\Http\Requests\UpdatePatientRequest;
 use App\Models\Admission;
 use App\Models\Chit;
 use App\Models\Department;
+use App\Models\FeeCategory;
 use App\Models\FeeType;
 use App\Models\Invoice;
 use App\Models\Patient;
@@ -359,6 +360,8 @@ class PatientController extends Controller
             'terms' => 'required'
         ]);
 
+
+
         $patient_tests_in_carts = PatientTestCart::where('patient_id', $patient->id)->get();
         if ($patient_tests_in_carts->isEmpty())
         {
@@ -459,15 +462,18 @@ class PatientController extends Controller
         $total_amount = $invoice->patient_test->sum('total_amount');
         $department = null;
         $fee_category = null;
+        $fee_category_main = null;
         if (!empty($invoice->patient_test_latest->fee_type->feeCategory)) {
             $department = $invoice->patient_test_latest->fee_type->feeCategory->name;
         }
         if (!empty($invoice->patient_test_latest->fee_type)) {
             $fee_category = $invoice->patient_test_latest->fee_type->type;
+            $fee_category_main = FeeCategory::find($invoice->patient_test_latest->fee_type->fee_category_id)->name;
         }
 
 
-        return view('patient.invoice', compact('patient', 'patient', 'invoice', 'total_amount', 'department', 'fee_category','chitNumber'));
+//        dd($invoice->patient_test->groupBy('fee_type_id'));
+        return view('patient.invoice', compact('patient', 'patient', 'fee_category_main', 'invoice', 'total_amount', 'department', 'fee_category','chitNumber'));
     }
 
 
