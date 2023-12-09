@@ -119,7 +119,7 @@
                             @endphp
                             <tr class="border-black">
                                 <td class="border-black border px-4 py-2 text-center">{{$loop->iteration}}</td>
-                                <td class="border-black border px-4 py-2">{{$patient_test_card->fee_type->type}} - {{ $patient_test_card->fee_type->id }}</td>
+                                <td class="border-black border px-4 py-2">{{$patient_test_card->fee_type->type}}</td>
                                 <td class="border-black border px-4 py-2 text-center font-bold">
                                     @if($patient->government_non_gov == 1)
                                         0.00
