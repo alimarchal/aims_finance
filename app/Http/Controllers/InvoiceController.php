@@ -30,16 +30,15 @@ class InvoiceController extends Controller
                 ->where('user_id', $user->id)->whereDate('created_at', Carbon::today())
 //                ->where('user_id', $user->id)->where('ipd_opd', 1)->whereDate('issued_date', Carbon::today())
 //                ->orderByDesc('created_at') // Corrected 'DSEC' to 'DESC'
-                ->paginate(500);
+                ->paginate(1000);
 
         } elseif ($user->hasRole(['Administrator'])) {
             $issued_invoices = QueryBuilder::for(Invoice::class)
                 ->allowedFilters(['patient_id', 'fee_type_id', AllowedFilter::exact('department_id')],)
                 ->whereDate('created_at', Carbon::today())
-//                ->orderByDesc('created_at') // Corrected 'DSEC' to 'DESC'
+                ->orderByDesc('created_at') // Corrected 'DSEC' to 'DESC'
                 ->paginate(1000);
         }
-
 
         return view('invoices.today',compact('issued_invoices'));
     }

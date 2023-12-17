@@ -20,7 +20,6 @@ use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Http\Request;
 
 
-
 class PatientController extends Controller
 {
     /**
@@ -161,6 +160,17 @@ class PatientController extends Controller
             $amount = null;
             if ($request->input('government_department_id')) {
                 $amount = 0.00;
+                if ($request->department_id == 7) {
+                    $fee_type_id = 108;
+                } else if ($request->department_id == 1) {
+                    // For emergency
+                    $fee_type_id = 1;
+                } else if ($request->department_id == 16) {
+                    // For Cardiology
+                    $fee_type_id = 1;
+                } else {
+                    $fee_type_id = 107;
+                }
             } else {
                 if ($request->department_id == 7) {
                     $amount = FeeType::find(108)->amount;
@@ -184,6 +194,7 @@ class PatientController extends Controller
             } else {
                 $ipd_opd = 1;
             }
+
             // this is for opd
             $chit = Chit::create([
                 'user_id' => auth()->user()->id,
@@ -361,10 +372,8 @@ class PatientController extends Controller
         ]);
 
 
-
         $patient_tests_in_carts = PatientTestCart::where('patient_id', $patient->id)->get();
-        if ($patient_tests_in_carts->isEmpty())
-        {
+        if ($patient_tests_in_carts->isEmpty()) {
             return to_route('patient.proceed', $patient->id)->with('error', 'You must select and then press the add button for a specific invoice.');
         }
         $flag = false;
@@ -406,8 +415,7 @@ class PatientController extends Controller
             }
 
 
-            if ($request->has('admission_form') && $request->admission_form == 1)
-            {
+            if ($request->has('admission_form') && $request->admission_form == 1) {
                 $admission = Admission::create([
                     'user_id' => $user_id,
                     'invoice_id' => $invoice->id,
@@ -473,7 +481,7 @@ class PatientController extends Controller
 
 
 //        dd($invoice->patient_test->groupBy('fee_type_id'));
-        return view('patient.invoice', compact('patient', 'patient', 'fee_category_main', 'invoice', 'total_amount', 'department', 'fee_category','chitNumber'));
+        return view('patient.invoice', compact('patient', 'patient', 'fee_category_main', 'invoice', 'total_amount', 'department', 'fee_category', 'chitNumber'));
     }
 
 

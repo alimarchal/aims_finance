@@ -4,9 +4,15 @@
             @media print {
                 @page {
                     margin-top: -30px;
+                    size: landscape;
                 }
                 table {
                     font-size: 12px!important;
+                    width: 100%;
+                    table-layout: auto;
+                }
+                th, td {
+                    white-space: nowrap;
                 }
             }
         </style>
@@ -46,13 +52,24 @@
         <div class="rounded-xl p-4 bg-white shadow-lg">
             <form action="">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label for="user_id" class="block text-gray-700 font-bold mb-2">User Name</label>
+                        <select name="user_id" id="user_id" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
+                            <option value="">None</option>
+                            @foreach(\App\Models\User::role('Front Desk/Receptionist')->get() as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                        {{--                        <input type="date" name="date" value="{{ request('filter.first_name') }}" id="date" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter name">--}}
+                    </div>
 
                     <div>
                         <label for="date" class="block text-gray-700 font-bold mb-2">Date</label>
                         <input type="date" name="date" value="{{ request('filter.first_name') }}" id="date" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter name">
                     </div>
 
-                    <div></div>
+
+
                     <div></div>
                     <div></div>
 
@@ -97,13 +114,13 @@
 
                         @if(request()->has('date'))
                             <p class="text-center font-extrabold mb-4">
-                                Report as of {{ \Carbon\Carbon::parse(request('date'))->format('d-M-Y h:m:s') }} - OPD Issued Chits
+                                Report as of {{ \Carbon\Carbon::parse(request('date'))->format('d-M-Y h:m:s') }}
                                 <br>
                                 <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
                             </p>
                         @else
                             <p class="text-center font-extrabold mb-4">
-                                Report as of {{ now()->format('d-M-Y h:m:s') }}  - OPD Issued Chits
+                                Report as of {{ now()->format('d-M-Y h:m:s') }}  - Daily Revenue User Wise
                                 <br>
                                 <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
                             </p>
@@ -111,41 +128,73 @@
                     <table class="table-auto w-full border-collapse border border-black">
                         <thead>
                         <tr class="border-black">
+                            <th class="border-black border px-4 py-2 text-left" colspan="2"></th>
+                            <th class="border-black border px-4 py-2 text-center" colspan="3">Invoices</th>
+                            <th class="border-black border px-4 py-2 text-center" colspan="3">Chits</th>
+                            <th class="border-black border px-4 py-2 text-center" rowspan="2">Total Revenue</th>
+                            <th class="border-black border px-4 py-2 text-center hidden print:block" rowspan="2">Signature</th>
+                        </tr>
+                        <tr class="border-black">
                             <th class="border-black border px-4 py-2 text-left">No</th>
-                            <th class="border-black border px-4 py-2 text-left">OPD</th>
+                            <th class="border-black border px-4 py-2 text-left">Name</th>
                             <th class="border-black border px-4 py-2 text-center">Entitled</th>
-                            <th class="border-black border px-4 py-2 text-center">Non-Entitled</th>
+                            <th class="border-black border px-4 py-2 text-center">Non Entitled</th>
+                            <th class="border-black border px-4 py-2 text-center">Revenue</th>
+                            <th class="border-black border px-4 py-2 text-center">Entitled</th>
+                            <th class="border-black border px-4 py-2 text-center">Non Entitled</th>
                             <th class="border-black border px-4 py-2 text-center">Revenue</th>
                         </tr>
                         </thead>
                         <tbody>
                         @php
-                            $totalNonEntitiled = 0;
-                            $totalEntitiled = 0;
+                            $totalInvoices = 0;
+
+                            $inv_non_entitled = 0;
+                            $inv_entitled = 0;
+                            $chit_non_entitled = 0;
+                            $chit_entitled = 0;
+
+                            $totalChits = 0;
                             $totalRevenue = 0;
                         @endphp
 
                         @foreach($data as $key => $value)
                             <tr class="border-black">
                                 <td class="border-black border px-4 py-2">{{ $loop->iteration }}</td>
-                                <td class="border-black border px-4 py-2">{{ $key }}</td>
-                                <td class="border-black border px-4 py-2 text-center">{{ $value['Entitiled'] }}</td>
-                                <td class="border-black border px-4 py-2 text-center">{{ $value['Non-Entitiled'] }}</td>
-                                <td class="border-black border px-4 py-2 text-right">{{ number_format($value['Revenue'],2) }}</td>
+                                <td class="border-black border px-4 py-2 text-left">{{ $value['Name'] }}</td>
+                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Invoices Entitled'],0) }}</td>
+                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Invoices Non Entitled'],0) }}</td>
+                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Invoices'],2) }}</td>
+
+                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chit Entitled'],0) }}</td>
+                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chit Non Entitled'],0) }}</td>
+                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chits'],2) }}</td>
+                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chits']+$value['Invoices'],2)  }}</td>
+                                <td class="border-black border px-4 py-2 text-center hidden print:block">&nbsp;</td>
                             </tr>
                             @php
-                                $totalNonEntitiled += $value['Non-Entitiled'];
-                                $totalEntitiled += $value['Entitiled'];
-                                $totalRevenue += $value['Revenue'];
+                                $inv_non_entitled += $value['Invoices Entitled'];
+                                $inv_entitled += $value['Invoices Non Entitled'];
+
+                                $chit_entitled += $value['Chit Entitled'];
+                                $chit_non_entitled += $value['Chit Non Entitled'];
+
+                                $totalInvoices += $value['Invoices'];
+                                $totalChits += $value['Chits'];
+                                $totalRevenue += $value['Chits']+$value['Invoices'];
                             @endphp
                         @endforeach
 
                         <!-- Total row -->
                         <tr class="border-black">
-                            <td class="border-black border px-4 py-2 text-right font-bold" colspan="2">Total: {{ $totalNonEntitiled }} + {{ $totalEntitiled }} = {{ $totalNonEntitiled+$totalEntitiled }}</td>
-                            <td class="border-black border px-4 py-2 text-center font-bold">{{ $totalNonEntitiled }}</td>
-                            <td class="border-black border px-4 py-2 text-center font-bold">{{ $totalEntitiled }}</td>
-                            <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($totalRevenue,2) }}</td>
+                            <td class="border-black border px-4 py-2 text-right font-bold" colspan="2">Total:</td>
+                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($inv_non_entitled,0) }}</td>
+                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($inv_entitled,0) }}</td>
+                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalInvoices,2) }}</td>
+                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($chit_entitled,0) }}</td>
+                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($chit_non_entitled,0) }}</td>
+                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalChits,2) }}</td>
+                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalRevenue,2) }}</td>
                         </tr>
 
                         </tbody>

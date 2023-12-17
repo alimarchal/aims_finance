@@ -36,7 +36,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($issued_invoices->sortByDesc('issued_date') as $invoice)
+                        @foreach($issued_invoices as $invoice)
                             <tr class="border-black">
                                 <td class="border-black border px-4 py-2">{{$loop->iteration}}</td>
                                 <td class="border-black border px-4 py-2 text-center">
@@ -67,11 +67,11 @@
                                 </td>
                             </tr>
                         @endforeach
-                        @if(!empty($invoice))
+                        @if(!empty($issued_invoices))
                             <tr class="border-black bg-black">
                                 <td class="border-black text-white border px-4 py-2 text-right font-extrabold" colspan="4">Total Amount</td>
                                 <td class="border-black text-white border px-4 py-2 text-center font-extrabold">
-                                    Rs. {{ number_format($invoice->sum('total_amount'),2) }}</td>
+                                    Rs. {{ number_format($issued_invoices->sum('total_amount'),2) }}</td>
                                 <td class="border-black text-white border px-4 py-2 text-center font-extrabold"></td>
                             </tr>
                         @endif
