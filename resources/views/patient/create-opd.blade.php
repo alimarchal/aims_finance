@@ -34,15 +34,15 @@
                         </div>
                         <div>
                             <x-label for="first_name" value="First Name" :required="true"/>
-                            <input type="text" name="first_name" id="first_name" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter first name" value="{{ old('first_name') }}">
+                            <input type="text" name="first_name" required id="first_name" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter first name" value="{{ old('first_name') }}">
                         </div>
                         <div>
                             <x-label for="last_name" value="Last Name" :required="false"/>
                             <input type="text" name="last_name" id="last_name" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter last name" value="{{ old('last_name') }}">
                         </div>
                         <div>
-                            <x-label for="father_husband_name" value="Father/Husband Name" :required="false"/>
-                            <input type="text" name="father_husband_name" id="father_husband_name" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter father/husband name" value="{{ old('father_husband_name') }}">
+                            <x-label for="father_husband_name" value="Father/Husband Name" :required="true"/>
+                            <input type="text" required name="father_husband_name" id="father_husband_name" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter father/husband name" value="{{ old('father_husband_name') }}">
                         </div>
                         <div>
                             <x-label for="age" value="Age" :required="true"/>

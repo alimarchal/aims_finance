@@ -146,10 +146,20 @@
                             <tr class="border-black">
                                 <td class="border-black border px-4 py-2 text-center"></td>
                                 <td class="border-black border px-4 py-2 text-center">
-                                    <select name="fee_type_id" id="select2" width="100%" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
+                                    <select name="fee_type_id" required id="select2" width="100%" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
                                         <option value="">Select Test / Bill Type</option>
                                         @foreach(\App\Models\FeeType::orderBy('type', 'ASC')->get() as $fee_type)
-                                            <option value="{{$fee_type->id}}" {{ old('fee_type_id') === $fee_type->id ? 'selected' : '' }}>{{ $fee_type->type }}</option>
+
+                                            @if($fee_type->id == 110 || $fee_type->id == 111 || $fee_type->id == 112)
+                                                @role('Administrator')
+                                                <option value="{{$fee_type->id}}" {{ old('fee_type_id') === $fee_type->id ? 'selected' : '' }}>{{ $fee_type->type }}</option>
+                                                @endrole
+                                            @else
+                                                <option value="{{$fee_type->id}}" {{ old('fee_type_id') === $fee_type->id ? 'selected' : '' }}>{{ $fee_type->type }}</option>
+                                            @endif
+
+
+
                                         @endforeach
                                     </select>
                                     <input type="hidden" value="{{ $patient->id }}" name="patient_id">
@@ -184,7 +194,13 @@
                                 <div class="grid grid-cols-3 md:grid-cols-3 px-4 py-4 gap-3">
                                     <div>
                                         <x-label for="unit_ward" value="Unit/Ward" :required="true" />
-                                        <input type="text" required name="unit_ward" id="unit_ward" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter Unit/Ward" value="{{ old('unit_ward') }}">
+                                        <select name="unit_ward" id="unit_ward" required class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
+                                            <option value="">None</option>
+                                            @foreach(\App\Models\AdmissionWard::orderBy('name', 'ASC')->get() as $aw)
+                                                <option value="{{ $aw->name }}" {{ old('unit_ward') === $aw->name ? 'selected' : '' }}>{{ $aw->name }}</option>
+                                            @endforeach
+                                        </select>
+
                                     </div>
                                     <div>
                                         <x-label for="disease" value="Disease" :required="true" />
@@ -200,23 +216,77 @@
                                     </div>
                                     <div>
                                         <x-label for="relation_with_patient" value="Relation with Patient" :required="true" />
-                                        <input type="text" required name="relation_with_patient" id="relation_with_patient" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter Relation with Patient" value="{{ old('relation_with_patient') }}">
+
+                                        <select name="relation_with_patient" id="relation_with_patient" required class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
+                                            <option value="">None</option>
+                                            @foreach(\App\Models\PatientAttendantRelation::orderBy('name', 'ASC')->get() as $aw)
+                                                <option value="{{ $aw->name }}" {{ old('relation_with_patient') === $aw->name ? 'selected' : '' }}>{{ $aw->name }}</option>
+                                            @endforeach
+                                        </select>
+
+{{--                                        <input type="text" required name="relation_with_patient" id="relation_with_patient" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter Relation with Patient" value="{{ old('relation_with_patient') }}">--}}
                                     </div>
                                     <div>
                                         <x-label for="address" value="Address" :required="true" />
                                         <input type="text" required name="address" id="address" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter Address" value="{{ old('address') }}">
                                     </div>
+
+
+                                    <div>
+                                        <x-label for="village" value="Village" :required="true" />
+                                        <input type="text" required name="village" id="village" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Village" value="{{ old('village') }}">
+                                    </div>
+
+
+
+                                    <div>
+                                        <x-label for="tehsil" value="Tehsil" :required="true" />
+                                        <select name="tehsil" id="tehsil" required class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
+                                            <option value="">None</option>
+                                            @foreach(\App\Models\Tehsil::orderBy('name', 'ASC')->get() as $aw)
+                                                <option value="{{ $aw->name }}" {{ old('tehsil') === $aw->name ? 'selected' : '' }}>{{ $aw->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+
+                                    <div>
+                                        <x-label for="district" value="District" :required="true" />
+                                        <select name="district" id="district" required class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
+                                            <option value="">None</option>
+                                            @foreach(\App\Models\District::orderBy('name', 'ASC')->get() as $aw)
+                                                <option value="{{ $aw->name }}" {{ old('district') === $aw->name ? 'selected' : '' }}>{{ $aw->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+
+
+
+
                                     <div>
                                         <x-label for="cell_no" value="Cell No" :required="true" />
                                         <input type="text" required name="cell_no" id="cell_no" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter Cell No" value="{{ old('cell_no') }}">
                                     </div>
                                     <div>
                                         <x-label for="cnic_no" value="CNIC No" :required="true" />
-                                        <input type="text" required name="cnic_no" id="cnic_no" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter CNIC No" value="{{ old('cnic_no') }}">
+                                        <input type="text" required name="cnic_no" minlength="13" maxlength="15" id="cnic_no" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter CNIC No" value="{{ old('cnic_no') }}" oninput="formatCNIC(this)">
                                     </div>
                                     <input type="hidden" name="admission_form" value="1">
                                 </div>
                             @endif
+
+
+                                @if($patient_test_card->fee_type->id == 110)
+
+                                    <div class="grid grid-cols-3 md:grid-cols-3 px-4 py-4 gap-3">
+                                        <div>
+                                            <x-label for="admission_no" value="Admission No" :required="true" />
+                                            <input type="number" min="1" required name="admission_no" id="admission_no" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter Admission No">
+                                        </div>
+                                        <input type="hidden" name="admission_form_return" value="1">
+                                    </div>
+                                @endif
 
                         @endforeach
 
@@ -262,8 +332,30 @@
                 $(document).on('select2:open', () => {
                     document.querySelector('.select2-search__field').focus();
                 });
-
             });
+        </script>
+        <script>
+            function formatCNIC(input) {
+                var value = input.value;
+                var formattedValue = value.replace(/[^0-9]/g, ''); // Remove any character that is not a number
+
+                // Split the string into parts for the CNIC format
+                var parts = [];
+                if (formattedValue.length > 5) {
+                    parts.push(formattedValue.substring(0, 5));
+                    if (formattedValue.length > 12) {
+                        parts.push(formattedValue.substring(5, 12));
+                        parts.push(formattedValue.substring(12, 13));
+                    } else {
+                        parts.push(formattedValue.substring(5));
+                    }
+                } else {
+                    parts.push(formattedValue);
+                }
+
+                // Join the parts with a hyphen
+                input.value = parts.join('-');
+            }
         </script>
     @endsection
 </x-app-layout>

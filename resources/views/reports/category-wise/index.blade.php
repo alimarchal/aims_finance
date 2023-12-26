@@ -59,41 +59,41 @@
 
     <div class="py-12">
 
-<div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-    <x-validation-errors class="mb-4"/>
-    <x-success-message class="mb-4"/>
-    <div class="bg-white overflow-hidden p-4">
-        <div class="overflow-x-auto">
-            <div class="grid grid-cols-3 gap-4">
-                <div></div> <!-- Empty column for spacing -->
-                <div class="flex items-center justify-center">
-                    <img src="{{ \Illuminate\Support\Facades\Storage::url('Aimsa8 copy 2.png') }}" alt="Logo" style="width: 300px;">
-                </div>
-                <div class="flex flex-col items-end">
-                    @php
-                        $date = null;
-                        if(request()->has('date')) { $date = \Carbon\Carbon::parse(request('date'))->format('d-M-Y'); }
-                        else { $date = now()->format('d-M-Y h:m:s'); }
-                        $reporting_data = (string)  "Reporting Date: $date\nAIMS, Muzaffarabad, AJK\nDepartment Wise Report";
-                    @endphp
-                    {!! DNS2D::getBarcodeSVG($reporting_data, 'QRCODE',3,3) !!}
-                </div>
-            </div>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <x-validation-errors class="mb-4"/>
+            <x-success-message class="mb-4"/>
+            <div class="bg-white overflow-hidden p-4">
+                <div class="overflow-x-auto">
+                    <div class="grid grid-cols-3 gap-4">
+                        <div></div> <!-- Empty column for spacing -->
+                        <div class="flex items-center justify-center">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url('Aimsa8 copy 2.png') }}" alt="Logo" style="width: 300px;">
+                        </div>
+                        <div class="flex flex-col items-end">
+                            @php
+                                $date = null;
+                                if(request()->has('date')) { $date = \Carbon\Carbon::parse(request('date'))->format('d-M-Y'); }
+                                else { $date = now()->format('d-M-Y h:m:s'); }
+                                $reporting_data = (string)  "Reporting Date: $date\nAIMS, Muzaffarabad, AJK\nDepartment Wise Report";
+                            @endphp
+                            {!! DNS2D::getBarcodeSVG($reporting_data, 'QRCODE',3,3) !!}
+                        </div>
+                    </div>
 
-            @if(request()->has('date'))
-                <p class="text-center font-extrabold mb-4">
-                    Report as of {{ \Carbon\Carbon::parse(request('date'))->format('d-M-Y h:m:s') }} - Department Wise Report
-                    <br>
-                    <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
-                </p>
-            @else
-                <p class="text-center font-extrabold mb-4">
-                    Report as of {{ now()->format('d-M-Y h:m:s') }}  - Department Wise Report
-                    <br>
-                    <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
-                </p>
-            @endif
-                    <table class="table-auto w-full border-collapse border border-black" >
+                    @if(request()->has('date'))
+                        <p class="text-center font-extrabold mb-4">
+                            Report as of {{ \Carbon\Carbon::parse(request('date'))->format('d-M-Y h:m:s') }} - Department Wise Report
+                            <br>
+                            <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
+                        </p>
+                    @else
+                        <p class="text-center font-extrabold mb-4">
+                            Report as of {{ now()->format('d-M-Y h:m:s') }} - Department Wise Report
+                            <br>
+                            <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
+                        </p>
+                    @endif
+                    <table class="table-auto w-full border-collapse border border-black">
                         <thead>
                         <tr class="border-black">
                             <th class="border-black border px-4 py-2">No</th>
@@ -121,18 +121,65 @@
                                     <td class="border-black border px-4 py-2">{{ $feeTypeName }}</td>
 
                                     <!-- Fee Type Details -->
-                                    <td class="border-black border text-center px-4 py-2">{{ number_format($feeTypeDetails['Non Entitled'],0) }} @php $non_entitled += $feeTypeDetails['Non Entitled']; @endphp</td>
-                                    <td class="border-black border text-center px-4 py-2">{{ number_format($feeTypeDetails['Entitled'],0) }} @php $entitled += $feeTypeDetails['Entitled'] @endphp</td>
+                                    <td class="border-black border text-center px-4 py-2">
+
+                                        @if(
+                                            $categoryName == "Emergency" && $feeTypeName == "Chit Fee" ||
+                                            $categoryName == "Cardiology" && $feeTypeName == "OPD Chit Fee" ||
+                                            $categoryName == "OPD (Out Door Patient)" && $feeTypeName == "Chit Fee" ||
+                                            $categoryName == "OPD (Out Door Patient)" && $feeTypeName == "Chit Fee (Family OPD)"
+                                            )
+                                            @if(request()->has('date'))
+                                                <a href="{{ route('chits.issued',['start_date' => request()->input('date'), 'end_date' => request()->input('date'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
+                                            @else
+                                                <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
+                                            @endif
+
+                                        @else
+
+                                            @if(request()->has('date'))
+                                                <a href="{{ route('invoice.issued',['start_date' => request()->input('date'), 'end_date' => request()->input('date'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
+                                            @else
+                                                <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
+                                            @endif
+                                        @endif
+
+
+                                        @php $non_entitled += $feeTypeDetails['Non Entitled']; @endphp</td>
+                                    <td class="border-black border text-center px-4 py-2">
+                                        @if(
+                                            $categoryName == "Emergency" && $feeTypeName == "Chit Fee" ||
+                                            $categoryName == "Cardiology" && $feeTypeName == "OPD Chit Fee" ||
+                                            $categoryName == "OPD (Out Door Patient)" && $feeTypeName == "Chit Fee" ||
+                                            $categoryName == "OPD (Out Door Patient)" && $feeTypeName == "Chit Fee (Family OPD)"
+                                            )
+                                            @if(request()->has('date'))
+                                                <a href="{{ route('chits.issued',['start_date' => request()->input('date'), 'end_date' => request()->input('date'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
+                                            @else
+                                                <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
+                                            @endif
+
+                                        @else
+
+                                            @if(request()->has('date'))
+                                                <a href="{{ route('invoice.issued',['start_date' => request()->input('date'), 'end_date' => request()->input('date'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
+                                            @else
+                                                <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
+                                            @endif
+                                        @endif
+
+
+                                        @php $entitled += $feeTypeDetails['Entitled'] @endphp</td>
                                     <td class="border-black border text-right px-4 py-2">{{ number_format($feeTypeDetails['Revenue'],2) }} @php $total += $feeTypeDetails['Revenue'] @endphp</td>
                                 </tr>
-                            @endforeach
+                        @endforeach
                         @endforeach
 
                         <tfoot class="border-black">
-                            <th colspan="3" class="text-right px-4">Total</th>
-                            <th class="border-black border text-center px-4 py-2">{{ number_format($non_entitled,0) }}</th>
-                            <th class="border-black border text-center px-4 py-2">{{ number_format($entitled,0) }}</th>
-                            <th class="border-black border text-center px-4 py-2">{{ number_format($total,2) }}</th>
+                        <th colspan="3" class="text-right px-4">Total</th>
+                        <th class="border-black border text-center px-4 py-2">{{ number_format($non_entitled,0) }}</th>
+                        <th class="border-black border text-center px-4 py-2">{{ number_format($entitled,0) }}</th>
+                        <th class="border-black border text-center px-4 py-2">{{ number_format($total,2) }}</th>
                         </tfoot>
 
                         </tbody>

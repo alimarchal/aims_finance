@@ -110,7 +110,11 @@
                 <td colspan="4"> آپ کا نمبر ہے ({{$chitNumber}})</td>
             </tr>
 
-
+            <tr>
+                <td colspan="4" style="margin: 0px; padding: 0px; font-size: 7px; text-align: center">
+                    <img src="{{ url('images/note.jpg') }}" alt="Note" style="height: 40px; margin: auto">
+                </td>
+            </tr>
             <tr style="border-bottom: 1px solid black; margin: 0px; padding: 0px; font-size: 7px; text-align: center">
                 <td colspan="4">Developed By Ali Raza Marchal - 0300-8169924</td>
             </tr>
@@ -149,18 +153,12 @@
 
 
             @if(!empty($invoice->admission))
-                <br>
-                <br>
                 <h1 style="text-align: center;font-weight: bold" class="mt-2">Hospital Admission Slip <br> A&D No: {{ $invoice->admission->id }}</h1>
 
-                <br>
-                <br>
 
                 <div class="overflow-x-auto" style="font-size: 12px;">
                     <table class="table-auto w-full border-collapse border border-black ">
                         <tbody>
-
-
                         <tr class="border-black">
                             <td class="border-black border text-left px-2 py-2" width="30%">Unit/Ward</td>
                             <td class="border-black border text-center" colspan="3" width="80%">{{ $invoice->admission->unit_ward }}</td>
@@ -197,7 +195,9 @@
 
                         <tr class="border-black">
                             <td class="border-black border text-left px-2 py-2">Address</td>
-                            <td class="border-black border text-center" colspan="3">{{ $invoice->admission->address }}</td>
+                            <td class="border-black border text-center" colspan="3">
+                                {{ $invoice->admission->address }} / {{ $invoice->admission->village }}  / {{ $invoice->admission->tehsil }} / {{ $invoice->admission->district }}
+                            </td>
                         </tr>
 
 
@@ -215,10 +215,6 @@
                         <tr class="border-black">
                             <td class="border-black border text-center">MOIC Signature</td>
                             <td class="border-black border text-center" colspan="3">
-                                <br>
-                                <br>
-                                <br>
-                                <br>
                                 <br>
                                 <br>
                             </td>

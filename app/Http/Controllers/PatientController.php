@@ -15,6 +15,7 @@ use App\Models\PatientTest;
 use App\Models\PatientTestCart;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use phpDocumentor\Reflection\DocBlock\Tags\Throws;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Http\Request;
@@ -28,9 +29,13 @@ class PatientController extends Controller
     public function index()
     {
         $patients = QueryBuilder::for(Patient::class)
-            ->allowedFilters(['first_name', 'last_name', 'father_husband_name', 'sex', 'cnic', 'mobile', 'government_non_gov', AllowedFilter::exact('id')],)
+            ->allowedFilters(['first_name', 'last_name', 'father_husband_name', 'sex', 'cnic', 'mobile', 'government_non_gov',
+                AllowedFilter::exact('government_card_no'),
+                AllowedFilter::exact('id'),
+            ],)
             ->orderByDesc('created_at') // Corrected 'DSEC' to 'DESC'
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
         return view('patient.index', compact('patients'));
     }
 
@@ -425,10 +430,25 @@ class PatientController extends Controller
                     'category' => $request->category,
                     'nok_name' => $request->nok_name,
                     'relation_with_patient' => $request->relation_with_patient,
+                    'village' => $request->village,
+                    'tehsil' => $request->tehsil,
+                    'district' => $request->district,
                     'address' => $request->address,
                     'cell_no' => $request->cell_no,
                     'cnic_no' => $request->cnic_no,
                 ]);
+            }
+
+
+            if ($request->has('admission_form_return') && $request->admission_form_return == 1) {
+                $invoice = Invoice::find($request->admission_no);
+                if (!empty($invoice)) {
+                    $admission = Admission::find($invoice->admission->id);
+                    $admission->status = "Yes";
+                    $admission->save();
+                } else {
+                    return throw new \ErrorException('Error found');
+                }
             }
 
 

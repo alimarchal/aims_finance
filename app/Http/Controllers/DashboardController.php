@@ -43,7 +43,6 @@ class DashboardController extends Controller
             $entitled = Chit::whereDate('issued_date', Carbon::today())->where('government_non_gov', 1)->count();
             $issued_invoices = Invoice::whereDate('created_at', Carbon::today())->count();
 
-
             $issued_invoices_revenue = Invoice::whereDate('created_at', Carbon::today())->sum('total_amount');
 
 

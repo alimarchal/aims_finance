@@ -21,6 +21,11 @@ class ChitController extends Controller
         return view('chit.issued_chits', compact('patient'));
     }
 
+    public function issued_invoices(Patient $patient)
+    {
+        return view('invoices.issued_invoices', compact('patient'));
+    }
+
     public function issue_new_chit(Patient $patient)
     {
         return view('chit.issue_new_chit', compact('patient'));
@@ -47,7 +52,6 @@ class ChitController extends Controller
         if ($count_chit_of_today_limit <= $count_chit_of_today) {
             return to_route('patient.create')->with('error', 'OPD today\'s limit has been reached to maximum limit of ' . $count_chit_of_today_limit . ' as assigned by OPD.');
         }
-
 
 
         DB::beginTransaction();
@@ -110,7 +114,7 @@ class ChitController extends Controller
         $issued_chits = null;
         if ($user->hasRole('Front Desk/Receptionist')) {
             $issued_chits = QueryBuilder::for(Chit::class)
-                ->allowedFilters(['patient_id', 'fee_type_id', 'government_department_id', 'issued_date', 'ipd_opd', 'government_card_no',AllowedFilter::exact('government_non_gov'), AllowedFilter::exact('id'),  AllowedFilter::exact('department_id')],)
+                ->allowedFilters(['patient_id', 'fee_type_id', 'government_department_id', 'issued_date', 'ipd_opd', 'government_card_no', AllowedFilter::exact('government_non_gov'), AllowedFilter::exact('id'), AllowedFilter::exact('department_id')],)
                 ->where('user_id', $user->id)->whereDate('issued_date', Carbon::today())
 //                ->where('user_id', $user->id)->where('ipd_opd', 1)->whereDate('issued_date', Carbon::today())
 //                ->orderByDesc('created_at') // Corrected 'DSEC' to 'DESC'
@@ -118,13 +122,46 @@ class ChitController extends Controller
 
         } elseif ($user->hasRole(['Administrator'])) {
             $issued_chits = QueryBuilder::for(Chit::class)
-                ->allowedFilters(['patient_id', 'fee_type_id', 'government_department_id', 'issued_date', 'ipd_opd', 'government_card_no',AllowedFilter::exact('government_non_gov'), AllowedFilter::exact('id'),  AllowedFilter::exact('department_id')],)
+                ->allowedFilters(['patient_id', 'fee_type_id', 'government_department_id', 'issued_date', 'ipd_opd', 'government_card_no', AllowedFilter::exact('government_non_gov'), AllowedFilter::exact('id'), AllowedFilter::exact('department_id')],)
                 ->whereDate('issued_date', Carbon::today())
 //                ->orderByDesc('created_at') // Corrected 'DSEC' to 'DESC'
                 ->paginate(1000);
         }
 
-        return view('chit.today',compact('issued_chits'));
+        return view('chit.today', compact('issued_chits'));
+    }
+
+
+    public function issued(Request $request)
+    {
+
+        $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
+        $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
+
+        $date_start_at = $start_date . ' 00:00:00';
+        $date_end_at = $end_date . ' 23:59:59';
+
+        $user = \Auth::user();
+        $issued_chits = null;
+        if ($user->hasRole(['Administrator'])) {
+            $issued_chits = QueryBuilder::for(Chit::class)->with('user', 'patient', 'department')
+                ->allowedFilters([
+                    AllowedFilter::exact('department_id'),
+                    AllowedFilter::exact('patient_id'),
+                    AllowedFilter::exact('fee_type_id'),
+                    AllowedFilter::exact('government_department_id'),
+                    AllowedFilter::exact('government_non_gov'),
+                    AllowedFilter::exact('government_card_no'),
+                    AllowedFilter::exact('patient.sex'),
+                    AllowedFilter::exact('user_id'),
+                    'government_department_id',
+                    'issued_date'
+                ])
+                ->whereBetween('created_at', [$date_start_at, $date_end_at])
+                ->orderBy('created_at') // Corrected 'DSEC' to 'DESC'
+                ->paginate(100000)->withQueryString();
+        }
+        return view('chit.issued', compact('issued_chits'));
     }
 
     /**
@@ -163,8 +200,8 @@ class ChitController extends Controller
             ->select('*', DB::raw('ROW_NUMBER() OVER (ORDER BY created_at) AS count_no'))
             ->get();
 
-        $chitNumber = $result->where('id',$chit->id)->first()->count_no;
-        return view('chit.print', compact('chit', 'patient','chitNumber'));
+        $chitNumber = $result->where('id', $chit->id)->first()->count_no;
+        return view('chit.print', compact('chit', 'patient', 'chitNumber'));
     }
 
 

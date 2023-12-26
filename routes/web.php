@@ -58,12 +58,18 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('patient/{patient}/chit/{chit}', [\App\Http\Controllers\ChitController::class, 'print'])->name('chit.print');
     Route::get('patient/{patient}/actions', [\App\Http\Controllers\PatientController::class, 'patient_actions'])->name('patient.actions');
     Route::get('patient/{patient}/issued-chits', [\App\Http\Controllers\ChitController::class, 'issued_chits'])->name('patient.issued-chits');
+    Route::get('patient/{patient}/issued-invoices', [\App\Http\Controllers\ChitController::class, 'issued_invoices'])->name('patient.issued-invoices');
     Route::get('patient/{patient}/issue-new-chit', [\App\Http\Controllers\ChitController::class, 'issue_new_chit'])->name('patient.issue-new-chit');
     Route::post('patient/{patient}/issue-new-chit', [\App\Http\Controllers\ChitController::class, 'issue_new_chit_store'])->name('patient.issue-new-chitStore');
 
     Route::get('chits/issued-today', [\App\Http\Controllers\ChitController::class, 'today'])->name('chits.issued-today');
     Route::get('invoice/issued-today', [\App\Http\Controllers\InvoiceController::class, 'today'])->name('invoice.issued-today');
+    Route::get('chits/issued', [\App\Http\Controllers\ChitController::class, 'issued'])->name('chits.issued');
+    Route::get('invoice/issued', [\App\Http\Controllers\InvoiceController::class, 'issued'])->name('invoice.issued');
+
+
     // Reports
+
 
 
     Route::get('reports', [\App\Http\Controllers\ReportsController::class, 'index'])->name('reports.index');
@@ -74,6 +80,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('reports/misc', [\App\Http\Controllers\ReportsController::class, 'reportMisc'])->name('reports.misc');
     Route::get('reports/misc/category-wise', [\App\Http\Controllers\ReportsController::class, 'categoryWise'])->name('reports.misc.category-wise');
+    Route::get('reports/misc/admission', [\App\Http\Controllers\ReportsController::class, 'admission'])->name('reports.misc.admission');
 
 
 });

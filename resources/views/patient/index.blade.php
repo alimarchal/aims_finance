@@ -92,6 +92,12 @@
                         </div>
                     </div>
 
+                    <div>
+                        <label for="government_card_no" class="block text-gray-700 font-bold mb-2">Government Card No</label>
+                        <input type="text" name="filter[government_card_no]" id="government_card_no" value="{{ request('filter.government_card_no') }}" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500"
+                               placeholder="Enter Card No: eg: 503">
+                    </div>
+
 
                     <div class="flex items-center justify-between">
                         <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">

@@ -151,6 +151,11 @@
                 </tr>
             @endif
 
+            <tr>
+                <td colspan="4" style="margin: 0px; padding: 0px; font-size: 7px; text-align: center">
+                    <img src="{{ url('images/note.jpg') }}" alt="Note" style="height: 40px; margin: auto">
+                </td>
+            </tr>
             <tr style="border-bottom: 1px solid black; margin: 0px; padding: 0px; font-size: 7px; text-align: center">
                 <td colspan="4">Developed By Ali Raza Marchal - 0300-8169924</td>
             </tr>

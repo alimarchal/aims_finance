@@ -40,4 +40,14 @@ class Invoice extends Model
         return $this->hasOne(Admission::class);
     }
 
+    public function patient(): BelongsTo
+    {
+        return $this->belongsTo(Patient::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

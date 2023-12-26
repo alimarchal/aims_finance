@@ -161,13 +161,40 @@
                         @foreach($data as $key => $value)
                             <tr class="border-black">
                                 <td class="border-black border px-4 py-2">{{ $loop->iteration }}</td>
-                                <td class="border-black border px-4 py-2 text-left">{{ $value['Name'] }}</td>
-                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Invoices Entitled'],0) }}</td>
-                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Invoices Non Entitled'],0) }}</td>
+                                <td class="border-black border px-4 py-2 text-left">{{ $value['Name'] }} - {{ $key }}</td>
+                                <td class="border-black border px-4 py-2 text-center">
+                                    @if(request()->has('date'))
+                                        <a href="{{ route('invoice.issued',['start_date' => request()->input('date'), 'end_date' => request()->input('date'), 'filter[user_id]='=> $key, 'filter[government_non_government]' => 1]) }}" class="text-blue-500 hover:underline">{{ number_format($value['Invoices Entitled'],0) }}</a>
+                                    @else
+                                        <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[user_id]='=> $key, 'filter[government_non_government]' => 1]) }}" class="text-blue-500 hover:underline">{{ number_format($value['Invoices Entitled'],0) }}</a>
+                                    @endif
+
+                                </td>
+                                <td class="border-black border px-4 py-2 text-center">
+                                    @if(request()->has('date'))
+                                        <a href="{{ route('invoice.issued',['start_date' => request()->input('date'), 'end_date' => request()->input('date'),'filter[user_id]='=> $key, 'filter[government_non_government]' => 0]) }}" class="text-blue-500 hover:underline">{{ number_format($value['Invoices Non Entitled'],0) }}</a>
+                                    @else
+                                        <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'),'filter[user_id]='=> $key, 'filter[government_non_government]' => 0]) }}" class="text-blue-500 hover:underline">{{ number_format($value['Invoices Non Entitled'],0) }}</a>
+                                    @endif
+
+                                </td>
                                 <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Invoices'],2) }}</td>
 
-                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chit Entitled'],0) }}</td>
-                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chit Non Entitled'],0) }}</td>
+                                <td class="border-black border px-4 py-2 text-center">
+                                    @if(request()->has('date'))
+                                        <a href="{{ route('chits.issued',['start_date' => request()->input('date'), 'end_date' => request()->input('date'),'filter[user_id]='=> $key, 'filter[government_non_gov]' => 1]) }}" class="text-blue-500 hover:underline">{{ number_format($value['Chit Entitled'],0) }}</a>
+                                    @else
+                                        <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'),'filter[user_id]='=> $key, 'filter[government_non_gov]' => 1]) }}" class="text-blue-500 hover:underline">{{ number_format($value['Chit Entitled'],0) }}</a>
+                                    @endif
+                                </td>
+                                <td class="border-black border px-4 py-2 text-center">
+                                    @if(request()->has('date'))
+                                        <a href="{{ route('chits.issued',['start_date' => request()->input('date'), 'end_date' => request()->input('date'),'filter[user_id]='=> $key, 'filter[government_non_gov]' => 0]) }}" class="text-blue-500 hover:underline">{{ number_format($value['Chit Non Entitled'],0) }}</a>
+                                    @else
+                                        <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'),'filter[user_id]='=> $key, 'filter[government_non_gov]' => 0]) }}" class="text-blue-500 hover:underline">{{ number_format($value['Chit Non Entitled'],0) }}</a>
+                                    @endif
+
+                                </td>
                                 <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chits'],2) }}</td>
                                 <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chits']+$value['Invoices'],2)  }}</td>
                                 <td class="border-black border px-4 py-2 text-center hidden print:block">&nbsp;</td>

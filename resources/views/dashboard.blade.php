@@ -7,7 +7,7 @@
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-{{--            <h2 class="text-2xl text-center">Total Chit </h2>--}}
+            {{--            <h2 class="text-2xl text-center">Total Chit </h2>--}}
             <div class="grid grid-cols-12 gap-6 ">
                 <a href="{{ route('chits.issued-today') }}" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
                     <div class="p-5">
@@ -18,7 +18,7 @@
                                 </div>
 
                                 <div class="mt-1 text-base  font-bold text-gray-600">
-                                    Issued Chits
+                                    Issued Chits Today
                                 </div>
                             </div>
                             <div class="col-span-1 flex items-center justify-end">
@@ -28,6 +28,8 @@
                         </div>
                     </div>
                 </a>
+
+
                 <a href="{{ route('chits.issued-today',['filter[government_non_gov]=0']) }}" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
                     <div class="p-5">
                         <div class="grid grid-cols-3 gap-1">
@@ -105,7 +107,6 @@
                 </a>
 
                 <a href="{{ route('invoice.issued-today') }}" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
-
                     <div class="p-5">
                         <div class="grid grid-cols-3 gap-1">
                             <div class="col-span-2">
@@ -117,7 +118,24 @@
                                 </div>
                             </div>
                             <div class="col-span-1 flex items-center justify-end">
+                                <img src="{{ url('images/invoice-revenue.png') }}" alt="legal case" class="h-12 w-12">
+                            </div>
+                        </div>
+                    </div>
+                </a>
 
+                <a href="javascript:;" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
+                    <div class="p-5">
+                        <div class="grid grid-cols-3 gap-1">
+                            <div class="col-span-2">
+                                <div class="text-3xl font-bold leading-8">
+                                    {{ number_format($issued_invoices_revenue + $today_revenue,2) }}
+                                </div>
+                                <div class="mt-1 text-base font-bold text-gray-600">
+                                    Total Revenue
+                                </div>
+                            </div>
+                            <div class="col-span-1 flex items-center justify-end">
                                 <img src="{{ url('images/invoice-revenue.png') }}" alt="legal case" class="h-12 w-12">
                             </div>
                         </div>
@@ -125,83 +143,52 @@
                 </a>
 
 
+                @role('Administrator')
+                <a href="{{ route('chits.issued') }}" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
+                    <div class="p-5">
+                        <div class="grid grid-cols-3 gap-1">
+                            <div class="col-span-2">
+                                <div class="text-3xl font-bold leading-8">
+                                    {{ $issued_chits }}
+                                </div>
+
+                                <div class="mt-1 text-base  font-bold text-gray-600">
+                                    Issued Chits History
+                                </div>
+                            </div>
+                            <div class="col-span-1 flex items-center justify-end">
+                                <img src="{{ Storage::url('images/1728946.png') }}" alt="employees on leave" class="h-12 w-12">
+
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="{{ route('invoice.issued') }}" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
+
+                    <div class="p-5">
+                        <div class="grid grid-cols-3 gap-1">
+                            <div class="col-span-2">
+                                <div class="text-3xl font-bold leading-8">
+                                    {{ $issued_invoices }}
+                                </div>
+                                <div class="mt-1 text-base font-bold text-gray-600">
+                                    Invoices History
+                                </div>
+                            </div>
+                            <div class="col-span-1 flex items-center justify-end">
+
+                                <img src="{{ Storage::url('issue_new_chit.png') }}" alt="legal case" class="h-12 w-12">
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+
+                @endrole
+
             </div>
 
-
-
-{{--            <div class="grid grid-cols-12 gap-6 mt-8">--}}
-{{--                <a href="#" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">--}}
-{{--                    <div class="p-5">--}}
-{{--                        <div class="grid grid-cols-3 gap-1">--}}
-{{--                            <div class="col-span-2">--}}
-{{--                                <div class="text-3xl font-bold leading-8">0</div>--}}
-
-{{--                                <div class="mt-1 text-base  font-bold text-gray-600">--}}
-{{--                                    Today Revenue--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                            <div class="col-span-1 flex items-center justify-end">--}}
-{{--                                <img src="https://cdn-icons-png.flaticon.com/512/1728/1728946.png" alt="employees on leave" class="h-12 w-12">--}}
-
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                </a>--}}
-{{--                <a href="#" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">--}}
-{{--                    <div class="p-5">--}}
-{{--                        <div class="grid grid-cols-3 gap-1">--}}
-{{--                            <div class="col-span-2">--}}
-{{--                                <div class="text-3xl font-bold leading-8">--}}
-{{--                                    0--}}
-{{--                                </div>--}}
-{{--                                <div class="mt-1 text-base  font-bold text-gray-600">--}}
-{{--                                    Total Revenue This Month--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                            <div class="col-span-1 flex items-center justify-end">--}}
-
-{{--                                <img src="https://cdn-icons-png.flaticon.com/512/817/817729.png" alt="legal case" class="h-12 w-12">--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                </a>--}}
-{{--                <a href="#" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">--}}
-{{--                    <div class="p-5">--}}
-{{--                        <div class="grid grid-cols-3 gap-1">--}}
-{{--                            <div class="col-span-2">--}}
-{{--                                <div class="text-3xl font-bold leading-8">--}}
-{{--                                    0--}}
-{{--                                </div>--}}
-{{--                                <div class="mt-1 text-base  font-bold text-gray-600">--}}
-{{--                                    Today Test Performed--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                            <div class="col-span-1 flex items-center justify-end">--}}
-{{--                                <img src="https://cdn-icons-png.flaticon.com/512/3127/3127109.png" alt="legal case" class="h-12 w-12">--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                </a>--}}
-{{--                <a href="#" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">--}}
-
-{{--                    <div class="p-5">--}}
-{{--                        <div class="grid grid-cols-3 gap-1">--}}
-{{--                            <div class="col-span-2">--}}
-{{--                                <div class="text-3xl font-bold leading-8">--}}
-{{--                                    0--}}
-{{--                                </div>--}}
-{{--                                <div class="mt-1 text-base font-bold text-gray-600">--}}
-{{--                                    Monthly Test Performed--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                            <div class="col-span-1 flex items-center justify-end">--}}
-
-{{--                                <img src="https://cdn-icons-png.flaticon.com/512/2906/2906361.png" alt="legal case" class="h-12 w-12">--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                </a>--}}
-{{--            </div>--}}
         </div>
     </div>
     @section('custom_script')

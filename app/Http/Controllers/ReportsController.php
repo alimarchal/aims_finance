@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admission;
 use App\Models\Chit;
 use App\Models\Department;
 use App\Models\FeeCategory;
 use App\Models\Invoice;
+use App\Models\Patient;
 use App\Models\PatientTest;
 use Carbon\Carbon;
 use DB;
 use http\Client\Curl\User;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ReportsController extends Controller
 {
@@ -106,6 +110,7 @@ class ReportsController extends Controller
             ];
         }
 
+
         return view('reports.reports-daily-ipd', compact('data'));
     }
 
@@ -152,16 +157,57 @@ class ReportsController extends Controller
                     $categories[$fee_cat->name][$fee_type->type] = [
                         'Non Entitled' => Chit::whereDate('issued_date', $date)->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->count(),
                         'Entitled' => Chit::whereDate('issued_date', $date)->where('fee_type_id', $fee_type->id)->where('government_non_gov', 1)->count(),
-                        'Revenue' => Chit::whereDate('issued_date', $date)->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('amount')];
+                        'Revenue' => Chit::whereDate('issued_date', $date)->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('amount'),
+                        'fee_category_id' => $fee_cat->id,
+                        'fee_type' => $fee_type->id
+                        ];
                 } else {
                     $categories[$fee_cat->name][$fee_type->type] = [
                         'Non Entitled' => PatientTest::whereDate('created_at', $date)->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->count(),
                         'Entitled' => PatientTest::whereDate('created_at', $date)->where('fee_type_id', $fee_type->id)->where('government_non_gov', 1)->count(),
-                        'Revenue' => PatientTest::whereDate('created_at', $date)->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('total_amount')];
+                        'Revenue' => PatientTest::whereDate('created_at', $date)->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('total_amount'),
+                        'fee_category_id' => $fee_cat->id,
+                        'fee_type' => $fee_type->id
+                    ];
                 }
             }
         }
 
+//        dd($categories);
+
         return view('reports.category-wise.index', compact('categories'));
+    }
+
+    public function admission(Request $request)
+    {
+        $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
+        $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
+
+        $date_start_at = $start_date . ' 00:00:00';
+        $date_end_at = $end_date . ' 23:59:59';
+
+        $admissions = QueryBuilder::for(Admission::class)->with('invoice','patient')
+            ->allowedFilters([
+                'patient.sex',
+                'disease',
+                'category',
+                'nok_name',
+                'relation_with_patient',
+                'address',
+                'cell_no',
+                'cnic_no',
+                'village',
+                AllowedFilter::exact('invoice.government_non_government'),
+                AllowedFilter::exact('unit_ward'),
+                AllowedFilter::exact('tehsil'),
+                AllowedFilter::exact('district'),
+                AllowedFilter::exact('patient_id'),
+                AllowedFilter::exact('invoice_id'),
+            ],)
+            ->whereBetween('created_at', [$date_start_at, $date_end_at])
+            ->get();
+
+
+        return view('reports.general-information.index', compact('admissions'));
     }
 }
