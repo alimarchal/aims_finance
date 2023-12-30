@@ -1,9 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Fee List
-
-
+            Report
             <div class="flex justify-center items-center float-right">
                 <div class="flex justify-center items-center float-right">
                     <button onclick="window.print()" class="flex items-center px-4 py-2 text-gray-600 bg-white border rounded-lg focus:outline-none hover:bg-gray-100 transition-colors duration-200 transform dark:text-gray-200 dark:border-gray-200  dark:hover:bg-gray-700 ml-2" title="Members List">
@@ -33,12 +31,17 @@
             <form action="">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
 
+
                     <div>
-                        <label for="date" class="block text-gray-700 font-bold mb-2">Date</label>
-                        <input type="date" name="date" value="{{ request('filter.first_name') }}" id="date" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter name">
+                        <label for="start_date" class="block text-gray-700 font-bold mb-2">Start Date</label>
+                        <input type="date" name="start_date" value="{{ request('filter.start_date') }}" id="start_date" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter name">
                     </div>
 
-                    <div></div>
+                    <div>
+                        <label for="end_date" class="block text-gray-700 font-bold mb-2">End Date</label>
+                        <input type="date" name="end_date" value="{{ request('filter.end_date') }}" id="end_date" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter name">
+                    </div>
+
                     <div></div>
                     <div></div>
 
@@ -129,16 +132,16 @@
                                             $categoryName == "OPD (Out Door Patient)" && $feeTypeName == "Chit Fee" ||
                                             $categoryName == "OPD (Out Door Patient)" && $feeTypeName == "Chit Fee (Family OPD)"
                                             )
-                                            @if(request()->has('date'))
-                                                <a href="{{ route('chits.issued',['start_date' => request()->input('date'), 'end_date' => request()->input('date'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
+                                            @if(request()->has('start_date'))
+                                                <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
                                             @else
                                                 <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
                                             @endif
 
                                         @else
 
-                                            @if(request()->has('date'))
-                                                <a href="{{ route('invoice.issued',['start_date' => request()->input('date'), 'end_date' => request()->input('date'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
+                                            @if(request()->has('start_date'))
+                                                <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
                                             @else
                                                 <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
                                             @endif
@@ -153,16 +156,16 @@
                                             $categoryName == "OPD (Out Door Patient)" && $feeTypeName == "Chit Fee" ||
                                             $categoryName == "OPD (Out Door Patient)" && $feeTypeName == "Chit Fee (Family OPD)"
                                             )
-                                            @if(request()->has('date'))
-                                                <a href="{{ route('chits.issued',['start_date' => request()->input('date'), 'end_date' => request()->input('date'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
+                                            @if(request()->has('start_date'))
+                                                <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
                                             @else
                                                 <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
                                             @endif
 
                                         @else
 
-                                            @if(request()->has('date'))
-                                                <a href="{{ route('invoice.issued',['start_date' => request()->input('date'), 'end_date' => request()->input('date'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
+                                            @if(request()->has('start_date'))
+                                                <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
                                             @else
                                                 <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
                                             @endif

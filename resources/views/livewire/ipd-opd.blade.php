@@ -18,9 +18,9 @@
                         <option value="{{$dept->id}}" {{ old('department_id') === $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
                     @endforeach
                 @elseif($ipd_opd == 0)
-                    @foreach(\App\Models\Department::orderBy('name', 'ASC')->where('category','Emergency')->get() as $dept)
-                        <option value="{{$dept->id}}" {{ old('department_id') === $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
-                    @endforeach
+{{--                    @foreach(\App\Models\Department::orderBy('name', 'ASC')->where('category','Emergency')->get() as $dept)--}}
+{{--                        <option value="{{$dept->id}}" {{ old('department_id') === $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>--}}
+{{--                    @endforeach--}}
                 @endif
             @endif
         </select>

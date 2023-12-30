@@ -43,8 +43,18 @@
             <tr class="border-none">
                 <td class="font-extrabold">Patient Name:</td>
                 <td class="">{{ $patient->title . ' ' .$patient->first_name . ' ' . $patient->last_name }}</td>
-                <td class="font-extrabold">Age/Sex</td>
-                <td class="">{{ $patient->age . ' ' . $patient->years_months }}/{{ ($patient->sex == 1?'Male':'Female') }}
+
+
+                <td class="font-extrabold">
+                    @if(!empty($patient->relationship_title))
+                        {{ $patient->relationship_title }}
+                    @else
+                        Father / Husband
+                    @endif
+
+                </td>
+                <td class="">
+                    {{ $patient->father_husband_name }}
                 </td>
             </tr>
             <tr>
@@ -92,10 +102,17 @@
                     <td>Non-Entitled</td>
                     {{--                        <td class=" font-extrabold">Amount Payable:</td>--}}
                     {{--                        <td class="font-extrabold">Rs. {{$chit->amount}}</td>--}}
-                    <td class=" font-extrabold">Printed By:</td>
-                    <td>
-                        {{ auth()->user()->name }}
+
+
+                    <td class="font-extrabold">Age/Sex</td>
+                    <td class="">
+                        {{ $patient->age . ' ' . $patient->years_months }}/{{ ($patient->sex == 1?'Male':'Female') }}
                     </td>
+
+                    {{--                    <td class=" font-extrabold">Printed By:</td>--}}
+                    {{--                    <td>--}}
+                    {{--                        {{ auth()->user()->name }}--}}
+                    {{--                    </td>--}}
                 </tr>
             @endif
 
@@ -104,47 +121,52 @@
                     <td class="font-extrabold">Category:</td>
                     <td class="">Entitled</td>
 
-                    <td class=" font-extrabold">Printed By:</td>
-                    <td class="font-extrabold">
-                        {{ auth()->user()->name }}
+                    <td class="font-extrabold">Age/Sex</td>
+                    <td class="">
+                        {{ $patient->age . ' ' . $patient->years_months }}/{{ ($patient->sex == 1?'Male':'Female') }}
                     </td>
 
+                    {{--                    <td class=" font-extrabold">Printed By:</td>--}}
+                    {{--                    <td class="font-extrabold">--}}
+                    {{--                        {{ auth()->user()->name }}--}}
+                    {{--                    </td>--}}
 
-{{--                    <td class=" font-extrabold">--}}
-{{--                        Card No:--}}
-{{--                    </td>--}}
-{{--                    <td class="">--}}
-{{--                        {{$chit->government_card_no}}--}}
-{{--                    </td>--}}
+
+                    {{--                    <td class=" font-extrabold">--}}
+                    {{--                        Card No:--}}
+                    {{--                    </td>--}}
+                    {{--                    <td class="">--}}
+                    {{--                        {{$chit->government_card_no}}--}}
+                    {{--                    </td>--}}
                 </tr>
             @endif
 
             @if($chit->government_non_gov)
-{{--                <tr>--}}
-{{--                    <td class="font-extrabold">--}}
-{{--                        Department--}}
-{{--                    </td>--}}
-{{--                    <td colspan="3">--}}
-{{--                        @if(!empty($chit->government_department_id))--}}
-{{--                            {{ \App\Models\GovernmentDepartment::find($chit->government_department_id)->name }}--}}
-{{--                        @else--}}
-{{--                            @if($patient->government_non_gov == 1)--}}
-{{--                                {{ $patient->government_department->name }}--}}
-{{--                            @endif--}}
-{{--                        @endif--}}
-{{--                    </td>--}}
-{{--                </tr>--}}
+                {{--                <tr>--}}
+                {{--                    <td class="font-extrabold">--}}
+                {{--                        Department--}}
+                {{--                    </td>--}}
+                {{--                    <td colspan="3">--}}
+                {{--                        @if(!empty($chit->government_department_id))--}}
+                {{--                            {{ \App\Models\GovernmentDepartment::find($chit->government_department_id)->name }}--}}
+                {{--                        @else--}}
+                {{--                            @if($patient->government_non_gov == 1)--}}
+                {{--                                {{ $patient->government_department->name }}--}}
+                {{--                            @endif--}}
+                {{--                        @endif--}}
+                {{--                    </td>--}}
+                {{--                </tr>--}}
 
                 <tr>
-{{--                    <td class="font-extrabold">Designation:</td>--}}
-{{--                    <td class="">{{$chit->designation}}</td>--}}
+                    {{--                    <td class="font-extrabold">Designation:</td>--}}
+                    {{--                    <td class="">{{$chit->designation}}</td>--}}
 
-{{--                    <td class="font-extrabold"></td>--}}
-{{--                    <td class=""></td>--}}
-{{--                    <td class=" font-extrabold">Printed By:</td>--}}
-{{--                    <td class="font-extrabold">--}}
-{{--                        {{ auth()->user()->name }}--}}
-{{--                    </td>--}}
+                    {{--                    <td class="font-extrabold"></td>--}}
+                    {{--                    <td class=""></td>--}}
+                    {{--                    <td class=" font-extrabold">Printed By:</td>--}}
+                    {{--                    <td class="font-extrabold">--}}
+                    {{--                        {{ auth()->user()->name }}--}}
+                    {{--                    </td>--}}
                     {{--                        <td class=" font-extrabold">Amount Payable:</td>--}}
                     {{--                        <td class=" font-extrabold"> {{ $chit->amount }}</td>--}}
 
@@ -152,8 +174,17 @@
             @endif
 
             <tr>
-                <td colspan="4" style="margin: 0px; padding: 0px; font-size: 7px; text-align: center">
-                    <img src="{{ url('images/note.jpg') }}" alt="Note" style="height: 40px; margin: auto">
+                <td class=" font-extrabold">Printed By:</td>
+                <td>
+                    {{ auth()->user()->name }}
+                </td>
+            </tr>
+
+
+            <tr>
+                <td colspan="4" style="margin: 0px; padding: 0px; font-size: 10px; font-weight: bold; text-align: center">
+                    نوٹ : یہ کمپیوٹر سے تیار کردہ پرچی ہے اور ہم اس پرچی کی دوسری کاپی فراہم نہیں کریں گے۔
+                    فیس کی واپسی صرف ایک گھنٹے میں مکمن ہے۔
                 </td>
             </tr>
             <tr style="border-bottom: 1px solid black; margin: 0px; padding: 0px; font-size: 7px; text-align: center">

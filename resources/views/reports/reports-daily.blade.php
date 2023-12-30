@@ -5,18 +5,17 @@
                 @page {
                     margin-top: -30px;
                 }
+
                 table {
-                    font-size: 12px!important;
+                    font-size: 12px !important;
                 }
             }
         </style>
     @endsection
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight inline-block">
-            Patients
+            Report
         </h2>
-
-
         <div class="flex justify-center items-center float-right">
             <div class="flex justify-center items-center float-right">
                 <button onclick="window.print()" class="flex items-center px-4 py-2 text-gray-600 bg-white border rounded-lg focus:outline-none hover:bg-gray-100 transition-colors duration-200 transform dark:text-gray-200 dark:border-gray-200  dark:hover:bg-gray-700 ml-2" title="Members List">
@@ -37,8 +36,6 @@
                 <span class="hidden md:inline-block ml-2" style="font-size: 14px;">Search Filters</span>
             </a>
         </div>
-
-
     </x-slot>
 
 
@@ -48,25 +45,26 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
 
                     <div>
-                        <label for="date" class="block text-gray-700 font-bold mb-2">Date</label>
-                        <input type="date" name="date" value="{{ request('filter.first_name') }}" id="date" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter name">
+                        <label for="start_date" class="block text-gray-700 font-bold mb-2">Start Date</label>
+                        <input type="date" name="start_date" value="{{ request('filter.start_date') }}" id="start_date" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter name">
                     </div>
 
+                    <div>
+                        <label for="end_date" class="block text-gray-700 font-bold mb-2">End Date</label>
+                        <input type="date" name="end_date" value="{{ request('filter.end_date') }}" id="end_date" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter name">
+                    </div>
                     <div></div>
                     <div></div>
                     <div></div>
-
-
+                    <div></div>
+                    <div></div>
+                    <div></div>
                     <div class="flex items-center justify-between">
                         <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
                             Search
                         </button>
                     </div>
-
-
                 </div>
-
-
             </form>
         </div>
     </div>
@@ -79,35 +77,35 @@
             <x-success-message class="mb-4"/>
             <div class="bg-white overflow-hidden p-4">
                 <div class="overflow-x-auto">
-                        <div class="grid grid-cols-3 gap-4">
-                            <div></div> <!-- Empty column for spacing -->
-                            <div class="flex items-center justify-center">
-                                <img src="{{ \Illuminate\Support\Facades\Storage::url('Aimsa8 copy 2.png') }}" alt="Logo" style="width: 300px;">
-                            </div>
-                            <div class="flex flex-col items-end">
-                                @php
-                                    $date = null;
-                                    if(request()->has('date')) { $date = \Carbon\Carbon::parse(request('date'))->format('d-M-Y'); }
-                                    else { $date = now()->format('d-M-Y h:m:s'); }
-                                    $reporting_data = (string)  "Reporting Date: $date\nAIMS, Muzaffarabad, AJK";
-                                @endphp
-                                {!! DNS2D::getBarcodeSVG($reporting_data, 'QRCODE',3,3) !!}
-                            </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div></div> <!-- Empty column for spacing -->
+                        <div class="flex items-center justify-center">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url('Aimsa8 copy 2.png') }}" alt="Logo" style="width: 300px;">
                         </div>
+                        <div class="flex flex-col items-end">
+                            @php
+                                $date = null;
+                                if(request()->has('date')) { $date = \Carbon\Carbon::parse(request('date'))->format('d-M-Y'); }
+                                else { $date = now()->format('d-M-Y h:m:s'); }
+                                $reporting_data = (string)  "Reporting Date: $date\nAIMS, Muzaffarabad, AJK";
+                            @endphp
+                            {!! DNS2D::getBarcodeSVG($reporting_data, 'QRCODE',3,3) !!}
+                        </div>
+                    </div>
 
-                        @if(request()->has('date'))
-                            <p class="text-center font-extrabold mb-4">
-                                Report as of {{ \Carbon\Carbon::parse(request('date'))->format('d-M-Y h:m:s') }} - OPD Issued Chits
-                                <br>
-                                <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
-                            </p>
-                        @else
-                            <p class="text-center font-extrabold mb-4">
-                                Report as of {{ now()->format('d-M-Y h:m:s') }}  - OPD Issued Chits
-                                <br>
-                                <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
-                            </p>
-                        @endif
+                    @if(request()->has('date'))
+                        <p class="text-center font-extrabold mb-4">
+                            Report as of {{ \Carbon\Carbon::parse(request('date'))->format('d-M-Y h:m:s') }} - OPD Issued Chits
+                            <br>
+                            <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
+                        </p>
+                    @else
+                        <p class="text-center font-extrabold mb-4">
+                            Report as of {{ now()->format('d-M-Y h:m:s') }} - OPD Issued Chits
+                            <br>
+                            <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
+                        </p>
+                    @endif
                     <table class="table-auto w-full border-collapse border border-black">
                         <thead>
                         <tr class="border-black">
@@ -129,8 +127,23 @@
                             <tr class="border-black">
                                 <td class="border-black border px-4 py-2">{{ $loop->iteration }}</td>
                                 <td class="border-black border px-4 py-2">{{ $key }}</td>
-                                <td class="border-black border px-4 py-2 text-center">{{ $value['Entitiled'] }}</td>
-                                <td class="border-black border px-4 py-2 text-center">{{ $value['Non_Entitiled'] }}</td>
+                                <td class="border-black border px-4 py-2 text-center">
+
+                                    @if(request()->has('start_date') || request()->has('end_date'))
+                                        <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 1, 'filter[department_id]' => (!empty(($value['department_id'])) ? $value['department_id'] : '1')]) }}" class="text-blue-500 hover:underline">{{ $value['Entitiled'] }}</a>
+                                    @else
+                                        <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 1, 'filter[department_id]' => (!empty(($value['department_id'])) ? $value['department_id'] : '1')]) }}" class="text-blue-500 hover:underline">{{ $value['Entitiled'] }}</a>
+                                    @endif
+
+
+                                </td>
+                                <td class="border-black border px-4 py-2 text-center">
+                                    @if(request()->has('date'))
+                                        <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 0, 'filter[department_id]' => (!empty(($value['department_id'])) ? $value['department_id'] : '1')]) }}" class="text-blue-500 hover:underline"> {{ $value['Non_Entitiled'] }}</a>
+                                    @else
+                                        <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 0, 'filter[department_id]' => (!empty(($value['department_id'])) ? $value['department_id'] : '1')]) }}" class="text-blue-500 hover:underline"> {{ $value['Non_Entitiled'] }}</a>
+                                    @endif
+                                </td>
                                 <td class="border-black border px-4 py-2 text-right">{{ number_format($value['Revenue'],2) }}</td>
                             </tr>
                             @php
@@ -153,7 +166,6 @@
 
 
                 </div>
-
 
 
             </div>

@@ -23,6 +23,8 @@ class StorePatientRequest extends FormRequest
     {
         return [
             'first_name' => 'required',
+            'relationship_title' => 'required',
+            'father_husband_name' => 'required',
             'mobile' => 'required|regex:/^03\d{2}-\d{7}$/',
 
             'age' => 'required|integer|min:0',

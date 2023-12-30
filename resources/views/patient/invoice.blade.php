@@ -111,8 +111,9 @@
             </tr>
 
             <tr>
-                <td colspan="4" style="margin: 0px; padding: 0px; font-size: 7px; text-align: center">
-                    <img src="{{ url('images/note.jpg') }}" alt="Note" style="height: 40px; margin: auto">
+                <td colspan="4" style="margin: 0px; padding: 0px; font-size: 10px; font-weight: bold; text-align: center">
+                    نوٹ : یہ کمپیوٹر سے تیار کردہ پرچی ہے اور ہم اس پرچی کی دوسری کاپی فراہم نہیں کریں گے۔
+                    فیس کی واپسی صرف ایک گھنٹے میں مکمن ہے۔
                 </td>
             </tr>
             <tr style="border-bottom: 1px solid black; margin: 0px; padding: 0px; font-size: 7px; text-align: center">
@@ -196,7 +197,7 @@
                         <tr class="border-black">
                             <td class="border-black border text-left px-2 py-2">Address</td>
                             <td class="border-black border text-center" colspan="3">
-                                {{ $invoice->admission->address }} / {{ $invoice->admission->village }}  / {{ $invoice->admission->tehsil }} / {{ $invoice->admission->district }}
+                                {{ $invoice->admission->address }} , {{ $invoice->admission->village }}  , {{ $invoice->admission->tehsil }} , {{ $invoice->admission->district }}
                             </td>
                         </tr>
 

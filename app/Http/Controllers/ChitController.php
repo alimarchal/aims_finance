@@ -35,6 +35,8 @@ class ChitController extends Controller
     public function issue_new_chit_store(Request $request, Patient $patient)
     {
 
+
+
         $request->validate([
             'ipd_opd' => 'required',
             'government_department_id' => 'required_with:government_card_no,designation',
@@ -62,19 +64,48 @@ class ChitController extends Controller
             $fee_type_id = null;
             $ipd_opd = $request->ipd_opd;
 
+            $amount = null;
             if ($request->input('government_department_id')) {
                 $amount = 0.00;
-            } else {
-                if ($request->ipd_opd == 0) {
-                    $amount = FeeType::find(1)->amount;
-                    $request->merge(['fee_type_id' => 1]);
-                    $ipd_opd = 0;
+                if ($request->department_id == 7) {
+                    $fee_type_id = 108;
+                } else if ($request->department_id == 1) {
+                    // For emergency
+                    $fee_type_id = 1;
+                } else if ($request->department_id == 16) {
+                    // For Cardiology
+                    $fee_type_id = 1;
                 } else {
+                    $fee_type_id = 107;
+                }
+            } else {
+                if ($request->department_id == 7) {
+                    $amount = FeeType::find(108)->amount;
+                    $fee_type_id = 108;
+                } else if ($request->department_id == 1) {
+                    // For emergency
+                    $amount = FeeType::find(1)->amount;
+                    $fee_type_id = 1;
+                } else if ($request->department_id == 16) {
+                    // For Cardiology
+                    $amount = FeeType::find(19)->amount;
+                    $fee_type_id = 1;
+                } else {
+                    $fee_type_id = 107;
                     $amount = FeeType::find(107)->amount;
-                    $request->merge(['fee_type_id' => 107]);
                 }
             }
-//            dd($request->all());
+
+            if ($request->has('ipd_opd')) {
+                $ipd_opd = 0;
+            } else {
+                $ipd_opd = 1;
+            }
+
+
+
+
+
             // this is for opd and ipd
             $chit = Chit::create([
                 'user_id' => $request->user_id,
@@ -96,12 +127,6 @@ class ChitController extends Controller
             // something went wrong
         }
 
-//        foreach ($request->patient_test as $pt) {
-//            PatientTestCart::create([
-//                'patient_id' => $patient->id,
-//                'lab_test_id' => $pt,
-//            ]);
-//        }
         return to_route('chit.print', [$patient->id, $chit->id]);
     }
 

@@ -20,6 +20,7 @@ class Patient extends Model
         'title',
         'first_name',
         'last_name',
+        'relationship_title',
         'father_husband_name',
         'age',
         'years_months',

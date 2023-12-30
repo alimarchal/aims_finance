@@ -565,7 +565,6 @@ class PatientController extends Controller
             $request->merge(['email_alert' => 0]);
         }
 
-//        dd($request->all());
         $patient->update($request->all());
         return redirect()->route('patient.index')->with('message', 'Patient updated successfully!');
     }
