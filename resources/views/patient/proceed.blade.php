@@ -150,9 +150,9 @@
                                         <option value="">Select Test / Bill Type</option>
                                         @foreach(\App\Models\FeeType::orderBy('type', 'ASC')->get() as $fee_type)
 
-                                            @if($fee_type->id == 110 || $fee_type->id == 111 || $fee_type->id == 112)
+                                            @if($fee_type->id >= 110)
                                                 @role('Administrator')
-                                                <option value="{{$fee_type->id}}" {{ old('fee_type_id') === $fee_type->id ? 'selected' : '' }}>{{ $fee_type->type }}</option>
+                                                    <option value="{{$fee_type->id}}" {{ old('fee_type_id') === $fee_type->id ? 'selected' : '' }}>{{ $fee_type->type }}</option>
                                                 @endrole
                                             @else
                                                 <option value="{{$fee_type->id}}" {{ old('fee_type_id') === $fee_type->id ? 'selected' : '' }}>{{ $fee_type->type }}</option>

@@ -75,7 +75,7 @@
                         <div class="flex flex-col items-end">
                             @php
                                 $date = null;
-                                if(request()->has('date')) { $date = \Carbon\Carbon::parse(request('date'))->format('d-M-Y'); }
+                                if(request()->has('start_date')) { $date = \Carbon\Carbon::parse(request('start_date'))->format('d-M-Y'); }
                                 else { $date = now()->format('d-M-Y h:m:s'); }
                                 $reporting_data = (string)  "Reporting Date: $date\nAIMS, Muzaffarabad, AJK\nDepartment Wise Report";
                             @endphp
@@ -83,9 +83,9 @@
                         </div>
                     </div>
 
-                    @if(request()->has('date'))
+                    @if(request()->has('start_date'))
                         <p class="text-center font-extrabold mb-4">
-                            Report as of {{ \Carbon\Carbon::parse(request('date'))->format('d-M-Y h:m:s') }} - Department Wise Report
+                            Report from {{ \Carbon\Carbon::parse(request('start_date'))->format('d-M-Y') }} to {{ \Carbon\Carbon::parse(request('end_date'))->format('d-M-Y') }} - Department Wise Report
                             <br>
                             <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
                         </p>

@@ -116,9 +116,9 @@
                             </div>
                         </div>
 
-                        @if(request()->has('date'))
+                        @if(request()->has('start_date'))
                             <p class="text-center font-extrabold mb-4">
-                                Report as of {{ \Carbon\Carbon::parse(request('date'))->format('d-M-Y h:m:s') }}
+                                Report from {{ \Carbon\Carbon::parse(request('start_date'))->format('d-M-Y') }} to {{ \Carbon\Carbon::parse(request('end_date'))->format('d-M-Y') }}
                                 <br>
                                 <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
                             </p>
