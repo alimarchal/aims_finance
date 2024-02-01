@@ -371,13 +371,14 @@ class PatientController extends Controller
     public function proceed_to_invoice(\Illuminate\Http\Request $request, Patient $patient)
     {
 
-
         $request->validate([
             'terms' => 'required'
         ]);
 
 
         $patient_tests_in_carts = PatientTestCart::where('patient_id', $patient->id)->get();
+
+
         if ($patient_tests_in_carts->isEmpty()) {
             return to_route('patient.proceed', $patient->id)->with('error', 'You must select and then press the add button for a specific invoice.');
         }
@@ -387,7 +388,6 @@ class PatientController extends Controller
 
         try {
 
-
             $user_id = auth()->user()->id;
             $patient_id = $patient->id;
             $total_all_amount = 0;
@@ -396,6 +396,8 @@ class PatientController extends Controller
                 'patient_id' => $patient_id,
                 'government_non_government' => $patient->government_non_gov,
             ]);
+
+
             foreach ($patient_tests_in_carts as $ptc) {
                 $total_amount = 0;
                 if ($patient->government_non_gov == 1) {
@@ -440,10 +442,12 @@ class PatientController extends Controller
             }
 
 
+
             if ($request->has('admission_form_return') && $request->admission_form_return == 1) {
                 $invoice = Invoice::find($request->admission_no);
+
                 if (!empty($invoice)) {
-                    $admission = Admission::find($invoice->admission->id);
+                    $admission = Admission::find($invoice->id);
                     $admission->status = "Yes";
                     $admission->save();
                 } else {
