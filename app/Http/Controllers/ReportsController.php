@@ -134,6 +134,7 @@ class ReportsController extends Controller
         return view('reports.category-wise.misc');
     }
 
+
     public function categoryWise(Request $request)
     {
         $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
@@ -142,7 +143,12 @@ class ReportsController extends Controller
         $date_start_at = $start_date . ' 00:00:00';
         $date_end_at = $end_date . ' 23:59:59';
 
-        $fee_categories = FeeCategory::with('feeTypes')->get();
+//        $fee_categories = FeeCategory::with('feeTypes')->get();
+        $fee_categories = QueryBuilder::for(FeeCategory::class)
+            ->allowedFilters('name')
+            ->allowedIncludes('feeTypes')
+            ->get();
+
         $categories = [];
 
         foreach ($fee_categories as $fee_cat) {

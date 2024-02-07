@@ -42,6 +42,17 @@
                         <input type="date" name="end_date" value="{{ request('filter.end_date') }}" id="end_date" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" placeholder="Enter name">
                     </div>
 
+
+                    <div>
+                        <x-label for="category_name" value="Category" :required="false"/>
+                        <select name="filter[name]" id="category_name" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
+                            <option value="">None</option>
+                            @foreach(\App\Models\FeeCategory::orderBy('name', 'ASC')->get() as $aw)
+                                <option value="{{ $aw->name }}" {{ old('name') === $aw->name ? 'selected' : '' }}>{{ $aw->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div></div>
                     <div></div>
 

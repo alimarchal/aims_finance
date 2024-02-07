@@ -31,6 +31,9 @@ class FeeTypeController extends Controller
      */
     public function store(StoreFeeTypeRequest $request)
     {
+        if ($request->amount < 0){
+            $request->merge(['status' => 'Return Fee']);
+        }
         $feeTypes = FeeType::create($request->all());
         return to_route('feeType.index')->with('message', 'Fee type has been created successfully!');
     }
@@ -56,6 +59,9 @@ class FeeTypeController extends Controller
      */
     public function update(UpdateFeeTypeRequest $request, FeeType $feeType)
     {
+        if ($request->amount < 0){
+            $request->merge(['status' => 'Return Fee']);
+        }
         $feeType->update($request->all());
         return to_route('feeType.index')->with('message', 'Fee type has been updated successfully!');
     }

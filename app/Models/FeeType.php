@@ -13,6 +13,7 @@ class FeeType extends Model
         'fee_category_id',
         'type',
         'amount',
+        'status',
     ];
 
     public function feeCategory()

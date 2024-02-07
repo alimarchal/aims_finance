@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('fee_category_id')->constrained();
             $table->string('type')->nullable();
             $table->decimal('amount',14,2);
+            $table->enum('status',['Normal','Return Fee'])->default('Normal');
             $table->timestamps();
         });
 

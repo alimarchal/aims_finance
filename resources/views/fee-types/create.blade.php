@@ -41,7 +41,7 @@
                         <label class="block text-gray-700 font-bold mb-2" for="name">
                             Total Fee
                         </label>
-                        <input name="amount" id="name" type="number" min="0.0" step="0.00"  placeholder="Total Fee" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <input name="amount" id="name" type="number" step="0.00"  placeholder="Total Fee" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                         @error('amount')
                         <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror

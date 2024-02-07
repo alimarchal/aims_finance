@@ -47,8 +47,16 @@
             <tr class="border-none">
                 <td class="font-extrabold">Patient Name:</td>
                 <td class="">{{ $patient->title . ' ' .$patient->first_name . ' ' . $patient->last_name }}</td>
-                <td class="font-extrabold">Age/Sex</td>
-                <td class="">{{ $patient->age . ' ' . $patient->years_months }}/{{ ($patient->sex == 1?'Male':'Female') }}
+                <td class="font-extrabold">
+                    @if(!empty($patient->relationship_title))
+                        {{ $patient->relationship_title }}
+                    @else
+                        Father / Husband
+                    @endif
+
+                </td>
+                <td class="">
+                    {{ $patient->father_husband_name }}
                 </td>
             </tr>
             <tr>
@@ -78,9 +86,8 @@
                     @endif
 
                 </td>
-                <td class=" font-extrabold">Issued By:</td>
-                <td class="">
-                    {{ \App\Models\User::find($invoice->user_id)->name }}
+                <td class="font-extrabold">Age/Sex</td>
+                <td class="">{{ $patient->age . ' ' . $patient->years_months }}/{{ ($patient->sex == 1?'Male':'Female') }}
                 </td>
             </tr>
 
@@ -106,6 +113,12 @@
                 </td>
             </tr>
 
+            <tr>
+                <td class=" font-extrabold">Issued By:</td>
+                <td class="">
+                    {{ \App\Models\User::find($invoice->user_id)->name }}
+                </td>
+            </tr>
             <tr style="font-size: 16px; text-align: center" class="font-extrabold">
                 <td colspan="4"> آپ کا نمبر ہے ({{$chitNumber}})</td>
             </tr>

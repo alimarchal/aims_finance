@@ -34,7 +34,7 @@
 {{--                            <th class="border-black border px-4 py-2">Type</th>--}}
                             <th class="border-black border px-4 py-2">Name</th>
                             <th class="border-black border px-4 py-2">Fee</th>
-{{--                            <th class="border-black border px-4 py-2 print:hidden">Edit</th>--}}
+                            <th class="border-black border px-4 py-2 print:hidden">Edit</th>
 {{--                            <th class="border-black border px-4 py-2 print:hidden">Delete</th>--}}
                         </tr>
                         </thead>
@@ -53,13 +53,13 @@
                                     <td class="border-black border px-4 py-2 text-center print:hidden">
                                         <a href="{{ route('feeType.edit', $feeType->id) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
                                     </td>
-                                    <td class="border-black border px-4 py-2 text-center print:hidden">
-                                        <form action="{{ route('feeType.destroy', $feeType->id) }}" method="POST" class="inline-block">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" onclick="return confirm('Are you sure you want to delete this lab test?')" class="text-red-600 hover:text-red-900">Delete</button>
-                                        </form>
-                                    </td>
+{{--                                    <td class="border-black border px-4 py-2 text-center print:hidden">--}}
+{{--                                        <form action="{{ route('feeType.destroy', $feeType->id) }}" method="POST" class="inline-block">--}}
+{{--                                            @csrf--}}
+{{--                                            @method('DELETE')--}}
+{{--                                            <button type="submit" onclick="return confirm('Are you sure you want to delete this lab test?')" class="text-red-600 hover:text-red-900">Delete</button>--}}
+{{--                                        </form>--}}
+{{--                                    </td>--}}
                                 </tr>
                             @endforeach
                         @endforeach

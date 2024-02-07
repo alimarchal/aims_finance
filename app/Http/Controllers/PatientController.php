@@ -442,7 +442,6 @@ class PatientController extends Controller
             }
 
 
-
             if ($request->has('admission_form_return') && $request->admission_form_return == 1) {
                 $invoice = Invoice::find($request->admission_no);
 
@@ -500,7 +499,13 @@ class PatientController extends Controller
         }
         if (!empty($invoice->patient_test_latest->fee_type)) {
             $fee_category = $invoice->patient_test_latest->fee_type->type;
-            $fee_category_main = FeeCategory::find($invoice->patient_test_latest->fee_type->fee_category_id)->name;
+            $fee_cat_id = FeeCategory::find($invoice->patient_test_latest->fee_type->fee_category_id)->id;
+
+            if ($fee_cat_id >= 8 && $fee_cat_id <= 12) {
+                $fee_category_main = "Pathology";
+            } else {
+                $fee_category_main = FeeCategory::find($invoice->patient_test_latest->fee_type->fee_category_id)->name;
+            }
         }
 
 
