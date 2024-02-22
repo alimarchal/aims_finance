@@ -128,12 +128,11 @@
                                     <td class="border-black border px-4 py-2">{{ $count }} @php $count++; @endphp</td>
                                     <!-- Category Name -->
                                     @if ($loop->first)
-                                        <td rowspan="{{ count($feeTypes) }}" class="border-black text-center border px-4 py-2">{{ $categoryName }}</td>
+                                        <td rowspan="{{ count($feeTypes) }}" class="border-black text-center border px-4 py-2">{{ \App\Models\FeeCategory::find($categoryName)->name }}</td>
                                     @endif
 
                                     <!-- Fee Type Name -->
-                                    <td class="border-black border px-4 py-2">{{ $feeTypeName }}</td>
-
+                                    <td class="border-black border px-4 py-2">{{ \App\Models\FeeType::find($feeTypeName)->type }}</td>
                                     <!-- Fee Type Details -->
                                     <td class="border-black border text-center px-4 py-2">
 
@@ -144,7 +143,7 @@
                                             $categoryName == "OPD (Out Door Patient)" && $feeTypeName == "Chit Fee (Family OPD)"
                                             )
                                             @if(request()->has('start_date'))
-                                                <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
+                                                <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $feeTypeDetails['fee_type_id']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
                                             @else
                                                 <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
                                             @endif
@@ -152,9 +151,9 @@
                                         @else
 
                                             @if(request()->has('start_date'))
-                                                <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
+                                                <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type_id']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
                                             @else
-                                                <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
+                                                <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type_id']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Non Entitled'],0) }}</a>
                                             @endif
                                         @endif
 
@@ -168,17 +167,17 @@
                                             $categoryName == "OPD (Out Door Patient)" && $feeTypeName == "Chit Fee (Family OPD)"
                                             )
                                             @if(request()->has('start_date'))
-                                                <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
+                                                <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $feeTypeDetails['fee_type_id']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
                                             @else
-                                                <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
+                                                <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $feeTypeDetails['fee_type_id']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
                                             @endif
 
                                         @else
 
                                             @if(request()->has('start_date'))
-                                                <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
+                                                <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type_id']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
                                             @else
-                                                <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
+                                                <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $feeTypeDetails['fee_type_id']]) }}" class="text-blue-500 hover:underline">{{ number_format($feeTypeDetails['Entitled'],0) }}</a>
                                             @endif
                                         @endif
 

@@ -6,6 +6,7 @@ use App\Models\Admission;
 use App\Models\Chit;
 use App\Models\Department;
 use App\Models\FeeCategory;
+use App\Models\FeeType;
 use App\Models\Invoice;
 use App\Models\Patient;
 use App\Models\PatientTest;
@@ -20,7 +21,6 @@ class ReportsController extends Controller
 {
     public function reportDaily(Request $request)
     {
-
         $user = \Auth::user();
         $issued_invoices = null;
 
@@ -89,8 +89,9 @@ class ReportsController extends Controller
             $user_id = $request->user_id;
             $roleName = 'Front Desk/Receptionist';
             $users = \App\Models\User::role($roleName)->where('id', $user_id)->get();
-        } else {
-            $users = \App\Models\User::role($roleName)->get();
+        }
+        else {
+            $users = \App\Models\User::where('id', '!=', 2)->get();
         }
 
 
@@ -100,7 +101,8 @@ class ReportsController extends Controller
 
 
         foreach ($users as $user) {
-            $data[$user->id] = ['Name' => $user->name,
+            $data[$user->id] = [
+                'Name' => $user->name,
                 'Invoices Entitled' => Invoice::whereBetween('created_at', [$date_start_at, $date_end_at])->where('user_id', $user->id)->where('government_non_government', 1)->count(),
                 'Invoices Non Entitled' => Invoice::whereBetween('created_at', [$date_start_at, $date_end_at])->where('user_id', $user->id)->where('government_non_government', 0)->count(),
                 'Invoices' => Invoice::whereBetween('created_at', [$date_start_at, $date_end_at])->where('user_id', $user->id)->sum('total_amount'),
@@ -109,7 +111,6 @@ class ReportsController extends Controller
                 'Chit Non Entitled' => Chit::whereBetween('created_at', [$date_start_at, $date_end_at])->where('user_id', $user->id)->where('government_non_gov', 0)->count(),
             ];
         }
-
 
         return view('reports.reports-daily-ipd', compact('data'));
     }
@@ -143,11 +144,40 @@ class ReportsController extends Controller
         $date_start_at = $start_date . ' 00:00:00';
         $date_end_at = $end_date . ' 23:59:59';
 
-//        $fee_categories = FeeCategory::with('feeTypes')->get();
         $fee_categories = QueryBuilder::for(FeeCategory::class)
             ->allowedFilters('name')
             ->allowedIncludes('feeTypes')
             ->get();
+
+// OLD ---
+//        $categories = [];
+//
+//        foreach ($fee_categories as $fee_cat) {
+//            foreach ($fee_cat->feeTypes as $fee_type) {
+//                // Append the fee type to the category array
+//                if ($fee_type->id == 107 || $fee_type->id == 108 || $fee_type->id == 19 || $fee_type->id == 1) {
+//                    $categories[$fee_cat->name][$fee_type->type] = [
+//                        'Non Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->count(),
+//                        'Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 1)->count(),
+//                        'Revenue' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('amount'),
+//                        'fee_category_id' => $fee_cat->id,
+//                        'fee_type_id' => $fee_type->id
+//                    ];
+//                }
+//                else {
+//                    $categories[$fee_cat->name][$fee_type->type] = [
+//                        'Non Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->count(),
+//                        'Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 1)->count(),
+//                        'Revenue' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('total_amount'),
+//                        'fee_category_id' => $fee_cat->id,
+//                        'fee_type_id' => $fee_type->id
+//                    ];
+//                }
+//            }
+//        }
+
+
+
 
         $categories = [];
 
@@ -155,20 +185,21 @@ class ReportsController extends Controller
             foreach ($fee_cat->feeTypes as $fee_type) {
                 // Append the fee type to the category array
                 if ($fee_type->id == 107 || $fee_type->id == 108 || $fee_type->id == 19 || $fee_type->id == 1) {
-                    $categories[$fee_cat->name][$fee_type->type] = [
+                    $categories[$fee_cat->id][$fee_type->id] = [
                         'Non Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->count(),
                         'Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 1)->count(),
                         'Revenue' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('amount'),
                         'fee_category_id' => $fee_cat->id,
-                        'fee_type' => $fee_type->id
-                        ];
-                } else {
-                    $categories[$fee_cat->name][$fee_type->type] = [
+                        'fee_type_id' => $fee_type->id
+                    ];
+                }
+                else {
+                    $categories[$fee_cat->id][$fee_type->id] = [
                         'Non Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->count(),
                         'Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 1)->count(),
                         'Revenue' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('total_amount'),
                         'fee_category_id' => $fee_cat->id,
-                        'fee_type' => $fee_type->id
+                        'fee_type_id' => $fee_type->id
                     ];
                 }
             }
@@ -185,7 +216,7 @@ class ReportsController extends Controller
         $date_start_at = $start_date . ' 00:00:00';
         $date_end_at = $end_date . ' 23:59:59';
 
-        $admissions = QueryBuilder::for(Admission::class)->with('invoice','patient')
+        $admissions = QueryBuilder::for(Admission::class)->with('invoice', 'patient')
             ->allowedFilters([
                 'patient.sex',
                 'disease',

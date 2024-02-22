@@ -165,7 +165,7 @@
                         @foreach($data as $key => $value)
                             <tr class="border-black">
                                 <td class="border-black border px-4 py-2">{{ $loop->iteration }}</td>
-                                <td class="border-black border px-4 py-2 text-left">{{ $value['Name'] }} - {{ $key }}</td>
+                                <td class="border-black border px-4 py-2 text-left">{{ $value['Name'] }}</td>
                                 <td class="border-black border px-4 py-2 text-center">
                                     @if(request()->has('start_date') || request()->has('end_date'))
                                         <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[user_id]='=> $key, 'filter[government_non_government]' => 1]) }}" class="text-blue-500 hover:underline">{{ number_format($value['Invoices Entitled'],0) }}</a>
