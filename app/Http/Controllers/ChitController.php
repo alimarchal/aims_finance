@@ -34,9 +34,6 @@ class ChitController extends Controller
 
     public function issue_new_chit_store(Request $request, Patient $patient)
     {
-
-
-
         $request->validate([
             'ipd_opd' => 'required',
             'government_department_id' => 'required_with:government_card_no,designation',
@@ -50,6 +47,7 @@ class ChitController extends Controller
         $count_chit_of_today = Chit::where('department_id', $request->department_id)->where('issued_date', '>=', Carbon::today())->count();
         $count_chit_of_today_limit = Department::where('id', $request->department_id)->first()->daily_patient_limit;
         $count_chit_of_today++;
+        $chit = null;
         // 46 >= 51
         if ($count_chit_of_today_limit <= $count_chit_of_today) {
             return to_route('patient.create')->with('error', 'OPD today\'s limit has been reached to maximum limit of ' . $count_chit_of_today_limit . ' as assigned by OPD.');
@@ -59,51 +57,83 @@ class ChitController extends Controller
         DB::beginTransaction();
 
         try {
-
             $amount = null;
             $fee_type_id = null;
             $ipd_opd = $request->ipd_opd;
-
             $amount = null;
+            $amount_hif = 0;
             if ($request->input('government_department_id')) {
                 $amount = 0.00;
+                $amount_hif = 0.00;
                 if ($request->department_id == 7) {
-                    $fee_type_id = 108;
-                } else if ($request->department_id == 1) {
-                    // For emergency
-                    $fee_type_id = 1;
-                } else if ($request->department_id == 16) {
-                    // For Cardiology
-                    $fee_type_id = 1;
-                } else {
-                    $fee_type_id = 107;
+//                    $fee_type_id = 108;
+                    $fee_type_id = FeeType::find(108)->id;
+                    $amount = FeeType::find(108)->amount;
+                    $amount_hif = FeeType::find(108)->hif;
                 }
-            } else {
+                else {
+                    if ($request->department_id == 1) {
+
+
+                        // For emergency
+//                    $fee_type_id = 1;
+                        $fee_type_id = FeeType::find(1)->id;
+                        $amount = FeeType::find(1)->amount;
+                        $amount_hif = FeeType::find(1)->hif;
+                    }
+                    else {
+                        if ($request->department_id == 16) {
+                            // For Cardiology
+//                    $fee_type_id = 1;
+                            $fee_type_id = FeeType::find(1)->id;
+                            $amount = FeeType::find(1)->amount;
+                            $amount_hif = FeeType::find(1)->hif;
+                        }
+                        else {
+//                    $fee_type_id = 107;
+                            $fee_type_id = FeeType::find(107)->id;
+                            $amount = FeeType::find(107)->amount;
+                            $amount_hif = FeeType::find(107)->hif;
+                        }
+                    }
+                }
+            }
+            else {
+//                dd($request->all());
                 if ($request->department_id == 7) {
                     $amount = FeeType::find(108)->amount;
+                    $amount_hif = FeeType::find(108)->hif;
                     $fee_type_id = 108;
-                } else if ($request->department_id == 1) {
-                    // For emergency
-                    $amount = FeeType::find(1)->amount;
-                    $fee_type_id = 1;
-                } else if ($request->department_id == 16) {
-                    // For Cardiology
-                    $amount = FeeType::find(19)->amount;
-                    $fee_type_id = 1;
-                } else {
-                    $fee_type_id = 107;
-                    $amount = FeeType::find(107)->amount;
+                }
+                else {
+                    if ($request->department_id == 1) {
+                        // For emergency
+                        $amount = FeeType::find(1)->amount;
+                        $amount_hif = FeeType::find(1)->hif;
+                        $fee_type_id = 1;
+                    }
+                    else {
+                        if ($request->department_id == 16) {
+                            // For Cardiology
+                            $amount = FeeType::find(19)->amount;
+                            $amount_hif = FeeType::find(19)->hif;
+                            $fee_type_id = 1;
+                        }
+                        else {
+                            $fee_type_id = 107;
+                            $amount = FeeType::find(107)->amount;
+                            $amount_hif = FeeType::find(107)->hif;
+                        }
+                    }
                 }
             }
 
             if ($request->has('ipd_opd')) {
                 $ipd_opd = 0;
-            } else {
+            }
+            else {
                 $ipd_opd = 1;
             }
-
-
-
 
 
             // this is for opd and ipd
@@ -118,6 +148,7 @@ class ChitController extends Controller
                 'fee_type_id' => $fee_type_id,
                 'issued_date' => now(),
                 'amount' => $amount,
+                'amount_hif' => $amount_hif,
                 'ipd_opd' => $ipd_opd,
                 'payment_status' => 1,
             ]);
@@ -144,8 +175,8 @@ class ChitController extends Controller
 //                ->where('user_id', $user->id)->where('ipd_opd', 1)->whereDate('issued_date', Carbon::today())
 //                ->orderByDesc('created_at') // Corrected 'DSEC' to 'DESC'
                 ->paginate(500);
-
-        } elseif ($user->hasRole(['Administrator'])) {
+        }
+        elseif ($user->hasRole(['Administrator'])) {
             $issued_chits = QueryBuilder::for(Chit::class)
                 ->allowedFilters(['patient_id', 'fee_type_id', 'government_department_id', 'issued_date', 'ipd_opd', 'government_card_no', AllowedFilter::exact('government_non_gov'), AllowedFilter::exact('id'), AllowedFilter::exact('department_id')],)
                 ->whereDate('issued_date', Carbon::today())
@@ -159,12 +190,12 @@ class ChitController extends Controller
 
     public function issued(Request $request)
     {
-
         $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
         $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
 
         $date_start_at = $start_date . ' 00:00:00';
         $date_end_at = $end_date . ' 23:59:59';
+
 
         $user = \Auth::user();
         $issued_chits = null;

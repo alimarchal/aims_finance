@@ -32,24 +32,24 @@ class ReportsController extends Controller
 
         $data = null;
         foreach (Department::where('name', '!=', 'Emergency')->get() as $dpt) {
-            $data[$dpt->name] = ['Non_Entitiled' => 0, 'Entitiled' => 0, 'Revenue' => 0, 'department_id' => $dpt->id];
+            $data[$dpt->name] = ['Non_Entitiled' => 0, 'Entitiled' => 0, 'Revenue' => 0, 'Revenue_HIF' => 0, 'department_id' => $dpt->id];
         }
 
         $non_entitled = DB::table('chits')
             ->join('departments', 'chits.department_id', '=', 'departments.id')
-            ->select('departments.name', DB::raw('COUNT(chits.government_non_gov) AS Non_Entitiled'), DB::raw('SUM(chits.amount) as Revenue'))
+            ->select('departments.name', DB::raw('COUNT(chits.government_non_gov) AS Non_Entitiled'), DB::raw('SUM(chits.amount) as Revenue, SUM(chits.amount_hif) as Revenue_HIF'))
             ->whereBetween('chits.issued_date', [$date_start_at, $date_end_at])
             ->where('chits.government_non_gov', 0)
-            ->where('ipd_opd', 1)
+            ->whereIn('ipd_opd', [1,0])
             ->groupBy('chits.department_id')
             ->get();
 
         $entitled = DB::table('chits')
             ->join('departments', 'chits.department_id', '=', 'departments.id')
-            ->select('departments.name', DB::raw('COUNT(chits.government_non_gov) AS Entitiled'), DB::raw('SUM(chits.amount) as Revenue'))
+            ->select('departments.name', DB::raw('COUNT(chits.government_non_gov) AS Entitiled'), DB::raw('SUM(chits.amount) as Revenue, SUM(chits.amount_hif) as Revenue_HIF'))
             ->whereBetween('chits.issued_date', [$date_start_at, $date_end_at])
             ->where('chits.government_non_gov', 1)
-            ->where('ipd_opd', 1)
+            ->whereIn('ipd_opd', [1,0])
             ->groupBy('chits.department_id')
             ->get();
 
@@ -58,12 +58,17 @@ class ReportsController extends Controller
         foreach ($non_entitled as $row) {
             $data[$row->name]['Non_Entitiled'] = $row->Non_Entitiled;
             $data[$row->name]['Revenue'] = $row->Revenue;
+            $data[$row->name]['Revenue_HIF'] = $row->Revenue_HIF;
         }
 
 
         foreach ($entitled as $row) {
             $data[$row->name]['Entitiled'] = $row->Entitiled;
         }
+
+
+//        dd($data);
+
 
         return view('reports.reports-daily', compact('data'));
     }
@@ -96,7 +101,7 @@ class ReportsController extends Controller
 
 
         foreach ($users as $user) {
-            $data[$user->id] = ['Name' => $user->name, 'Invoices' => 0, 'Chits' => 0, 'Invoices Entitled' => 0, 'Invoices Non Entitled' => 0, 'Chit Entitled' => 0, 'Chit Non Entitled' => 0];
+            $data[$user->id] = ['Name' => $user->name, 'Invoices' => 0,  'Invoices HIF' => 0,  'Chits' => 0, 'Chits HIF' => 0, 'Invoices Entitled' => 0, 'Invoices Non Entitled' => 0, 'Chit Entitled' => 0, 'Chit Non Entitled' => 0];
         }
 
 
@@ -106,11 +111,15 @@ class ReportsController extends Controller
                 'Invoices Entitled' => Invoice::whereBetween('created_at', [$date_start_at, $date_end_at])->where('user_id', $user->id)->where('government_non_government', 1)->count(),
                 'Invoices Non Entitled' => Invoice::whereBetween('created_at', [$date_start_at, $date_end_at])->where('user_id', $user->id)->where('government_non_government', 0)->count(),
                 'Invoices' => Invoice::whereBetween('created_at', [$date_start_at, $date_end_at])->where('user_id', $user->id)->sum('total_amount'),
+                'Invoices HIF' => Invoice::whereBetween('created_at', [$date_start_at, $date_end_at])->where('user_id', $user->id)->sum('hif_amount'),
                 'Chits' => Chit::whereBetween('created_at', [$date_start_at, $date_end_at])->where('user_id', $user->id)->sum('amount'),
+                'Chits HIF' => Chit::whereBetween('created_at', [$date_start_at, $date_end_at])->where('user_id', $user->id)->sum('amount_hif'),
                 'Chit Entitled' => Chit::whereBetween('created_at', [$date_start_at, $date_end_at])->where('user_id', $user->id)->where('government_non_gov', 1)->count(),
                 'Chit Non Entitled' => Chit::whereBetween('created_at', [$date_start_at, $date_end_at])->where('user_id', $user->id)->where('government_non_gov', 0)->count(),
             ];
         }
+
+//        dd($data);
 
         return view('reports.reports-daily-ipd', compact('data'));
     }
@@ -144,7 +153,7 @@ class ReportsController extends Controller
         $date_start_at = $start_date . ' 00:00:00';
         $date_end_at = $end_date . ' 23:59:59';
 
-        $fee_categories = QueryBuilder::for(FeeCategory::class)
+        $fee_categories = QueryBuilder::for(FeeCategory::class)->with('feeTypes')
             ->allowedFilters('name')
             ->allowedIncludes('feeTypes')
             ->get();
@@ -182,13 +191,26 @@ class ReportsController extends Controller
         $categories = [];
 
         foreach ($fee_categories as $fee_cat) {
-            foreach ($fee_cat->feeTypes as $fee_type) {
+            $fee_types_relation = null;
+            if ($request->input('status')) {
+                // The filter exists, retrieve its value
+                $status = $request->input('status');
+
+                $fee_types_relation = $fee_cat->feeTypes->where('status',$status);
+            } else {
+                // The filter does not exist, handle the case accordingly
+                $fee_types_relation = $fee_cat->feeTypes;
+            }
+
+
+            foreach ($fee_types_relation as $fee_type) {
                 // Append the fee type to the category array
                 if ($fee_type->id == 107 || $fee_type->id == 108 || $fee_type->id == 19 || $fee_type->id == 1) {
                     $categories[$fee_cat->id][$fee_type->id] = [
                         'Non Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->count(),
                         'Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 1)->count(),
                         'Revenue' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('amount'),
+                        'HIF' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('amount_hif'),
                         'fee_category_id' => $fee_cat->id,
                         'fee_type_id' => $fee_type->id
                     ];
@@ -198,12 +220,15 @@ class ReportsController extends Controller
                         'Non Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->count(),
                         'Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 1)->count(),
                         'Revenue' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('total_amount'),
+                        'HIF' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('hif_amount'),
                         'fee_category_id' => $fee_cat->id,
                         'fee_type_id' => $fee_type->id
                     ];
                 }
             }
         }
+
+//        dd($categories);
 
         return view('reports.category-wise.index', compact('categories'));
     }

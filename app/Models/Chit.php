@@ -17,6 +17,7 @@ class Chit extends Model
         'fee_type_id',
         'issued_date',
         'amount',
+        'amount_hif',
         'ipd_opd',
         'payment_status',
         'government_non_gov',

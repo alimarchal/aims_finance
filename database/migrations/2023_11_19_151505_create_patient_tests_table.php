@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('invoice_id')->constrained();
             $table->boolean('government_non_gov')->default(0);
             $table->decimal('total_amount',15,2);
+            $table->decimal('hif_amount',15,2);
             $table->timestamps();
         });
     }

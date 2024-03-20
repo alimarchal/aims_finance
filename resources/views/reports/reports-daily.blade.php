@@ -113,7 +113,9 @@
                             <th class="border-black border px-4 py-2 text-left">OPD</th>
                             <th class="border-black border px-4 py-2 text-center">Entitled</th>
                             <th class="border-black border px-4 py-2 text-center">Non-Entitled</th>
-                            <th class="border-black border px-4 py-2 text-center">Revenue</th>
+                            <th class="border-black border px-4 py-2 text-center">HIF</th>
+                            <th class="border-black border px-4 py-2 text-center">Govt</th>
+                            <th class="border-black border px-4 py-2 text-center">Total</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -121,6 +123,7 @@
                             $totalNonEntitiled = 0;
                             $totalEntitiled = 0;
                             $totalRevenue = 0;
+                            $totalRevenue_HIF = 0;
                         @endphp
 
                         @foreach($data as $key => $value)
@@ -144,12 +147,15 @@
                                         <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 0, 'filter[department_id]' => (!empty(($value['department_id'])) ? $value['department_id'] : '1')]) }}" class="text-blue-500 hover:underline"> {{ $value['Non_Entitiled'] }}</a>
                                     @endif
                                 </td>
+                                <td class="border-black border px-4 py-2 text-right">{{ number_format($value['Revenue_HIF'],2) }}</td>
+                                <td class="border-black border px-4 py-2 text-right">{{ number_format(($value['Revenue']-$value['Revenue_HIF']),2) }}</td>
                                 <td class="border-black border px-4 py-2 text-right">{{ number_format($value['Revenue'],2) }}</td>
                             </tr>
                             @php
                                 $totalNonEntitiled += $value['Non_Entitiled'];
                                 $totalEntitiled += $value['Entitiled'];
                                 $totalRevenue += $value['Revenue'];
+                                $totalRevenue_HIF += $value['Revenue_HIF'];
                             @endphp
                         @endforeach
 
@@ -158,6 +164,8 @@
                             <td class="border-black border px-4 py-2 text-right font-bold" colspan="2">Total: {{ $totalNonEntitiled }} + {{ $totalEntitiled }} = {{ $totalNonEntitiled+$totalEntitiled }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ $totalNonEntitiled }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ $totalEntitiled }}</td>
+                            <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($totalRevenue_HIF,2) }}</td>
+                            <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($totalRevenue-$totalRevenue_HIF,2) }}</td>
                             <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($totalRevenue,2) }}</td>
                         </tr>
 

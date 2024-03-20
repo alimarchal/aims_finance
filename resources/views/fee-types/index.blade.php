@@ -34,6 +34,7 @@
 {{--                            <th class="border-black border px-4 py-2">Type</th>--}}
                             <th class="border-black border px-4 py-2">Name</th>
                             <th class="border-black border px-4 py-2">Fee</th>
+                            <th class="border-black border px-4 py-2">HIF</th>
                             <th class="border-black border px-4 py-2 print:hidden">Edit</th>
 {{--                            <th class="border-black border px-4 py-2 print:hidden">Delete</th>--}}
                         </tr>
@@ -50,6 +51,7 @@
 {{--                                    <td class="border-black border px-4 py-2">{{$feeType->feeCategory->type}}</td>--}}
                                     <td class="border-black border px-4 py-2">{{$feeType->type}}</td>
                                     <td class="border-black border px-4 py-2 text-right">{{number_format($feeType->amount,2)}}</td>
+                                    <td class="border-black border px-4 py-2 text-right">{{number_format($feeType->hif,2)}}</td>
                                     <td class="border-black border px-4 py-2 text-center print:hidden">
                                         <a href="{{ route('feeType.edit', $feeType->id) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
                                     </td>

@@ -11,6 +11,9 @@ class PatientTestCart extends Model
     protected $fillable = [
         'patient_id',
         'fee_type_id',
+        'government_non_gov',
+        'government_department_id',
+        'government_card_no',
     ];
 
     public function fee_type()

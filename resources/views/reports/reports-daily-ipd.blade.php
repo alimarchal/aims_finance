@@ -133,8 +133,8 @@
                         <thead>
                         <tr class="border-black">
                             <th class="border-black border px-4 py-2 text-left" colspan="2"></th>
-                            <th class="border-black border px-4 py-2 text-center" colspan="3">Invoices</th>
-                            <th class="border-black border px-4 py-2 text-center" colspan="3">Chits</th>
+                            <th class="border-black border px-4 py-2 text-center" colspan="4">Invoices</th>
+                            <th class="border-black border px-4 py-2 text-center" colspan="4">Chits</th>
                             <th class="border-black border px-4 py-2 text-center" rowspan="2">Total Revenue</th>
                             <th class="border-black border px-4 py-2 text-center hidden print:block" rowspan="2">Signature</th>
                         </tr>
@@ -143,9 +143,11 @@
                             <th class="border-black border px-4 py-2 text-left">Name</th>
                             <th class="border-black border px-4 py-2 text-center">Entitled</th>
                             <th class="border-black border px-4 py-2 text-center">Non Entitled</th>
+                            <th class="border-black border px-4 py-2 text-center">HIF</th>
                             <th class="border-black border px-4 py-2 text-center">Revenue</th>
                             <th class="border-black border px-4 py-2 text-center">Entitled</th>
                             <th class="border-black border px-4 py-2 text-center">Non Entitled</th>
+                            <th class="border-black border px-4 py-2 text-center">HIF</th>
                             <th class="border-black border px-4 py-2 text-center">Revenue</th>
                         </tr>
                         </thead>
@@ -160,6 +162,8 @@
 
                             $totalChits = 0;
                             $totalRevenue = 0;
+                            $totalInvoicesHIF = 0;
+                            $totalChitHIF = 0;
                         @endphp
 
                         @foreach($data as $key => $value)
@@ -182,6 +186,7 @@
                                     @endif
 
                                 </td>
+                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Invoices HIF'],2) }}</td>
                                 <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Invoices'],2) }}</td>
 
                                 <td class="border-black border px-4 py-2 text-center">
@@ -199,6 +204,7 @@
                                     @endif
 
                                 </td>
+                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chits HIF'],2) }}</td>
                                 <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chits'],2) }}</td>
                                 <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chits']+$value['Invoices'],2)  }}</td>
                                 <td class="border-black border px-4 py-2 text-center hidden print:block">&nbsp;</td>
@@ -207,6 +213,8 @@
                                 $inv_non_entitled += $value['Invoices Entitled'];
                                 $inv_entitled += $value['Invoices Non Entitled'];
 
+                                $totalInvoicesHIF += $value['Invoices HIF'];
+                                $totalChitHIF += $value['Chits HIF'];
                                 $chit_entitled += $value['Chit Entitled'];
                                 $chit_non_entitled += $value['Chit Non Entitled'];
 
@@ -221,9 +229,11 @@
                             <td class="border-black border px-4 py-2 text-right font-bold" colspan="2">Total:</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($inv_non_entitled,0) }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($inv_entitled,0) }}</td>
+                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalInvoicesHIF,2) }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalInvoices,2) }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($chit_entitled,0) }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($chit_non_entitled,0) }}</td>
+                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalChitHIF,2) }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalChits,2) }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalRevenue,2) }}</td>
                         </tr>

@@ -23,7 +23,8 @@ class StoreFeeTypeRequest extends FormRequest
     {
         return [
             'type' => 'required',
-            'amount' => 'required'
+            'amount' => 'required',
+            'hif' => 'required',
         ];
     }
 }

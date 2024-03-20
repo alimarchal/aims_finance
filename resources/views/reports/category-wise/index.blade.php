@@ -45,13 +45,36 @@
 
                     <div>
                         <x-label for="category_name" value="Category" :required="false"/>
-                        <select name="filter[name]" id="category_name" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
+                        <select name="filter[name]" id="category_name" style="width: 100%" class="select2 w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500" multiple>
                             <option value="">None</option>
                             @foreach(\App\Models\FeeCategory::orderBy('name', 'ASC')->get() as $aw)
                                 <option value="{{ $aw->name }}" {{ old('name') === $aw->name ? 'selected' : '' }}>{{ $aw->name }}</option>
                             @endforeach
                         </select>
                     </div>
+
+
+                    <div>
+                        <x-label for="status" value="Status" :required="false"/>
+                        <select name="status" id="status" style="width: 100%" class="select2 w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
+                            <option value="">None</option>
+                            <option value="Normal">Normal</option>
+                            <option value="Return Fee">Return Fee</option>
+                        </select>
+                    </div>
+
+
+{{--                    <div>--}}
+{{--                        <x-label for="department_id" value="OPD Department" :required="true"/>--}}
+{{--                        <select name="department_id" class="select2 w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">--}}
+{{--                            <option value="">Select Department</option>--}}
+{{--                            @foreach(\App\Models\Department::orderBy('name', 'ASC')->where('category','OPD')->get() as $dept)--}}
+{{--                                <option value="{{$dept->id}}"  {{ old('department_id') === $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>--}}
+{{--                            @endforeach--}}
+{{--                        </select>--}}
+{{--                    </div>--}}
+
+
 
                     <div></div>
                     <div></div>
@@ -116,12 +139,13 @@
                             <th class="border-black border px-4 py-2">Name</th>
                             <th class="border-black border px-4 py-2">Non Entitled</th>
                             <th class="border-black border px-4 py-2">Entitled</th>
+                            <th class="border-black border px-4 py-2">HIF</th>
                             <th class="border-black border px-4 py-2">Revenue</th>
                         </tr>
                         </thead>
                         <tbody>
 
-                        @php $count = 1; $non_entitled = 0; $entitled = 0; $total = 0; @endphp
+                        @php $count = 1; $non_entitled = 0; $entitled = 0; $total = 0; $hif = 0; @endphp
                         @foreach($categories as $categoryName => $feeTypes)
                             @foreach($feeTypes as $feeTypeName => $feeTypeDetails)
                                 <tr class="border-black">
@@ -183,6 +207,7 @@
 
 
                                         @php $entitled += $feeTypeDetails['Entitled'] @endphp</td>
+                                    <td class="border-black border text-right px-4 py-2">{{ number_format($feeTypeDetails['HIF'],2) }} @php $hif += $feeTypeDetails['HIF'] @endphp</td>
                                     <td class="border-black border text-right px-4 py-2">{{ number_format($feeTypeDetails['Revenue'],2) }} @php $total += $feeTypeDetails['Revenue'] @endphp</td>
                                 </tr>
                         @endforeach
@@ -192,7 +217,8 @@
                         <th colspan="3" class="text-right px-4">Total</th>
                         <th class="border-black border text-center px-4 py-2">{{ number_format($non_entitled,0) }}</th>
                         <th class="border-black border text-center px-4 py-2">{{ number_format($entitled,0) }}</th>
-                        <th class="border-black border text-center px-4 py-2">{{ number_format($total,2) }}</th>
+                        <th class="border-black border text-center px-4 py-2 text-right">{{ number_format($hif,2) }}</th>
+                        <th class="border-black border text-center px-4 py-2 text-right">{{ number_format($total,2) }}</th>
                         </tfoot>
 
                         </tbody>
@@ -203,7 +229,55 @@
         </div>
     </div>
     @section('custom_script')
+
+
+
         <script>
+
+
+            $(document).ready(function () {
+    // Initialize Select2 on your elements
+    $('.js-example-basic-multiple').select2();
+    $('.select2').select2();
+
+    // This function updates the action URL of the form or modifies/creates a hidden input to include the selected values as a single query parameter
+    function updateFilterParameter() {
+        // Assuming your select element has the class 'select2', adjust if necessary
+        var selectedCategories = $('#category_name').val().join(',');
+
+        // Check if a hidden input for 'filter[name]' already exists, if not create one
+        var hiddenInput = $('input[type=hidden][name="filter[name]"]');
+        if (hiddenInput.length === 0) {
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'filter[name]',
+                value: selectedCategories
+            }).appendTo('form');
+        } else {
+            // If it exists, just update its value
+            hiddenInput.val(selectedCategories);
+        }
+    }
+
+    // Listen for form submission
+    $('form').on('submit', function(e) {
+        // Prevent the default form submission
+        e.preventDefault();
+
+        // Update the filter parameter before submitting the form
+        updateFilterParameter();
+
+        // Submit the form
+        this.submit();
+    });
+});
+
+$(document).on('select2:open', () => {
+    // Auto-focus on the search field when select2 opens
+    document.querySelector('.select2-search__field').focus();
+});
+
+
             const targetDiv = document.getElementById("filters");
             const btn = document.getElementById("toggle");
             btn.onclick = function () {

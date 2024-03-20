@@ -17,7 +17,10 @@ class PatientTest extends Model
         'fee_type_id',
         'invoice_id',
         'government_non_gov',
+        'government_department_id',
+        'government_card_no',
         'total_amount',
+        'hif_amount',
     ];
 
     public function invoice(): BelongsTo
