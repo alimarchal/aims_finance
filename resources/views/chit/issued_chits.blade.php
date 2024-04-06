@@ -60,11 +60,12 @@
                                 </td>
 
                                 <td class="border-black border px-4 py-2 text-center">
-                                    @if($chit->ipd_opd == 1)
-                                        OPD
-                                    @else
-                                        Emergency
-                                    @endif
+                                    OPD
+{{--                                    @if($chit->ipd_opd == 1)--}}
+{{--                                        OPD--}}
+{{--                                    @else--}}
+{{--                                        Emergency--}}
+{{--                                    @endif--}}
                                 </td>
                                 <td class="border-black border px-4 py-2 text-center">
                                     {{$chit->amount}}

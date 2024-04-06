@@ -42,6 +42,9 @@ class ChitController extends Controller
             'department_id' => 'required',
         ]);
 
+
+//        dd($request->all());
+
         // login user id capture
         $request->merge(['user_id' => auth()->user()->id]);
         $count_chit_of_today = Chit::where('department_id', $request->department_id)->where('issued_date', '>=', Carbon::today())->count();
@@ -66,40 +69,31 @@ class ChitController extends Controller
                 $amount = 0.00;
                 $amount_hif = 0.00;
                 if ($request->department_id == 7) {
-//                    $fee_type_id = 108;
                     $fee_type_id = FeeType::find(108)->id;
                     $amount = FeeType::find(108)->amount;
                     $amount_hif = FeeType::find(108)->hif;
                 }
                 else {
                     if ($request->department_id == 1) {
-
-
-                        // For emergency
-//                    $fee_type_id = 1;
                         $fee_type_id = FeeType::find(1)->id;
-                        $amount = FeeType::find(1)->amount;
-                        $amount_hif = FeeType::find(1)->hif;
+//                        $amount = FeeType::find(1)->amount;
+//                        $amount_hif = FeeType::find(1)->hif;
                     }
                     else {
                         if ($request->department_id == 16) {
-                            // For Cardiology
-//                    $fee_type_id = 1;
                             $fee_type_id = FeeType::find(1)->id;
-                            $amount = FeeType::find(1)->amount;
-                            $amount_hif = FeeType::find(1)->hif;
+//                            $amount = FeeType::find(1)->amount;
+//                            $amount_hif = FeeType::find(1)->hif;
                         }
                         else {
-//                    $fee_type_id = 107;
                             $fee_type_id = FeeType::find(107)->id;
-                            $amount = FeeType::find(107)->amount;
-                            $amount_hif = FeeType::find(107)->hif;
+//                            $amount = FeeType::find(107)->amount;
+//                            $amount_hif = FeeType::find(107)->hif;
                         }
                     }
                 }
             }
             else {
-//                dd($request->all());
                 if ($request->department_id == 7) {
                     $amount = FeeType::find(108)->amount;
                     $amount_hif = FeeType::find(108)->hif;

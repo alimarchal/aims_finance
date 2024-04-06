@@ -95,7 +95,7 @@
     <div class="py-12">
 
 
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <x-validation-errors class="mb-4"/>
             <x-success-message class="mb-4"/>
             <div class="bg-white overflow-hidden p-4">
@@ -129,13 +129,13 @@
                                 <span>Software Developed By SeeChange Innovative - Contact No: 0300-8169924</span>
                             </p>
                         @endif
-                    <table class="table-auto w-full border-collapse border border-black">
+                    <table class="table-auto w-full border-collapse border border-black" style="font-size: 12px!important;">
                         <thead>
                         <tr class="border-black">
                             <th class="border-black border px-4 py-2 text-left" colspan="2"></th>
-                            <th class="border-black border px-4 py-2 text-center" colspan="4">Invoices</th>
-                            <th class="border-black border px-4 py-2 text-center" colspan="4">Chits</th>
-                            <th class="border-black border px-4 py-2 text-center" rowspan="2">Total Revenue</th>
+                            <th class="border-black border px-4 py-2 text-center" colspan="5">Invoices</th>
+                            <th class="border-black border px-4 py-2 text-center" colspan="5">Chits</th>
+                            <th class="border-black border px-4 py-2 text-center" rowspan="3">Grand Revenue</th>
                             <th class="border-black border px-4 py-2 text-center hidden print:block" rowspan="2">Signature</th>
                         </tr>
                         <tr class="border-black">
@@ -144,11 +144,13 @@
                             <th class="border-black border px-4 py-2 text-center">Entitled</th>
                             <th class="border-black border px-4 py-2 text-center">Non Entitled</th>
                             <th class="border-black border px-4 py-2 text-center">HIF</th>
-                            <th class="border-black border px-4 py-2 text-center">Revenue</th>
+                            <th class="border-black border px-4 py-2 text-center">Govt</th>
+                            <th class="border-black border px-4 py-2 text-center">Total</th>
                             <th class="border-black border px-4 py-2 text-center">Entitled</th>
                             <th class="border-black border px-4 py-2 text-center">Non Entitled</th>
                             <th class="border-black border px-4 py-2 text-center">HIF</th>
-                            <th class="border-black border px-4 py-2 text-center">Revenue</th>
+                            <th class="border-black border px-4 py-2 text-center">Govt</th>
+                            <th class="border-black border px-4 py-2 text-center">Total</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -187,6 +189,7 @@
 
                                 </td>
                                 <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Invoices HIF'],2) }}</td>
+                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Invoices']-$value['Invoices HIF'],2) }}</td>
                                 <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Invoices'],2) }}</td>
 
                                 <td class="border-black border px-4 py-2 text-center">
@@ -205,6 +208,7 @@
 
                                 </td>
                                 <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chits HIF'],2) }}</td>
+                                <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chits']-$value['Chits HIF'],2) }}</td>
                                 <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chits'],2) }}</td>
                                 <td class="border-black border px-4 py-2 text-center">{{ number_format($value['Chits']+$value['Invoices'],2)  }}</td>
                                 <td class="border-black border px-4 py-2 text-center hidden print:block">&nbsp;</td>
@@ -230,10 +234,12 @@
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($inv_non_entitled,0) }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($inv_entitled,0) }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalInvoicesHIF,2) }}</td>
+                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalInvoices-$totalInvoicesHIF ,2) }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalInvoices,2) }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($chit_entitled,0) }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($chit_non_entitled,0) }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalChitHIF,2) }}</td>
+                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalChits-$totalChitHIF,2) }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalChits,2) }}</td>
                             <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($totalRevenue,2) }}</td>
                         </tr>

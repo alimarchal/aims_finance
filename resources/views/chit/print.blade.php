@@ -83,6 +83,7 @@
                 <td class=" font-extrabold">Issue Date:</td>
                 <td class="">{{ \Carbon\Carbon::parse($chit->issued_date)->format('d-M-y h:i:s') }}</td>
             </tr>
+
             <tr>
                 <td class=" font-extrabold">Mobile:</td>
                 <td class="">
@@ -96,7 +97,13 @@
             </tr>
 
 
-            @if($chit->amount != 0 && $chit->government_non_gov == 0)
+
+
+
+
+
+
+            @if($chit->government_non_gov == 0)
                 <tr>
                     <td class="font-extrabold">Category:</td>
                     <td>Non-Entitled</td>
@@ -116,7 +123,26 @@
                 </tr>
             @endif
 
-            @if($chit->amount == 0 && $chit->government_non_gov == 1)
+            @if($chit->government_non_gov == 1)
+
+{{--                <tr>--}}
+{{--                    <td class="font-extrabold">Category:</td>--}}
+{{--                    <td>Non-Entitled</td>--}}
+{{--                    --}}{{--                        <td class=" font-extrabold">Amount Payable:</td>--}}
+{{--                    --}}{{--                        <td class="font-extrabold">Rs. {{$chit->amount}}</td>--}}
+
+
+{{--                    <td class="font-extrabold">Age/Sex</td>--}}
+{{--                    <td class="">--}}
+{{--                        {{ $patient->age . ' ' . $patient->years_months }}/{{ ($patient->sex == 1?'Male':'Female') }}--}}
+{{--                    </td>--}}
+
+{{--                    --}}{{--                    <td class=" font-extrabold">Printed By:</td>--}}
+{{--                    --}}{{--                    <td>--}}
+{{--                    --}}{{--                        {{ auth()->user()->name }}--}}
+{{--                    --}}{{--                    </td>--}}
+{{--                </tr>--}}
+
                 <tr>
                     <td class="font-extrabold">Category:</td>
                     <td class="">Entitled</td>
@@ -142,6 +168,8 @@
             @endif
 
             @if($chit->government_non_gov)
+
+
                 {{--                <tr>--}}
                 {{--                    <td class="font-extrabold">--}}
                 {{--                        Department--}}
@@ -181,14 +209,14 @@
             </tr>
 
 
-            <tr>
-                <td colspan="4" style="margin: 0px; padding: 0px; font-size: 10px; font-weight: bold; text-align: center">
-                    نوٹ : یہ کمپیوٹر سے تیار کردہ پرچی ہے اور ہم اس پرچی کی دوسری کاپی فراہم نہیں کریں گے۔
-                    فیس کی واپسی صرف ایک گھنٹے میں مکمن ہے۔
-                </td>
-            </tr>
+{{--            <tr>--}}
+{{--                <td colspan="4" style="margin: 0px; padding: 0px; font-size: 10px; font-weight: bold; text-align: center">--}}
+{{--                    نوٹ : یہ کمپیوٹر سے تیار کردہ پرچی ہے اور ہم اس پرچی کی دوسری کاپی فراہم نہیں کریں گے۔--}}
+{{--                    فیس کی واپسی صرف ایک گھنٹے میں مکمن ہے۔--}}
+{{--                </td>--}}
+{{--            </tr>--}}
             <tr style="border-bottom: 1px solid black; margin: 0px; padding: 0px; font-size: 7px; text-align: center">
-                <td colspan="4">Developed By Ali Raza Marchal - 0300-8169924</td>
+                <td colspan="4">Software Developed By SeeChange Innovative - 0300-8169924</td>
             </tr>
 
             {{--                <tr>--}}

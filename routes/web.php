@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +15,44 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+
+//Route::get('/reset', function () {
+//    $pt = \App\Models\PatientTest::where('government_non_gov', 0)->whereBetween('created_at',['2024-03-25 00:00:00', '2024-03-31 23:59:59'])->get();
+//    $pt_group_by = \App\Models\PatientTest::where('government_non_gov', 0)
+//        ->whereBetween('created_at',['2024-03-25 00:00:00', '2024-03-31 23:59:59'])
+//        ->groupBy('invoice_id')
+//        ->get();
+//
+//
+//    DB::beginTransaction();
+//    try {
+//        foreach ($pt as $test)
+//        {
+//            $hif_amount = \App\Models\FeeType::find($test->fee_type_id)->hif;
+//            $test->hif_amount = $hif_amount;
+//            $test->save();
+//        }
+//
+//
+//
+//        foreach ($pt_group_by as $invoice)
+//        {
+//            $invoice_sum = \App\Models\PatientTest::where('invoice_id', $invoice->invoice_id)->sum('hif_amount');
+//            $inv = \App\Models\Invoice::find($invoice->invoice_id);
+//            $inv->hif_amount = $invoice_sum;
+//            $inv->save();
+//
+//        }
+//        DB::commit();
+//
+//        echo "Done...";
+//    } catch (\Exception $e) {
+//        DB::rollback();
+//        // something went wrong
+//    }
+//
+//});
 
 Route::get('/', function () {
     return to_route('login');

@@ -466,7 +466,7 @@ class PatientController extends Controller
                     'government_department_id' => $patient->government_department_id,
                     'government_card_no' => $patient->government_card_no,
                     'total_amount' => $total_amount,
-                    'hif_amount' => $total_all_amount_hif,
+                    'hif_amount' =>  FeeType::find($ptc->fee_type_id)->hif,
                 ]);
             }
             $invoice->total_amount = $total_all_amount;

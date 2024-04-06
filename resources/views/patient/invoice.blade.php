@@ -123,14 +123,14 @@
                 <td colspan="4"> آپ کا نمبر ہے ({{$chitNumber}})</td>
             </tr>
 
-            <tr>
-                <td colspan="4" style="margin: 0px; padding: 0px; font-size: 10px; font-weight: bold; text-align: center">
-                    نوٹ : یہ کمپیوٹر سے تیار کردہ پرچی ہے اور ہم اس پرچی کی دوسری کاپی فراہم نہیں کریں گے۔
-                    فیس کی واپسی صرف ایک گھنٹے میں مکمن ہے۔
-                </td>
-            </tr>
+{{--            <tr>--}}
+{{--                <td colspan="4" style="margin: 0px; padding: 0px; font-size: 10px; font-weight: bold; text-align: center">--}}
+{{--                    نوٹ : یہ کمپیوٹر سے تیار کردہ پرچی ہے اور ہم اس پرچی کی دوسری کاپی فراہم نہیں کریں گے۔--}}
+{{--                    فیس کی واپسی صرف ایک گھنٹے میں مکمن ہے۔--}}
+{{--                </td>--}}
+{{--            </tr>--}}
             <tr style="border-bottom: 1px solid black; margin: 0px; padding: 0px; font-size: 7px; text-align: center">
-                <td colspan="4">Developed By Ali Raza Marchal - 0300-8169924</td>
+                <td colspan="4">Software Developed By SeeChange Innovative - 0300-8169924</td>
             </tr>
         </table>
 

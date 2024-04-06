@@ -64,15 +64,15 @@
                     </div>
 
 
-{{--                    <div>--}}
-{{--                        <x-label for="department_id" value="OPD Department" :required="true"/>--}}
-{{--                        <select name="department_id" class="select2 w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">--}}
-{{--                            <option value="">Select Department</option>--}}
-{{--                            @foreach(\App\Models\Department::orderBy('name', 'ASC')->where('category','OPD')->get() as $dept)--}}
-{{--                                <option value="{{$dept->id}}"  {{ old('department_id') === $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>--}}
-{{--                            @endforeach--}}
-{{--                        </select>--}}
-{{--                    </div>--}}
+                    {{--                    <div>--}}
+                    {{--                        <x-label for="department_id" value="OPD Department" :required="true"/>--}}
+                    {{--                        <select name="department_id" class="select2 w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">--}}
+                    {{--                            <option value="">Select Department</option>--}}
+                    {{--                            @foreach(\App\Models\Department::orderBy('name', 'ASC')->where('category','OPD')->get() as $dept)--}}
+                    {{--                                <option value="{{$dept->id}}"  {{ old('department_id') === $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>--}}
+                    {{--                            @endforeach--}}
+                    {{--                        </select>--}}
+                    {{--                    </div>--}}
 
 
 
@@ -96,7 +96,7 @@
 
     <div class="py-12">
 
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <x-validation-errors class="mb-4"/>
             <x-success-message class="mb-4"/>
             <div class="bg-white overflow-hidden p-4">
@@ -139,13 +139,18 @@
                             <th class="border-black border px-4 py-2">Name</th>
                             <th class="border-black border px-4 py-2">Non Entitled</th>
                             <th class="border-black border px-4 py-2">Entitled</th>
+                            @if(request()->input('status') == "Normal")
+                                <th class="border-black border px-4 py-2">Returned</th>
+                                <th class="border-black border px-4 py-2">Return Amount</th>
+                            @endif
                             <th class="border-black border px-4 py-2">HIF</th>
-                            <th class="border-black border px-4 py-2">Revenue</th>
+                            <th class="border-black border px-4 py-2">Govt</th>
+                            <th class="border-black border px-4 py-2">Total</th>
                         </tr>
                         </thead>
                         <tbody>
 
-                        @php $count = 1; $non_entitled = 0; $entitled = 0; $total = 0; $hif = 0; @endphp
+                        @php $count = 1; $non_entitled = 0; $entitled = 0; $total = 0; $hif = 0; $return_count = 0; $return_amount = 0; $return_amount_temp = 0; @endphp
                         @foreach($categories as $categoryName => $feeTypes)
                             @foreach($feeTypes as $feeTypeName => $feeTypeDetails)
                                 <tr class="border-black">
@@ -207,18 +212,53 @@
 
 
                                         @php $entitled += $feeTypeDetails['Entitled'] @endphp</td>
+
+
+                                    @if(request()->input('status') == "Normal")
+                                        <td class="border-black border text-center px-4 py-2">
+                                            @if(!empty($feeTypeDetails['Returned']))
+                                                @php
+                                                    $return_count = $return_count + \App\Models\PatientTest::where('fee_type_id',$feeTypeDetails['Returned']->id)->whereBetween('created_at',[$feeTypeDetails['Returned Start Date'],$feeTypeDetails['Returned End Date']])->where('total_amount','<',0)->count()
+                                                @endphp
+                                                {{ \App\Models\PatientTest::where('fee_type_id',$feeTypeDetails['Returned']->id)->whereBetween('created_at',[$feeTypeDetails['Returned Start Date'],$feeTypeDetails['Returned End Date']])->where('total_amount','<',0)->count() }}
+                                            @endif
+                                        </td>
+
+                                        <td class="border-black border text-center px-4 py-2">
+                                            @if(!empty($feeTypeDetails['Returned']))
+                                                @php
+                                                    $return_amount = $return_amount + \App\Models\PatientTest::where('fee_type_id',$feeTypeDetails['Returned']->id)->whereBetween('created_at',[$feeTypeDetails['Returned Start Date'],$feeTypeDetails['Returned End Date']])->where('total_amount','<',0)->sum('total_amount');
+                                                    $return_amount_temp = \App\Models\PatientTest::where('fee_type_id',$feeTypeDetails['Returned']->id)->whereBetween('created_at',[$feeTypeDetails['Returned Start Date'],$feeTypeDetails['Returned End Date']])->where('total_amount','<',0)->sum('total_amount');
+
+                                                @endphp
+                                                {{ \App\Models\PatientTest::where('fee_type_id',$feeTypeDetails['Returned']->id)->whereBetween('created_at',[$feeTypeDetails['Returned Start Date'],$feeTypeDetails['Returned End Date']])->where('total_amount','<',0)->sum('total_amount') }}
+                                            @endif
+
+                                        </td>
+                                    @endif
+
                                     <td class="border-black border text-right px-4 py-2">{{ number_format($feeTypeDetails['HIF'],2) }} @php $hif += $feeTypeDetails['HIF'] @endphp</td>
-                                    <td class="border-black border text-right px-4 py-2">{{ number_format($feeTypeDetails['Revenue'],2) }} @php $total += $feeTypeDetails['Revenue'] @endphp</td>
+                                    <td class="border-black border text-right px-4 py-2">{{ number_format($feeTypeDetails['Revenue']-$feeTypeDetails['HIF'],2) }}</td>
+                                    <td class="border-black border text-right px-4 py-2">{{ number_format($feeTypeDetails['Revenue'] - abs($return_amount_temp),2) }} @php $total += $feeTypeDetails['Revenue'] @endphp</td>
                                 </tr>
                         @endforeach
                         @endforeach
 
                         <tfoot class="border-black">
-                        <th colspan="3" class="text-right px-4">Total</th>
-                        <th class="border-black border text-center px-4 py-2">{{ number_format($non_entitled,0) }}</th>
-                        <th class="border-black border text-center px-4 py-2">{{ number_format($entitled,0) }}</th>
-                        <th class="border-black border text-center px-4 py-2 text-right">{{ number_format($hif,2) }}</th>
-                        <th class="border-black border text-center px-4 py-2 text-right">{{ number_format($total,2) }}</th>
+
+
+                        <tr>
+                            <th colspan="3" class="text-right px-4">Total</th>
+                            <th class="border-black border text-center px-4 py-2">{{ number_format($non_entitled,0) }}</th>
+                            <th class="border-black border text-center px-4 py-2">{{ number_format($entitled,0) }}</th>
+                            @if(request()->input('status') == "Normal")
+                                <th class="border-black border text-center px-4 py-2">{{ $return_count }}</th>
+                                <th class="border-black border text-center px-4 py-2">{{ number_format($return_amount,2) }}</th>
+                            @endif
+                            <th class="border-black border text-center px-4 py-2 text-right">{{ number_format($hif,2) }}</th>
+                            <th class="border-black border text-center px-4 py-2 text-right">{{ number_format($total-$hif,2) }}</th>
+                            <th class="border-black border text-center px-4 py-2 text-right">{{ number_format($total - abs($return_amount),2) }}</th>
+                        </tr>
                         </tfoot>
 
                         </tbody>

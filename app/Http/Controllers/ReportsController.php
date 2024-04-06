@@ -67,9 +67,6 @@ class ReportsController extends Controller
         }
 
 
-//        dd($data);
-
-
         return view('reports.reports-daily', compact('data'));
     }
 
@@ -158,6 +155,7 @@ class ReportsController extends Controller
             ->allowedIncludes('feeTypes')
             ->get();
 
+
 // OLD ---
 //        $categories = [];
 //
@@ -212,7 +210,10 @@ class ReportsController extends Controller
                         'Revenue' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('amount'),
                         'HIF' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('amount_hif'),
                         'fee_category_id' => $fee_cat->id,
-                        'fee_type_id' => $fee_type->id
+                        'fee_type_id' => $fee_type->id,
+                        'Returned Start Date' => $date_start_at,
+                        'Returned End Date' => $date_end_at,
+                        'Returned' => FeeType::where('type','Return ' . FeeType::find($fee_type->id)->type)->first(),
                     ];
                 }
                 else {
@@ -222,7 +223,10 @@ class ReportsController extends Controller
                         'Revenue' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('total_amount'),
                         'HIF' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('hif_amount'),
                         'fee_category_id' => $fee_cat->id,
-                        'fee_type_id' => $fee_type->id
+                        'fee_type_id' => $fee_type->id,
+                        'Returned Start Date' => $date_start_at,
+                        'Returned End Date' => $date_end_at,
+                        'Returned' => FeeType::where('type','Return ' . FeeType::find($fee_type->id)->type)->first(),
                     ];
                 }
             }
