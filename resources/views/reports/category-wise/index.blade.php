@@ -64,15 +64,6 @@
                     </div>
 
 
-                    {{--                    <div>--}}
-                    {{--                        <x-label for="department_id" value="OPD Department" :required="true"/>--}}
-                    {{--                        <select name="department_id" class="select2 w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">--}}
-                    {{--                            <option value="">Select Department</option>--}}
-                    {{--                            @foreach(\App\Models\Department::orderBy('name', 'ASC')->where('category','OPD')->get() as $dept)--}}
-                    {{--                                <option value="{{$dept->id}}"  {{ old('department_id') === $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>--}}
-                    {{--                            @endforeach--}}
-                    {{--                        </select>--}}
-                    {{--                    </div>--}}
 
 
 

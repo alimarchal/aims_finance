@@ -17,43 +17,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-//Route::get('/reset', function () {
-//    $pt = \App\Models\PatientTest::where('government_non_gov', 0)->whereBetween('created_at',['2024-03-25 00:00:00', '2024-03-31 23:59:59'])->get();
-//    $pt_group_by = \App\Models\PatientTest::where('government_non_gov', 0)
-//        ->whereBetween('created_at',['2024-03-25 00:00:00', '2024-03-31 23:59:59'])
-//        ->groupBy('invoice_id')
-//        ->get();
-//
-//
-//    DB::beginTransaction();
-//    try {
-//        foreach ($pt as $test)
-//        {
-//            $hif_amount = \App\Models\FeeType::find($test->fee_type_id)->hif;
-//            $test->hif_amount = $hif_amount;
-//            $test->save();
-//        }
-//
-//
-//
-//        foreach ($pt_group_by as $invoice)
-//        {
-//            $invoice_sum = \App\Models\PatientTest::where('invoice_id', $invoice->invoice_id)->sum('hif_amount');
-//            $inv = \App\Models\Invoice::find($invoice->invoice_id);
-//            $inv->hif_amount = $invoice_sum;
-//            $inv->save();
-//
-//        }
-//        DB::commit();
-//
-//        echo "Done...";
-//    } catch (\Exception $e) {
-//        DB::rollback();
-//        // something went wrong
-//    }
-//
-//});
-
 Route::get('/', function () {
     return to_route('login');
 });
@@ -108,7 +71,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
 
     // Reports
-    
+
     Route::get('reports', [\App\Http\Controllers\ReportsController::class, 'index'])->name('reports.index');
     Route::get('reports/opd', [\App\Http\Controllers\ReportsController::class, 'opd'])->name('reports.opd');
     Route::get('reports/ipd', [\App\Http\Controllers\ReportsController::class, 'ipd'])->name('reports.ipd');
@@ -116,8 +79,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('reports/ipd/reports-daily', [\App\Http\Controllers\ReportsController::class, 'reportDailyIPD'])->name('reports.opd.reportDailyIPD');
 
     Route::get('reports/misc', [\App\Http\Controllers\ReportsController::class, 'reportMisc'])->name('reports.misc');
-    Route::get('reports/misc/category-wise', [\App\Http\Controllers\ReportsController::class, 'categoryWise'])->name('reports.misc.category-wise');
+//    Route::get('reports/misc/category-wise', [\App\Http\Controllers\ReportsController::class, 'categoryWise'])->name('reports.misc.category-wise');
     Route::get('reports/misc/admission', [\App\Http\Controllers\ReportsController::class, 'admission'])->name('reports.misc.admission');
+
+
+    Route::get('reports/misc/department-wise', [\App\Http\Controllers\ReportsController::class, 'department_wise'])->name('reports.misc.category-wise');
 
 
 });
