@@ -33,7 +33,7 @@
     <div class="max-w-7xl mx-auto mt-12 px-4 sm:px-6 lg:px-8" style="display: none" id="filters">
         <div class="rounded-xl p-4 bg-white shadow-lg">
             <form action="">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
 
                     <div>
@@ -66,13 +66,15 @@
 
 
 
-                    <div>
-                        <x-label for="status" value="Status" :required="false"/>
-                        <select name="status" id="status" style="width: 100%" class="select2 w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
-                            <option value="">None</option>
-                            <option value="Normal">With Return</option>
-                        </select>
-                    </div>
+
+
+{{--                    <div>--}}
+{{--                        <x-label for="status" value="Status" :required="false"/>--}}
+{{--                        <select name="status" id="status" style="width: 100%" class="select2 w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">--}}
+{{--                            <option value="">None</option>--}}
+{{--                            <option value="Normal">With Return</option>--}}
+{{--                        </select>--}}
+{{--                    </div>--}}
 
 
 
@@ -141,21 +143,21 @@
                             <th class="border-black border px-4 py-2">Name</th>
                             <th class="border-black border px-4 py-2">Entitled</th>
                             <th class="border-black border px-4 py-2">Non Entitled</th>
+{{--                            <th class="border-black border px-4 py-2">Revenue</th>--}}
+{{--                            <th class="border-black border px-4 py-2">HIF</th>--}}
+                            <th class="border-black border px-4 py-2">Govt</th>
+
                             @if(request()->input('status') == "Normal")
                                 <th class="border-black border px-4 py-2">Returned</th>
-                                <th class="border-black border px-4 py-2">Σ-R</th>
                                 <th class="border-black border px-4 py-2">Return Amount</th>
                             @endif
-                            <th class="border-black border px-4 py-2">Revenue</th>
-                            <th class="border-black border px-4 py-2">HIF</th>
-                            <th class="border-black border px-4 py-2">Govt</th>
 
 {{--                            <th class="border-black border px-4 py-2">Status</th>--}}
 
                         </tr>
                         </thead>
                         <tbody>
-                        @php $count = 1; $non_entitled = 0; $entitled = 0; $total_revenue = 0;   $return_entitled = 0; $return_non_entitled = 0; $hif = 0; $govt = 0; $return_count = 0; $return_amount = 0; $return_total_count_grand = 0; $return_total_count_grand_full = 0; @endphp
+                        @php $count = 1; $non_entitled = 0; $entitled = 0; $total_revenue = 0;   $return_entitled = 0; $return_non_entitled = 0; $hif = 0; $govt = 0; $return_count = 0; $return_amount = 0; @endphp
                         @foreach($categories as $fee_category_id => $fee_types)
                             @php
                                 $fee_category = \App\Models\FeeCategory::find($fee_category_id);
@@ -177,79 +179,33 @@
 
                                     <td class="border-black border px-4 py-2 text-center">
 
+                                        {{ $data['Entitled'] }}
 
-                                        @if($fee_type->id == 1 || $fee_type->id == 19 || $fee_type->id == 107 || $fee_type->id == 108)
-                                            @if(request()->has('start_date'))
-                                                <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $data['fee_type_id']]) }}" class="text-blue-500 hover:underline">
-                                                    {{ $data['Entitled'] }}
-                                                </a>
-                                            @else
-                                                <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $data['fee_type_id']]) }}" class="text-blue-500 hover:underline">
-                                                    {{ $data['Entitled'] }}
-                                                </a>
-                                            @endif
-
-                                        @else
-
-                                            @if(request()->has('start_date'))
-                                                <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}" class="text-blue-500 hover:underline">
-                                                    {{ $data['Entitled'] }}
-                                                </a>
-                                            @else
-                                                <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}" class="text-blue-500 hover:underline">
-                                                    {{ $data['Entitled'] }}
-                                                </a>
-                                            @endif
-                                        @endif
 
 
 
 
                                     </td>
                                     <td class="border-black border px-4 py-2 text-center">
-
-
-                                        @if($fee_type->id == 1 || $fee_type->id == 19 || $fee_type->id == 107 || $fee_type->id == 108)
-                                            @if(request()->has('start_date'))
-                                                <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $data['fee_type_id']]) }}" class="text-blue-500 hover:underline">
-                                                    {{ $data['Non Entitled'] }}
-                                                </a>
-                                            @else
-                                                <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $data['fee_type_id']]) }}" class="text-blue-500 hover:underline">
-                                                    {{ $data['Non Entitled'] }}
-                                                </a>
-                                            @endif
-                                        @else
-                                                @if(request()->has('start_date'))
-                                                    <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}" class="text-blue-500 hover:underline">
-                                                        {{ $data['Non Entitled'] }}
-                                                    </a>
-                                                @else
-                                                    <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}" class="text-blue-500 hover:underline">
-                                                        {{ $data['Non Entitled'] }}
-                                                    </a>
-                                                @endif
-                                        @endif
+                                        {{ $data['Non Entitled'] }}
 
 
                                     </td>
+
+{{--                                    <td class="border-black border px-4 py-2 text-right">{{ number_format($data['Revenue'],2) }}</td>--}}
+{{--                                    <td class="border-black border px-4 py-2 text-right">{{ number_format($data['HIF'],2) }}</td>--}}
+                                    <td class="border-black border px-4 py-2 text-right">{{ number_format($data['Revenue'] - $data['HIF'],2) }}</td>
+
+
 
                                     @if(request()->input('status') == "Normal")
                                         <td class="border-black border text-center px-4 py-2">
                                             @if(!empty($data['Returned']))
                                                 @php
-                                                    $return_count = $return_count + \App\Models\PatientTest::where('fee_type_id',$data['Returned']->id)->whereBetween('created_at',[$data['Returned Start Date'],$data['Returned End Date']])->where('total_amount','<',0)->count();
-                                                    $return_total_count_grand = \App\Models\PatientTest::where('fee_type_id',$data['Returned']->id)->whereBetween('created_at',[$data['Returned Start Date'],$data['Returned End Date']])->where('total_amount','<',0)->count();
+                                                    $return_count = $return_count + \App\Models\PatientTest::where('fee_type_id',$data['Returned']->id)->whereBetween('created_at',[$data['Returned Start Date'],$data['Returned End Date']])->where('total_amount','<',0)->count()
                                                 @endphp
                                                 {{ \App\Models\PatientTest::where('fee_type_id',$data['Returned']->id)->whereBetween('created_at',[$data['Returned Start Date'],$data['Returned End Date']])->where('total_amount','<',0)->count() }}
                                             @endif
-                                        </td>
-
-                                        <td class="border-black border text-center px-4 py-2">
-
-                                            {{ ($data['Entitled'] + $data['Non Entitled'])  - $return_total_count_grand }}
-{{--                                            {{ $data['Entitled'] }} +--}}
-{{--                                            {{ $data['Non Entitled'] }} - {{ $return_total_count_grand }}--}}
                                         </td>
 
                                         <td class="border-black border text-center px-4 py-2">
@@ -261,16 +217,9 @@
                                                 @endphp
                                                 {{ \App\Models\PatientTest::where('fee_type_id',$data['Returned']->id)->whereBetween('created_at',[$data['Returned Start Date'],$data['Returned End Date']])->where('total_amount','<',0)->sum('total_amount') }}
                                             @endif
+
                                         </td>
                                     @endif
-
-                                    <td class="border-black border px-4 py-2 text-right">{{ number_format($data['Revenue'],2) }}</td>
-                                    <td class="border-black border px-4 py-2 text-right">{{ number_format($data['HIF'],2) }}</td>
-                                    <td class="border-black border px-4 py-2 text-right">{{ number_format($data['Revenue'] - $data['HIF'],2) }}</td>
-
-
-
-
 
 {{--                                    <td class="border-black border px-4 py-2 text-right">{{ $data['Status'] }}</td>--}}
                                     @php
@@ -295,24 +244,11 @@
                         <tfoot>
                         <tr class="border-black">
                             <td class="border-black border px-4 py-2 text-right" colspan="3">Total</td>
-                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($entitled,0) }}</td>
-                            <td class="border-black border px-4 py-2 text-center font-bold">
-                                @if(request()->input('status') == "Normal")
-                                    {{ number_format($non_entitled,0) }}
-                                @else
-                                    {{ number_format($non_entitled,0) }}
-                                @endif
-
-                            </td>
-                            @if(request()->input('status') == "Normal")
-                                <td class="border-black border px-4 py-2 text-center">{{ $return_count }}</td>
-                                <td class="border-black border px-4 py-2 text-center">{{ $entitled + $non_entitled - $return_count }} </td>
-                                <td class="border-black border px-4 py-2 text-center">{{ $return_amount }}</td>
-                            @endif
-                            <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($total_revenue - (abs($return_amount)),2) }}</td>
-                            <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($hif,2) }}</td>
+                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($entitled - $return_entitled,0) }}</td>
+                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($non_entitled - $return_non_entitled,0) }}</td>
+{{--                            <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($total_revenue - (abs($return_amount)),2) }}</td>--}}
+{{--                            <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($hif,2) }}</td>--}}
                             <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($govt,2) }}</td>
-
                         </tr>
                         </tfoot>
                     </table>

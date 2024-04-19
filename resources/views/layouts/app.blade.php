@@ -13,12 +13,15 @@
     <script src="{{ Storage::url('js/jquery-3.6.0.min.js') }}"></script>
     <link href="{{ Storage::url('css/select2.min.css') }}" rel="stylesheet"/>
     <script src="{{ Storage::url('js/select2.min.js') }}" defer></script>
-    <script src="{{ Storage::url('js/apexcharts.js') }}" defer></script>
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+
+    @stack('header')
+
     <!-- Styles -->
     @yield('custom_header')
+
     @livewireStyles
 </head>
 <body class="font-sans antialiased">

@@ -41,4 +41,9 @@ class Chit extends Model
     {
         return $this->belongsTo(Patient::class);
     }
+
+    public function fee_type(): BelongsTo
+    {
+        return $this->belongsTo(FeeType::class,'fee_type_id');
+    }
 }

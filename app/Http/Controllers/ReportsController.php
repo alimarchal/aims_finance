@@ -68,11 +68,19 @@ class ReportsController extends Controller
         }
 
 
-        return view('reports.reports-daily', compact('data'));
+        if ($user->hasRole('Auditor')) {
+            return view('reports.auditor.reports-daily', compact('data'));
+        } else {
+            return view('reports.reports-daily', compact('data'));
+        }
+
+
     }
 
     public function reportDailyIPD(Request $request)
     {
+
+        $user = \Auth::user();
         // this is invoices and chits report by user wise
         // Only For IPD
         $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
@@ -116,9 +124,18 @@ class ReportsController extends Controller
             ];
         }
 
-//        dd($data);
 
-        return view('reports.reports-daily-ipd', compact('data'));
+
+
+
+        if (\Auth::user()->hasRole('Auditor')) {
+            return view('reports.auditor.reports-daily-ipd', compact('data'));
+        } elseif(\Auth::user()->hasRole(['Administrator','Front Desk/Receptionist'])) {
+
+            return view('reports.reports-daily-ipd', compact('data'));
+        }
+
+
     }
 
     public function index()
@@ -200,7 +217,6 @@ class ReportsController extends Controller
             }
         }
 
-//        dd($categories);
 
         return view('reports.category-wise.index', compact('categories'));
     }
@@ -210,12 +226,19 @@ class ReportsController extends Controller
     {
         $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
         $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
+        $user = \Auth::user();
 
         $date_start_at = $start_date . ' 00:00:00';
         $date_end_at = $end_date . ' 23:59:59';
 
         $fee_types = null;
+        $status = ['Normal', 'Return Fee'];
         $fee_category_ids = $request->input('filter.fee_category_id');
+        $get_status_values = $request->input('status');
+
+        if ($get_status_values !== null) {
+            $status = explode(',', $get_status_values);
+        }
 
         if ($fee_category_ids !== null) {
             // Split the string into an array of individual IDs
@@ -225,15 +248,15 @@ class ReportsController extends Controller
                 ->orderBy('fee_category_id')
                 ->orderByRaw('CASE WHEN status = "Normal" THEN 1 ELSE 2 END')
                 ->whereIn('fee_category_id', $fee_category_ids)
+                ->whereIn('status', $status)
                 ->get();
         } else {
             $fee_types = QueryBuilder::for(FeeType::class)
                 ->orderBy('fee_category_id')
                 ->orderByRaw('CASE WHEN status = "Normal" THEN 1 ELSE 2 END')
+                ->whereIn('status', $status)
                 ->get();
         }
-
-
 
 
         $categories = [];
@@ -257,7 +280,11 @@ class ReportsController extends Controller
                     'Non Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->count(),
                     'Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 1)->count(),
                     'Revenue' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->sum('total_amount'),
-                    'HIF' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->sum('hif_amount'),
+                    'HIF' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)
+                        ->whereHas('fee_type', function($query) {
+                            $query->whereIn('status', ['Return Fee','Normal']);
+                        })
+                        ->sum('hif_amount'),
                     'fee_category_id' => $ft->fee_category_id,
                     'fee_type_id' => $ft->id,
                     'Returned Start Date' => $date_start_at,
@@ -268,56 +295,17 @@ class ReportsController extends Controller
             }
         }
 
-//        dd($categories);
 
 
-//        foreach ($fee_categories as $fee_cat) {
-//            $fee_types_relation = null;
-//            if ($request->input('status')) {
-//                // The filter exists, retrieve its value
-//                $status = $request->input('status');
-//
-//                $fee_types_relation = $fee_cat->feeTypes->where('status',$status);
-//            } else {
-//                // The filter does not exist, handle the case accordingly
-//                $fee_types_relation = $fee_cat->feeTypes;
-//            }
-//
-//
-//            foreach ($fee_types_relation as $fee_type) {
-//                // Append the fee type to the category array
-//                if ($fee_type->id == 107 || $fee_type->id == 108 || $fee_type->id == 19 || $fee_type->id == 1) {
-//                    $categories[$fee_cat->id][$fee_type->id] = [
-//                        'Non Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->count(),
-//                        'Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 1)->count(),
-//                        'Revenue' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('amount'),
-//                        'HIF' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('amount_hif'),
-//                        'fee_category_id' => $fee_cat->id,
-//                        'fee_type_id' => $fee_type->id,
-//                        'Returned Start Date' => $date_start_at,
-//                        'Returned End Date' => $date_end_at,
-//                        'Returned' => FeeType::where('type','Return ' . FeeType::find($fee_type->id)->type)->first(),
-//                    ];
-//                }
-//                else {
-//                    $categories[$fee_cat->id][$fee_type->id] = [
-//                        'Non Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->count(),
-//                        'Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 1)->count(),
-//                        'Revenue' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('total_amount'),
-//                        'HIF' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $fee_type->id)->where('government_non_gov', 0)->sum('hif_amount'),
-//                        'fee_category_id' => $fee_cat->id,
-//                        'fee_type_id' => $fee_type->id,
-//                        'Returned Start Date' => $date_start_at,
-//                        'Returned End Date' => $date_end_at,
-//                        'Returned' => FeeType::where('type','Return ' . FeeType::find($fee_type->id)->type)->first(),
-//                    ];
-//                }
-//            }
-//        }
 
-//        dd($fee_types);
+        if ($user->hasRole('Auditor')) {
+            return view('reports.auditor.department-wise', compact('categories', 'fee_types'));
+        } else {
+            return view('reports.category-wise.department-wise', compact('categories', 'fee_types'));
+        }
 
-        return view('reports.category-wise.department-wise', compact('categories', 'fee_types'));
+
+
     }
 
     public function admission(Request $request)

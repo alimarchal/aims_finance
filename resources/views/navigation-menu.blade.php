@@ -23,15 +23,18 @@
                     </x-nav-link>
 
 
+                    @role('Auditor')
+                        <x-nav-link href="{{ route('reports.index') }}" :active="request()->routeIs('reports.*')">
+                            {{ __('Reports') }}
+                        </x-nav-link>
+                    @endrole
+
+
                     @role('Administrator')
 
                     <x-nav-link href="{{ route('reports.index') }}" :active="request()->routeIs('reports.*')">
                         {{ __('Reports') }}
                     </x-nav-link>
-
-{{--                    <x-nav-link href="{{ route('labTest.index') }}" :active="request()->routeIs('labTest.*')">--}}
-{{--                        {{ __('Lab Test') }}--}}
-{{--                    </x-nav-link>--}}
 
                     <x-nav-link href="{{ route('department.index') }}" :active="request()->routeIs('department.*')">
                         {{ __('OPDs') }}

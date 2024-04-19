@@ -50,6 +50,8 @@
                         </div>
                     </div>
                 </a>
+
+                @if(Auth::user()->hasRole(['Administrator','Front Desk/Receptionist']))
                 <a href="{{ route('patient.proceed', $patient->id) }}" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
                     <div class="p-5">
                         <div class="grid grid-cols-3 gap-1">
@@ -86,6 +88,7 @@
                         </div>
                     </div>
                 </a>
+                @endif
             </div>
 
         </div>
