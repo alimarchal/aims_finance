@@ -44,7 +44,7 @@
                                         {{ number_format($today_revenue,0) }}
                                     </div>
                                     <div class="mt-1 text-base  font-bold text-gray-600">
-                                        Today Revenue (PKR)
+                                        Today Revenue
                                     </div>
                                 </div>
                                 <div class="col-span-1 flex items-center justify-end">
@@ -225,6 +225,13 @@
                         <div class="bg-white rounded-lg shadow-lg p-4" id="chart_subjects">
                         </div>
                     </div>
+
+
+                    <div class="col-span-12 md:col-span-12 lg:col-span-12">
+                        <div class="bg-white rounded-lg shadow-lg p-4" id="chart_test_report">
+                        </div>
+                    </div>
+
                 </div>
                 @endrole
             @endif
@@ -450,14 +457,6 @@
                 var age_wise_chart = new ApexCharts(document.querySelector("#age_wise_chart"), service_length_options);
                 age_wise_chart.render();
 
-
-
-
-
-
-
-
-
                 var options_subjects = {
                     series: [{
                         name: 'Admissions',
@@ -529,6 +528,57 @@
 
                 var chart_options_subjects = new ApexCharts(document.querySelector("#chart_subjects"), options_subjects);
                 chart_options_subjects.render();
+
+
+
+                var options_test_report = {
+                    series: [
+                        @foreach ($patient_test_daily_report as $key => $count)
+                            {{ $count }},
+                        @endforeach
+                    ],
+                    chart: {
+                        width: '100%',
+                        height: '400px',
+                        type: 'pie',
+                    },
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        text: 'Today Total Test Performed In Laboratory',
+                        align: 'center',
+                        margin: 0,
+                        offsetX: 0,
+                        offsetY: 0,
+                        floating: false,
+                        style: {
+                            fontSize:  '14px',
+                            fontWeight:  'bold',
+                            fontFamily:  '', //undefined
+                            color:  '#263238'
+                        },
+                    },
+                    labels: [
+                        @foreach ($patient_test_daily_report as $key => $count)
+                            '{{ App\Models\FeeCategory::find($key)->name }} ({{ $count }})',
+                        @endforeach
+                    ],
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            chart: {
+                                width: 200
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }]
+                };
+                var chart_test_report = new ApexCharts(document.querySelector("#chart_test_report"), options_test_report);
+                chart_test_report.render();
+
 
 
             </script>

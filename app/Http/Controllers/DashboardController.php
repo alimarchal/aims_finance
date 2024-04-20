@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admission;
 use App\Models\Chit;
 use App\Models\Department;
+use App\Models\FeeCategory;
 use App\Models\Invoice;
 use App\Models\Patient;
 use App\Models\PatientTest;
@@ -31,10 +32,16 @@ class DashboardController extends Controller
         $age_group_wise_data = ['0-12' => 0, '13-20' => 0, '20-30' => 0, '30-50' => 0, '50-90+' => 0,];
         $opd_department_wise = array_fill_keys(Department::pluck('name')->toArray(), 0);
         $admission_weekly_report = [];
+        $patient_test_daily_report = [];
+
 
         for ($i = 12; $i >= 0; $i--) {
             $date = now()->subDays($i)->format('d/m');
             $admission_weekly_report[$date] = 0;
+        }
+
+        foreach (FeeCategory::whereIn('id',[8,9,10,11,12])->get() as $fc) {
+            $patient_test_daily_report[$fc->id] = 0;
         }
 
 
@@ -90,14 +97,29 @@ class DashboardController extends Controller
                 $admission_weekly_report[$item->Date] = $item->Count;
             }
 
+
+            $pt = DB::table('patient_tests')
+                ->select('fee_types.fee_category_id', DB::raw('count(patient_tests.fee_type_id) as total'))
+                ->join('fee_types', 'patient_tests.fee_type_id', '=', 'fee_types.id')
+                ->whereDate('patient_tests.created_at', Carbon::today())
+                ->whereIn('fee_types.fee_category_id',[8,9,10,11,12])
+                ->groupBy('fee_types.fee_category_id')
+                ->orderBy('fee_types.fee_category_id', 'ASC')
+                ->get();
+            foreach ($pt as $item) {
+                $patient_test_daily_report[$item->fee_category_id] = $item->total;
+            }
+
+
         }
-//        dd($admission_weekly_report);
+
 
         return view('dashboard', compact('issued_chits', 'today_revenue', 'non_entitled', 'entitled','issued_invoices','issued_invoices_revenue',
             'gender_wise',
             'age_group_wise_data',
             'opd_department_wise',
             'admission_weekly_report',
+            'patient_test_daily_report',
         ));
     }
 }
