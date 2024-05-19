@@ -60,8 +60,8 @@
                 </td>
             </tr>
             <tr>
-                <td class=" font-extrabold">Medical Record No:</td>
-                <td class="">{{ \Carbon\Carbon::now()->format('y') . '-' .$patient->id }}-{{ $invoice->id }}</td>
+                <td class="font-extrabold">Medical Record No:</td>
+                <td class="font-extrabold">{{ \Carbon\Carbon::now()->format('y') . '-' .$patient->id }}-{{ $invoice->id }}</td>
                 <td class=" font-extrabold">Mobile:</td>
                 <td class="">{{$patient->mobile}}</td>
             </tr>

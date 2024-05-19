@@ -135,6 +135,8 @@
                             </div>
                         </div>
                     </a>
+
+
                     <a href="javascript:;"
                        class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-4 intro-y bg-white">
                         <div class="p-5">
@@ -197,6 +199,46 @@
                                 </div>
                             </div>
                         </a>
+
+                    <a href="javascript:;"
+                       class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-4 intro-y bg-white">
+                        <div class="p-5">
+                            <div class="grid grid-cols-3 gap-1">
+                                <div class="col-span-2">
+                                    <div class="text-3xl font-bold leading-8">
+                                        {{ number_format($government_amount_today,2) }}
+                                    </div>
+                                    <div class="mt-1 text-base font-bold text-gray-600">
+                                       Today Govt Amount
+                                    </div>
+                                </div>
+                                <div class="col-span-1 flex items-center justify-end">
+                                    <img src="{{ url('images/invoice-revenue.png') }}" alt="legal case"
+                                         class="h-12 w-12">
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="javascript:;"
+                       class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-4 intro-y bg-white">
+                        <div class="p-5">
+                            <div class="grid grid-cols-3 gap-1">
+                                <div class="col-span-2">
+                                    <div class="text-3xl font-bold leading-8">
+                                        {{ number_format($hif_amount_today,2) }}
+                                    </div>
+                                    <div class="mt-1 text-base font-bold text-gray-600">
+                                        Today HIF Amount
+                                    </div>
+                                </div>
+                                <div class="col-span-1 flex items-center justify-end">
+                                    <img src="{{ url('images/invoice-revenue.png') }}" alt="legal case"
+                                         class="h-12 w-12">
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
                     @endrole
                 </div>
                 @role('Administrator')
@@ -227,8 +269,14 @@
                     </div>
 
 
-                    <div class="col-span-12 md:col-span-12 lg:col-span-12">
+                    <div class="col-span-6 md:col-span-6 lg:col-span-6">
                         <div class="bg-white rounded-lg shadow-lg p-4" id="chart_test_report">
+                        </div>
+                    </div>
+
+
+                    <div class="col-span-6 md:col-span-6 lg:col-span-6">
+                        <div class="bg-white rounded-lg shadow-lg p-4" id="chart_test_report_operation_theater">
                         </div>
                     </div>
 
@@ -578,6 +626,55 @@
                 };
                 var chart_test_report = new ApexCharts(document.querySelector("#chart_test_report"), options_test_report);
                 chart_test_report.render();
+
+
+                var options_test_report_operation_theater = {
+                    series: [
+                        @foreach ($patient_test_daily_report_op as $key => $count)
+                            {{ $count }},
+                        @endforeach
+                    ],
+                    chart: {
+                        width: '100%',
+                        height: '400px',
+                        type: 'pie',
+                    },
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        text: 'Operation Theater',
+                        align: 'center',
+                        margin: 0,
+                        offsetX: 0,
+                        offsetY: 0,
+                        floating: false,
+                        style: {
+                            fontSize:  '14px',
+                            fontWeight:  'bold',
+                            fontFamily:  '', //undefined
+                            color:  '#263238'
+                        },
+                    },
+                    labels: [
+                        @foreach ($patient_test_daily_report_op as $key => $count)
+                            '{{ App\Models\FeeType::find($key)->type }} ({{ $count }})',
+                        @endforeach
+                    ],
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            chart: {
+                                width: 200
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }]
+                };
+                var chart_test_report_operation_theater = new ApexCharts(document.querySelector("#chart_test_report_operation_theater"), options_test_report_operation_theater);
+                chart_test_report_operation_theater.render();
 
 
 

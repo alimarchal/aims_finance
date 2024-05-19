@@ -92,8 +92,8 @@
                     {{--                        @endif--}}
                     {{ $patient->mobile }}
                 </td>
-                <td class=" font-extrabold">MR Number:</td>
-                <td class="">{{ date('y'). '-'. $chit->patient_id  .'-' . $chit->id }}</td>
+                <td class="font-extrabold">MR Number:</td>
+                <td class="font-extrabold">{{ date('y'). '-'. $chit->patient_id  .'-' . $chit->id }}</td>
             </tr>
 
 

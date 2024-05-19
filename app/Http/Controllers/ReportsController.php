@@ -36,6 +36,7 @@ class ReportsController extends Controller
             $data[$dpt->name] = ['Non_Entitiled' => 0, 'Entitiled' => 0, 'Revenue' => 0, 'Revenue_HIF' => 0, 'department_id' => $dpt->id];
         }
 
+
         $non_entitled = DB::table('chits')
             ->join('departments', 'chits.department_id', '=', 'departments.id')
             ->select('departments.name', DB::raw('COUNT(chits.government_non_gov) AS Non_Entitiled'), DB::raw('SUM(chits.amount) as Revenue, SUM(chits.amount_hif) as Revenue_HIF'))
@@ -261,39 +262,88 @@ class ReportsController extends Controller
 
         $categories = [];
 
-        foreach ($fee_types as $ft) {
-            if ($ft->id == 107 || $ft->id == 108 || $ft->id == 19 || $ft->id == 1) {
-                $categories[$ft->fee_category_id][$ft->id] = [
-                    'Non Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->count(),
-                    'Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 1)->count(),
-                    'Revenue' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->sum('amount'),
-                    'HIF' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->sum('amount_hif'),
-                    'fee_category_id' => $ft->fee_category_id,
-                    'fee_type_id' => $ft->id,
-                    'Returned Start Date' => $date_start_at,
-                    'Returned End Date' => $date_end_at,
-                    'Returned' => FeeType::where('type', 'Return ' . FeeType::find($ft->id)->type)->first(),
-                    'Status' => $ft->status,
-                ];
-            } else {
-                $categories[$ft->fee_category_id][$ft->id] = [
-                    'Non Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->count(),
-                    'Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 1)->count(),
-                    'Revenue' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->sum('total_amount'),
-                    'HIF' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)
-                        ->whereHas('fee_type', function($query) {
-                            $query->whereIn('status', ['Return Fee','Normal']);
-                        })
+
+        if ( $request->input('status') == "Normal")
+        {
+            foreach ($fee_types as $ft) {
+                if ($ft->id == 107 || $ft->id == 108 || $ft->id == 19 || $ft->id == 1) {
+                    $categories[$ft->fee_category_id][$ft->id] = [
+                        'Non Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->count(),
+                        'Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 1)->count(),
+                        'Revenue' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->sum('amount'),
+                        'HIF' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->sum('amount_hif'),
+                        'fee_category_id' => $ft->fee_category_id,
+                        'fee_type_id' => $ft->id,
+                        'Returned Start Date' => $date_start_at,
+                        'Returned End Date' => $date_end_at,
+                        'Returned' => FeeType::where('type', 'Return ' . FeeType::find($ft->id)->type)->first(),
+                        'Status' => $ft->status,
+                    ];
+                } else {
+
+                    $return_fee_id = 0;
+                    $return_fee =  FeeType::where('type', 'Return ' . FeeType::find($ft->id)->type)->first();
+                    if (!empty($return_fee)) {
+                        $return_fee_id = $return_fee->id;
+                    }
+
+
+                    $categories[$ft->fee_category_id][$ft->id] = [
+                        'Non Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->count(),
+                        'Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 1)->count(),
+                        'Revenue' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->whereIn('fee_type_id', [$ft->id, $return_fee_id])->where('government_non_gov', 0)->sum('total_amount'),
+                        'HIF' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->whereIn('fee_type_id', [$ft->id, $return_fee_id])->where('government_non_gov', 0)
+//                            ->whereHas('fee_type', function($query) {
+//                                $query->whereIn('status', ['Return Fee','Normal']);
+//                            })
                         ->sum('hif_amount'),
-                    'fee_category_id' => $ft->fee_category_id,
-                    'fee_type_id' => $ft->id,
-                    'Returned Start Date' => $date_start_at,
-                    'Returned End Date' => $date_end_at,
-                    'Returned' => FeeType::where('type', 'Return ' . FeeType::find($ft->id)->type)->first(),
-                    'Status' => $ft->status,
-                ];
+                        'fee_category_id' => $ft->fee_category_id,
+                        'fee_type_id' => $ft->id,
+                        'Returned Start Date' => $date_start_at,
+                        'Returned End Date' => $date_end_at,
+                        'Returned' => FeeType::where('type', 'Return ' . FeeType::find($ft->id)->type)->first(),
+                        'Status' => $ft->status,
+                    ];
+                }
             }
         }
+
+        else {
+            foreach ($fee_types as $ft) {
+                if ($ft->id == 107 || $ft->id == 108 || $ft->id == 19 || $ft->id == 1) {
+                    $categories[$ft->fee_category_id][$ft->id] = [
+                        'Non Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->count(),
+                        'Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 1)->count(),
+                        'Revenue' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->sum('amount'),
+                        'HIF' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->sum('amount_hif'),
+                        'fee_category_id' => $ft->fee_category_id,
+                        'fee_type_id' => $ft->id,
+                        'Returned Start Date' => $date_start_at,
+                        'Returned End Date' => $date_end_at,
+                        'Returned' => FeeType::where('type', 'Return ' . FeeType::find($ft->id)->type)->first(),
+                        'Status' => $ft->status,
+                    ];
+                } else {
+                    $categories[$ft->fee_category_id][$ft->id] = [
+                        'Non Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->count(),
+                        'Entitled' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 1)->count(),
+                        'Revenue' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->sum('total_amount'),
+                        'HIF' => PatientTest::whereBetween('created_at', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)
+                            ->whereHas('fee_type', function($query) {
+                                $query->whereIn('status', ['Return Fee','Normal']);
+                            })
+                            ->sum('hif_amount'),
+                        'fee_category_id' => $ft->fee_category_id,
+                        'fee_type_id' => $ft->id,
+                        'Returned Start Date' => $date_start_at,
+                        'Returned End Date' => $date_end_at,
+                        'Returned' => FeeType::where('type', 'Return ' . FeeType::find($ft->id)->type)->first(),
+                        'Status' => $ft->status,
+                    ];
+                }
+            }
+        }
+
 
 
 

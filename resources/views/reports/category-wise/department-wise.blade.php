@@ -308,10 +308,20 @@
                                 <td class="border-black border px-4 py-2 text-center">{{ $return_count }}</td>
                                 <td class="border-black border px-4 py-2 text-center">{{ $entitled + $non_entitled - $return_count }} </td>
                                 <td class="border-black border px-4 py-2 text-center">{{ $return_amount }}</td>
+
+{{--                                <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($total_revenue - (abs($return_amount)),2) }}</td>--}}
+{{--                                <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($hif,2) }}</td>--}}
+{{--                                <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($govt,2) }}</td>--}}
+                                <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($total_revenue ,2) }}</td>
+                                <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($hif,2) }}</td>
+                                <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($govt,2) }}</td>
+
+                            @else
+                                <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($total_revenue - (abs($return_amount)),2) }}</td>
+                                <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($hif,2) }}</td>
+                                <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($govt,2) }}</td>
                             @endif
-                            <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($total_revenue - (abs($return_amount)),2) }}</td>
-                            <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($hif,2) }}</td>
-                            <td class="border-black border px-4 py-2 text-right font-bold">{{ number_format($govt,2) }}</td>
+
 
                         </tr>
                         </tfoot>

@@ -20,12 +20,16 @@ class DashboardController extends Controller
     {
 
 
+        $hif_amount_today = 0;
+        $government_amount_today = 0;
         $issued_chits = 0;
         $issued_invoices_revenue = 0;
         $issued_invoices = 0;
         $today_revenue = 0;
         $non_entitled = 0;
         $entitled = 0;
+        $hif_today = 0;
+        $government_today = 0;
         $user = \Auth::user();
         // reports variables
         $gender_wise = ['Male' => 0, 'Female' => 0];
@@ -33,6 +37,7 @@ class DashboardController extends Controller
         $opd_department_wise = array_fill_keys(Department::pluck('name')->toArray(), 0);
         $admission_weekly_report = [];
         $patient_test_daily_report = [];
+        $patient_test_daily_report_op = [];
 
 
         for ($i = 12; $i >= 0; $i--) {
@@ -40,9 +45,14 @@ class DashboardController extends Controller
             $admission_weekly_report[$date] = 0;
         }
 
-        foreach (FeeCategory::whereIn('id',[8,9,10,11,12])->get() as $fc) {
+        foreach (FeeCategory::whereIn('id',[2,3,8,9,10,11,12])->get() as $fc) {
             $patient_test_daily_report[$fc->id] = 0;
         }
+
+        foreach (FeeCategory::whereIn('id',[9,10])->get() as $fc) {
+            $patient_test_daily_report_op[$fc->id] = 0;
+        }
+
 
 
 
@@ -65,6 +75,9 @@ class DashboardController extends Controller
             $entitled = Chit::whereDate('issued_date', Carbon::today())->where('government_non_gov', 1)->count();
             $issued_invoices = Invoice::whereDate('created_at', Carbon::today())->count();
             $issued_invoices_revenue = Invoice::whereDate('created_at', Carbon::today())->sum('total_amount');
+
+            $hif_amount_today = Invoice::whereDate('created_at', Carbon::today())->sum('hif_amount') + Chit::whereDate('created_at', Carbon::today())->sum('amount_hif');
+            $government_amount_today = (Invoice::whereDate('created_at', Carbon::today())->sum('total_amount') + Chit::whereDate('created_at', Carbon::today())->sum('amount')) - $hif_amount_today;
 
 
             // charts reports
@@ -102,7 +115,7 @@ class DashboardController extends Controller
                 ->select('fee_types.fee_category_id', DB::raw('count(patient_tests.fee_type_id) as total'))
                 ->join('fee_types', 'patient_tests.fee_type_id', '=', 'fee_types.id')
                 ->whereDate('patient_tests.created_at', Carbon::today())
-                ->whereIn('fee_types.fee_category_id',[8,9,10,11,12])
+                ->whereIn('fee_types.fee_category_id',[2,3,8,9,10,11,12])
                 ->groupBy('fee_types.fee_category_id')
                 ->orderBy('fee_types.fee_category_id', 'ASC')
                 ->get();
@@ -111,15 +124,30 @@ class DashboardController extends Controller
             }
 
 
+            $op = DB::table('patient_tests')
+                ->select('fee_type_id', DB::raw('COUNT(*) AS total'))
+                ->whereDate('patient_tests.created_at', Carbon::today())
+                ->whereIn('fee_type_id', [9, 10])
+                ->groupBy('fee_type_id')
+                ->get();
+
+
+            foreach ($op as $item) {
+                $patient_test_daily_report_op[$item->fee_type_id] = $item->total;
+            }
+
+
         }
-
-
         return view('dashboard', compact('issued_chits', 'today_revenue', 'non_entitled', 'entitled','issued_invoices','issued_invoices_revenue',
             'gender_wise',
             'age_group_wise_data',
             'opd_department_wise',
             'admission_weekly_report',
             'patient_test_daily_report',
+            'government_amount_today',
+            'hif_amount_today',
+            'patient_test_daily_report_op',
         ));
+
     }
 }
