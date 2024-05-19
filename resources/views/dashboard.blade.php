@@ -280,6 +280,11 @@
                         </div>
                     </div>
 
+                    <div class="col-span-6 md:col-span-6 lg:col-span-6">
+                        <div class="bg-white rounded-lg shadow-lg p-4" id="chart_test_report_radiology">
+                        </div>
+                    </div>
+
                 </div>
                 @endrole
             @endif
@@ -675,6 +680,55 @@
                 };
                 var chart_test_report_operation_theater = new ApexCharts(document.querySelector("#chart_test_report_operation_theater"), options_test_report_operation_theater);
                 chart_test_report_operation_theater.render();
+
+
+                var options_test_report_radiology = {
+                    series: [
+                        @foreach ($patient_test_daily_report_rd as $key => $count)
+                            {{ $count }},
+                        @endforeach
+                    ],
+                    chart: {
+                        width: '100%',
+                        height: '400px',
+                        type: 'pie',
+                    },
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        text: 'Operation Theater',
+                        align: 'center',
+                        margin: 0,
+                        offsetX: 0,
+                        offsetY: 0,
+                        floating: false,
+                        style: {
+                            fontSize:  '14px',
+                            fontWeight:  'bold',
+                            fontFamily:  '', //undefined
+                            color:  '#263238'
+                        },
+                    },
+                    labels: [
+                        @foreach ($patient_test_daily_report_rd as $key => $count)
+                            '{{ App\Models\FeeType::find($key)->type }} ({{ $count }})',
+                        @endforeach
+                    ],
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            chart: {
+                                width: 200
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }]
+                };
+                var chart_test_report_radiology = new ApexCharts(document.querySelector("#chart_test_report_radiology"), options_test_report_radiology);
+                chart_test_report_radiology.render();
 
 
 

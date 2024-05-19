@@ -38,6 +38,7 @@ class DashboardController extends Controller
         $admission_weekly_report = [];
         $patient_test_daily_report = [];
         $patient_test_daily_report_op = [];
+        $patient_test_daily_report_rd = [];
 
 
         for ($i = 12; $i >= 0; $i--) {
@@ -45,12 +46,16 @@ class DashboardController extends Controller
             $admission_weekly_report[$date] = 0;
         }
 
-        foreach (FeeCategory::whereIn('id',[2,3,8,9,10,11,12])->get() as $fc) {
+        foreach (FeeCategory::whereIn('id',[8,9,10,11,12])->get() as $fc) {
             $patient_test_daily_report[$fc->id] = 0;
         }
 
         foreach (FeeCategory::whereIn('id',[9,10])->get() as $fc) {
             $patient_test_daily_report_op[$fc->id] = 0;
+        }
+
+        foreach (FeeCategory::whereIn('id',[6,7,8])->get() as $fc) {
+            $patient_test_daily_report_rd[$fc->id] = 0;
         }
 
 
@@ -115,7 +120,7 @@ class DashboardController extends Controller
                 ->select('fee_types.fee_category_id', DB::raw('count(patient_tests.fee_type_id) as total'))
                 ->join('fee_types', 'patient_tests.fee_type_id', '=', 'fee_types.id')
                 ->whereDate('patient_tests.created_at', Carbon::today())
-                ->whereIn('fee_types.fee_category_id',[2,3,8,9,10,11,12])
+                ->whereIn('fee_types.fee_category_id',[8,9,10,11,12])
                 ->groupBy('fee_types.fee_category_id')
                 ->orderBy('fee_types.fee_category_id', 'ASC')
                 ->get();
@@ -131,9 +136,20 @@ class DashboardController extends Controller
                 ->groupBy('fee_type_id')
                 ->get();
 
+            $rd = DB::table('patient_tests')
+                ->select('fee_type_id', DB::raw('COUNT(*) AS total'))
+                ->whereDate('patient_tests.created_at', Carbon::today())
+                ->whereIn('fee_type_id', [6,7,8])
+                ->groupBy('fee_type_id')
+                ->get();
+
 
             foreach ($op as $item) {
                 $patient_test_daily_report_op[$item->fee_type_id] = $item->total;
+            }
+
+            foreach ($rd as $item) {
+                $patient_test_daily_report_rd[$item->fee_type_id] = $item->total;
             }
 
 
@@ -147,6 +163,7 @@ class DashboardController extends Controller
             'government_amount_today',
             'hif_amount_today',
             'patient_test_daily_report_op',
+            'patient_test_daily_report_rd',
         ));
 
     }
