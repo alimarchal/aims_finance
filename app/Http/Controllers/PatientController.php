@@ -84,14 +84,11 @@ class PatientController extends Controller
             if (!$dateOfBirth) {
                 if ($yearsMonths === 'Year(s)') {
                     $dateOfBirth = now()->subYears($age)->format('Y-m-d');
-                }
-                elseif ($yearsMonths === 'Month(s)') {
+                } elseif ($yearsMonths === 'Month(s)') {
                     $dateOfBirth = now()->subMonths($age)->format('Y-m-d');
-                }
-                elseif ($yearsMonths === 'Day(s)') {
+                } elseif ($yearsMonths === 'Day(s)') {
                     $dateOfBirth = now()->subDay($age)->format('Y-m-d');
-                }
-                else {
+                } else {
                     // Handle an invalid selection or provide a default value
                     $dateOfBirth = null;
                 }
@@ -106,8 +103,7 @@ class PatientController extends Controller
 
         if (!empty($patient)) {
             return to_route('patient.actions', [$patient->id]);
-        }
-        else {
+        } else {
             return to_route('patient.index')->with('message', 'There is an error occurred for creating patient');
         }
     }
@@ -155,14 +151,11 @@ class PatientController extends Controller
             if (!$dateOfBirth) {
                 if ($yearsMonths === 'Year(s)') {
                     $dateOfBirth = now()->subYears($age)->format('Y-m-d');
-                }
-                elseif ($yearsMonths === 'Day(s)') {
+                } elseif ($yearsMonths === 'Day(s)') {
                     $dateOfBirth = now()->subDay($age)->format('Y-m-d');
-                }
-                elseif ($yearsMonths === 'Month(s)') {
+                } elseif ($yearsMonths === 'Month(s)') {
                     $dateOfBirth = now()->subMonths($age)->format('Y-m-d');
-                }
-                else {
+                } else {
                     // Handle an invalid selection or provide a default value
                     $dateOfBirth = null;
                 }
@@ -174,52 +167,52 @@ class PatientController extends Controller
 
             $amount = null;
             $amount_hif = null;
+            $govt_amount = null;
             if ($request->input('government_department_id')) {
                 $amount = 0.00;
                 $amount_hif = 0.00;
+                $govt_amount = 0.00;
                 if ($request->department_id == 7) {
                     $fee_type_id = 108;
-                }
-                else {
+                } else {
                     if ($request->department_id == 1) {
                         // For emergency
                         $fee_type_id = 1;
-                    }
-                    else {
+                    } else {
                         if ($request->department_id == 16) {
                             // For Cardiology
                             $fee_type_id = 1;
-                        }
-                        else {
+                        } else {
                             $fee_type_id = 107;
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 if ($request->department_id == 7) {
                     $amount = FeeType::find(108)->amount;
                     $amount_hif = FeeType::find(108)->hif;
                     $fee_type_id = 108;
-                }
-                else {
+                    // all amount goes to government
+                    $govt_amount = $amount;
+                } else {
                     if ($request->department_id == 1) {
                         // For emergency
                         $amount = FeeType::find(1)->amount;
                         $amount_hif = FeeType::find(1)->hif;
+                        $govt_amount = $amount - $amount_hif;
                         $fee_type_id = 1;
-                    }
-                    else {
+                    } else {
                         if ($request->department_id == 16) {
                             // For Cardiology
                             $amount = FeeType::find(19)->amount;
                             $amount_hif = FeeType::find(19)->hif;
+                            $govt_amount = $amount - $amount_hif;
                             $fee_type_id = 1;
-                        }
-                        else {
+                        } else {
                             $fee_type_id = 107;
                             $amount = FeeType::find(107)->amount;
                             $amount_hif = FeeType::find(107)->hif;
+                            $govt_amount = $amount - $amount_hif;
                         }
                     }
                 }
@@ -227,8 +220,7 @@ class PatientController extends Controller
 
             if ($request->has('ipd_opd')) {
                 $ipd_opd = 0;
-            }
-            else {
+            } else {
                 $ipd_opd = 1;
             }
 
@@ -245,6 +237,7 @@ class PatientController extends Controller
                 'issued_date' => now(),
                 'amount' => $amount,
                 'amount_hif' => $amount_hif,
+                'govt_amount' => $govt_amount,
                 'ipd_opd' => $ipd_opd,
                 'payment_status' => 1,
             ]);
@@ -256,8 +249,7 @@ class PatientController extends Controller
 
         if (!empty($chit) && !empty($patient)) {
             return to_route('chit.print', [$patient->id, $chit->id]);
-        }
-        else {
+        } else {
             return to_route('patient.index')->with('message', 'There is an error occurred for creating patient and chit');
         }
     }
@@ -307,14 +299,11 @@ class PatientController extends Controller
             if (!$dateOfBirth) {
                 if ($yearsMonths === 'Year(s)') {
                     $dateOfBirth = now()->subYears($age)->format('Y-m-d');
-                }
-                elseif ($yearsMonths === 'Month(s)') {
+                } elseif ($yearsMonths === 'Month(s)') {
                     $dateOfBirth = now()->subMonths($age)->format('Y-m-d');
-                }
-                elseif ($yearsMonths === 'Day(s)') {
+                } elseif ($yearsMonths === 'Day(s)') {
                     $dateOfBirth = now()->subDay($age)->format('Y-m-d');
-                }
-                else {
+                } else {
                     // Handle an invalid selection or provide a default value
                     $dateOfBirth = null;
                 }
@@ -327,25 +316,21 @@ class PatientController extends Controller
             $amount = null;
             if ($request->input('government_department_id')) {
                 $amount = 0.00;
-            }
-            else {
+            } else {
                 if ($request->department_id == 7) {
                     $amount = FeeType::find(108)->amount;
                     $fee_type_id = 108;
-                }
-                else {
+                } else {
                     if ($request->department_id == 1) {
                         // For emergency
                         $amount = FeeType::find(1)->amount;
                         $fee_type_id = 1;
-                    }
-                    else {
+                    } else {
                         if ($request->department_id == 16) {
                             // For Cardiology
                             $amount = FeeType::find(19)->amount;
                             $fee_type_id = 1;
-                        }
-                        else {
+                        } else {
                             $fee_type_id = 107;
                             $amount = FeeType::find(107)->amount;
                         }
@@ -355,8 +340,7 @@ class PatientController extends Controller
 
             if ($request->has('ipd_opd')) {
                 $ipd_opd = 0;
-            }
-            else {
+            } else {
                 $ipd_opd = 1;
             }
             // this is for opd
@@ -382,8 +366,7 @@ class PatientController extends Controller
 
         if (!empty($chit) && !empty($patient)) {
             return to_route('chit.print', [$patient->id, $chit->id]);
-        }
-        else {
+        } else {
             return to_route('patient.index')->with('message', 'There is an error occurred for creating patient and chit');
         }
     }
@@ -396,12 +379,21 @@ class PatientController extends Controller
 
     public function add_to_cart(\Illuminate\Http\Request $request, Patient $patient)
     {
+
+        $status = $request->status;
+        if (empty($request->status)) {
+            $status = "Normal";
+        } else {
+            $status = $request->status;
+        }
+
         $add_to_cart = PatientTestCart::create([
             'patient_id' => $request->patient_id,
             'fee_type_id' => $request->fee_type_id,
             'government_non_gov' => $patient->government_non_gov,
             'government_department_id' => $patient->government_department_id,
             'government_card_no' => $patient->government_card_no,
+            'status' => $status,
         ]);
         return to_route('patient.proceed', $patient->id);
     }
@@ -416,48 +408,105 @@ class PatientController extends Controller
 
     public function proceed_to_invoice(\Illuminate\Http\Request $request, Patient $patient)
     {
-        $request->validate([
-            'terms' => 'required'
-        ]);
+        // Validate that the user has agreed to the terms.
+        $request->validate(['terms' => 'required']);
 
+        // Fetch the patient's test cart items.
+        $patientTestCartItems = PatientTestCart::where('patient_id', $patient->id)->get();
 
-        $patient_tests_in_carts = PatientTestCart::where('patient_id', $patient->id)->get();
-
-
-        if ($patient_tests_in_carts->isEmpty()) {
-            return to_route('patient.proceed', $patient->id)->with('error', 'You must select and then press the add button for a specific invoice.');
+        // Ensure the patient has tests or admissions in their cart.
+        if ($patientTestCartItems->isEmpty()) {
+            return redirect()->route('patient.proceed', $patient->id)
+                ->with('error', 'You must add at least one test or admission to the cart before proceeding to the invoice.');
         }
+
+        // Initialize a flag for later use (purpose to be determined by subsequent logic).
         $flag = false;
+
+        // Initialize an admission variable (purpose to be determined by subsequent logic).
         $admission = null;
+
+
         DB::beginTransaction();
 
         try {
-            $user_id = auth()->user()->id;
-            $patient_id = $patient->id;
-            $total_all_amount = 0;
-            $total_all_amount_hif = 0;
+            // User and patient data
+            $userId = auth()->user()->id;
+            $patientId = $patient->id;
+
+            // Initialize total amounts
+            $totalAllAmount = 0;
+            $totalAllAmountHif = 0;
+            $totalAllGovernmentAmount = 0;
+
+            // Create initial invoice
             $invoice = Invoice::create([
-                'user_id' => $user_id,
-                'patient_id' => $patient_id,
+                'user_id' => $userId,
+                'patient_id' => $patientId,
                 'government_non_government' => $patient->government_non_gov,
                 'government_department_id' => $patient->government_department_id,
                 'government_card_no' => $patient->government_card_no,
             ]);
 
 
-            foreach ($patient_tests_in_carts as $ptc) {
-                $total_amount = 0;
-                $total_amount_hif = 0;
+//            foreach ($patientTestCartItems as $ptc) {
+//                $total_amount = 0;
+//                $total_amount_hif = 0;
+//                if ($patient->government_non_gov == 1) {
+//                    $total_amount = 0;
+//                    $total_all_amount = $total_all_amount + $total_amount;
+//                    $total_all_amount_hif = $total_all_amount_hif + $total_amount_hif;
+//                }
+//                else {
+//                    $total_amount = FeeType::find($ptc->fee_type_id)->amount;
+//                    $total_all_amount = $total_all_amount + $total_amount;
+//                    $total_all_amount_hif = $total_all_amount_hif + FeeType::find($ptc->fee_type_id)->hif;
+//                }
+//                PatientTest::create([
+//                    'patient_id' => $ptc->patient_id,
+//                    'fee_type_id' => $ptc->fee_type_id,
+//                    'invoice_id' => $invoice->id,
+//                    'government_non_gov' => $patient->government_non_gov,
+//                    'government_department_id' => $patient->government_department_id,
+//                    'government_card_no' => $patient->government_card_no,
+//                    'total_amount' => $total_amount,
+//                    'hif_amount' =>  FeeType::find($ptc->fee_type_id)->hif,
+//                ]);
+//            }
+
+
+            // Loop through test cart items
+            foreach ($patientTestCartItems as $ptc) {
+                $totalAmount = 0;
+                $totalHifAmount = 0;
+                $totalGovtAmount = 0;
+                // Calculate total amount (based on government status)
                 if ($patient->government_non_gov == 1) {
-                    $total_amount = 0;
-                    $total_all_amount = $total_all_amount + $total_amount;
-                    $total_all_amount_hif = $total_all_amount_hif + $total_amount_hif;
+                    $totalAmount = 0;
+                    $totalHifAmount = 0;
+                    $totalGovtAmount = 0;
+                } else {
+                    $feeType = FeeType::find($ptc->fee_type_id);
+                    if ($ptc->status == "Normal") {
+                        $totalAmount = $feeType->amount;
+                        $totalHifAmount = $feeType->hif;
+                        $totalGovtAmount = $totalAmount - $totalHifAmount;
+                    } elseif ($ptc->status == "Return") {
+                        // amount convert to negative...
+                        $totalAmount = $feeType->amount * -1;
+                        $totalHifAmount = $feeType->hif * -1;
+                        $totalGovtAmount = $totalAmount - $totalHifAmount;
+                    }
                 }
-                else {
-                    $total_amount = FeeType::find($ptc->fee_type_id)->amount;
-                    $total_all_amount = $total_all_amount + $total_amount;
-                    $total_all_amount_hif = $total_all_amount_hif + FeeType::find($ptc->fee_type_id)->hif;
-                }
+
+
+                // Update totals
+                $totalAllAmount += $totalAmount;
+                $totalAllAmountHif += $totalHifAmount;
+                $totalAllGovernmentAmount += $totalGovtAmount;
+
+
+                // Create PatientTest record
                 PatientTest::create([
                     'patient_id' => $ptc->patient_id,
                     'fee_type_id' => $ptc->fee_type_id,
@@ -465,23 +514,29 @@ class PatientController extends Controller
                     'government_non_gov' => $patient->government_non_gov,
                     'government_department_id' => $patient->government_department_id,
                     'government_card_no' => $patient->government_card_no,
-                    'total_amount' => $total_amount,
-                    'hif_amount' =>  FeeType::find($ptc->fee_type_id)->hif,
+                    'total_amount' => $totalAmount,
+                    'hif_amount' => $totalHifAmount,
+                    'govt_amount' => $totalGovtAmount,
+                    'status' => $ptc->status,
                 ]);
             }
-            $invoice->total_amount = $total_all_amount;
-            $invoice->hif_amount = $total_all_amount_hif;
+
+
+            // Update invoice with calculated totals
+            $invoice->total_amount = $totalAllAmount;
+            $invoice->hif_amount = $totalAllAmountHif;
+            $invoice->govt_amount = $totalAllGovernmentAmount;
             $invoice->save();
-            foreach ($patient_tests_in_carts as $ptc) {
-                $ptc->delete();
-            }
+
+            // Clear patient's test cart
+            $patientTestCartItems->each->delete();
 
 
             if ($request->has('admission_form') && $request->admission_form == 1) {
                 $admission = Admission::create([
-                    'user_id' => $user_id,
+                    'user_id' => $userId,
                     'invoice_id' => $invoice->id,
-                    'patient_id' => $patient_id,
+                    'patient_id' => $patientId,
                     'unit_ward' => $request->unit_ward,
                     'disease' => $request->disease,
                     'category' => $request->category,
@@ -504,8 +559,7 @@ class PatientController extends Controller
                     $admission = Admission::find($invoice->id);
                     $admission->status = "Yes";
                     $admission->save();
-                }
-                else {
+                } else {
                     return throw new \ErrorException('Error found');
                 }
             }
@@ -520,8 +574,7 @@ class PatientController extends Controller
 
         if ($flag) {
             return to_route('patient.patient_invoice', [$patient->id, $invoice->id]);
-        }
-        else {
+        } else {
             return to_route('patient.proceed', $patient->id)->with('message', 'Something went wrong, please try again.');
         }
     }
@@ -557,8 +610,7 @@ class PatientController extends Controller
 
             if ($fee_cat_id >= 8 && $fee_cat_id <= 12) {
                 $fee_category_main = "Pathology";
-            }
-            else {
+            } else {
                 $fee_category_main = FeeCategory::find($invoice->patient_test_latest->fee_type->fee_category_id)->name;
             }
         }
@@ -617,16 +669,14 @@ class PatientController extends Controller
     {
         if ($request->input('mobile_alert')) {
             $request->merge(['mobile_alert' => 1]);
-        }
-        else {
+        } else {
             $request->merge(['mobile_alert' => 0]);
         }
 
 
         if ($request->input('email_alert')) {
             $request->merge(['email_alert' => 1]);
-        }
-        else {
+        } else {
             $request->merge(['email_alert' => 0]);
         }
 
@@ -659,8 +709,7 @@ class PatientController extends Controller
 
         if (in_array($title, $maleTitles)) {
             return '1';
-        }
-        elseif (in_array($title, $femaleTitles)) {
+        } elseif (in_array($title, $femaleTitles)) {
             return '0';
         }
     }

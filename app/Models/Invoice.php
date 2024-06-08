@@ -20,6 +20,7 @@ class Invoice extends Model
         'government_department_id',
         'total_amount',
         'hif_amount',
+        'govt_amount',
     ];
 
     public function patient_test(): HasMany

@@ -21,6 +21,8 @@ class PatientTest extends Model
         'government_card_no',
         'total_amount',
         'hif_amount',
+        'govt_amount',
+        'status',
     ];
 
     public function invoice(): BelongsTo

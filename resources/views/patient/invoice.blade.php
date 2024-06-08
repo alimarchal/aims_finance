@@ -294,7 +294,7 @@
                         var flag = false;
 
                         {{--redirectToLink("{{ route('patient.index') }}");--}}
-                                @if(1)
+                        @if(1)
                             flag = true
                         @else
                             flag = false;

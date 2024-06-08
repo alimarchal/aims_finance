@@ -56,39 +56,34 @@ class ChitController extends Controller
             return to_route('patient.create')->with('error', 'OPD today\'s limit has been reached to maximum limit of ' . $count_chit_of_today_limit . ' as assigned by OPD.');
         }
 
-
         DB::beginTransaction();
 
         try {
-            $amount = null;
+            $amount = 0;
             $fee_type_id = null;
             $ipd_opd = $request->ipd_opd;
-            $amount = null;
             $amount_hif = 0;
+            $govt_amount = 0;
             if ($request->input('government_department_id')) {
                 $amount = 0.00;
                 $amount_hif = 0.00;
+                $govt_amount = 0.00;
                 if ($request->department_id == 7) {
                     $fee_type_id = FeeType::find(108)->id;
                     $amount = FeeType::find(108)->amount;
                     $amount_hif = FeeType::find(108)->hif;
+                    $govt_amount = $amount - $amount_hif;
                 }
                 else {
                     if ($request->department_id == 1) {
                         $fee_type_id = FeeType::find(1)->id;
-//                        $amount = FeeType::find(1)->amount;
-//                        $amount_hif = FeeType::find(1)->hif;
                     }
                     else {
                         if ($request->department_id == 16) {
                             $fee_type_id = FeeType::find(1)->id;
-//                            $amount = FeeType::find(1)->amount;
-//                            $amount_hif = FeeType::find(1)->hif;
                         }
                         else {
                             $fee_type_id = FeeType::find(107)->id;
-//                            $amount = FeeType::find(107)->amount;
-//                            $amount_hif = FeeType::find(107)->hif;
                         }
                     }
                 }
@@ -98,6 +93,8 @@ class ChitController extends Controller
                     $amount = FeeType::find(108)->amount;
                     $amount_hif = FeeType::find(108)->hif;
                     $fee_type_id = 108;
+                    // as all amount goes to government
+                    $govt_amount = $amount;
                 }
                 else {
                     if ($request->department_id == 1) {
@@ -105,6 +102,7 @@ class ChitController extends Controller
                         $amount = FeeType::find(1)->amount;
                         $amount_hif = FeeType::find(1)->hif;
                         $fee_type_id = 1;
+                        $govt_amount = $amount - $amount_hif;
                     }
                     else {
                         if ($request->department_id == 16) {
@@ -112,15 +110,18 @@ class ChitController extends Controller
                             $amount = FeeType::find(19)->amount;
                             $amount_hif = FeeType::find(19)->hif;
                             $fee_type_id = 1;
+                            $govt_amount = $amount - $amount_hif;
                         }
                         else {
                             $fee_type_id = 107;
                             $amount = FeeType::find(107)->amount;
                             $amount_hif = FeeType::find(107)->hif;
+                            $govt_amount = $amount - $amount_hif;
                         }
                     }
                 }
             }
+
 
             if ($request->has('ipd_opd')) {
                 $ipd_opd = 0;
@@ -143,6 +144,7 @@ class ChitController extends Controller
                 'issued_date' => now(),
                 'amount' => $amount,
                 'amount_hif' => $amount_hif,
+                'govt_amount' => $govt_amount,
                 'ipd_opd' => $ipd_opd,
                 'payment_status' => 1,
             ]);

@@ -8,7 +8,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-3">
+    <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(Auth::user()->hasRole('Auditor'))
                 <h1 class="p-8 bg-white font-extrabold text-center">Please use the reports for details investigation...</h1>
@@ -288,11 +288,6 @@
                 </div>
                 @endrole
             @endif
-
-
-
-
-
         </div>
     </div>
     @role('Administrator')

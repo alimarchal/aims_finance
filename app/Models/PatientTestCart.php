@@ -14,6 +14,7 @@ class PatientTestCart extends Model
         'government_non_gov',
         'government_department_id',
         'government_card_no',
+        'status',
     ];
 
     public function fee_type()

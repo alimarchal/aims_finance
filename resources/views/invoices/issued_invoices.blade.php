@@ -49,9 +49,9 @@
                                 <td class="border-black border px-4 py-2 text-center">{{date('y')}}-{{ $chit->id .'-' . $chit->patient_id}}</td>
                                 <td class="border-black border px-4 py-2 text-center">
                                     @if($chit->government_non_government == 1)
-                                        Non-Entitled
-                                    @else
                                         Entitled
+                                    @else
+                                        Non-Entitled
                                     @endif
                                 </td>
                                 <td class="border-black border px-4 py-2 text-center">

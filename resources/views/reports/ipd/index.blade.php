@@ -42,7 +42,6 @@
                         </div>
                     </div>
                 </a>
-
                 <a href="{{ route('reports.misc.admission') }}" class="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white">
                     <div class="p-5">
                         <div class="grid grid-cols-3 gap-1">

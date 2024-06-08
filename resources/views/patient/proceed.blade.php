@@ -25,8 +25,8 @@
                         <img src="{{ \Illuminate\Support\Facades\Storage::url('Aimsa8.png') }}" alt="Logo" class="w-16 h-16">
                     </div>
                     <div class="flex flex-col items-end">
-                        @php $patient_id = (string) $patient->id; @endphp
-                        {!! DNS2D::getBarcodeSVG($patient_id, 'QRCODE',3,3) !!}
+{{--                        @php $patient_id = (string) $patient->id; @endphp--}}
+{{--                        {!! DNS2D::getBarcodeSVG($patient_id, 'QRCODE',3,3) !!}--}}
                     </div>
                 </div>
                 <h1 class="text-center text-2xl font-bold">Abbas Institute of Medical Sciences (AIMS)</h1>
@@ -101,6 +101,7 @@
                             <th class="border-black border px-4 py-2 text-center">S.No</th>
                             <th class="border-black border px-4 py-2 text-left">Name</th>
 {{--                            <th class="border-black border px-4 py-2 text-center">Reporting Date & Time</th>--}}
+                            <th class="border-black border px-4 py-2">Status</th>
                             <th class="border-black border px-4 py-2">Amount</th>
                             <th class="border-black border px-4 py-2 print:hidden">Action</th>
                         </tr>
@@ -119,7 +120,8 @@
                             @endphp
                             <tr class="border-black">
                                 <td class="border-black border px-4 py-2 text-center">{{$loop->iteration}}</td>
-                                <td class="border-black border px-4 py-2">{{$patient_test_card->fee_type->type}}</td>
+                                <td class="border-black border px-4 py-2 font-bold">{{$patient_test_card->fee_type->type}}</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold">{{$patient_test_card->status}}</td>
                                 <td class="border-black border px-4 py-2 text-center font-bold">
                                     @if($patient->government_non_gov == 1)
                                         0.00
@@ -127,6 +129,8 @@
                                         {{number_format($patient_test_card->fee_type->amount,2)}}
                                     @endif
                                 </td>
+
+
                                 <td class="border-black border px-4 py-2 text-center print:hidden">
                                     <form action="{{ route('patient_cart.destroy', $patient_test_card->id) }}" method="POST" class="inline-block">
                                         @csrf
@@ -145,26 +149,27 @@
                             @csrf
                             <tr class="border-black">
                                 <td class="border-black border px-4 py-2 text-center"></td>
-                                <td class="border-black border px-4 py-2 text-center">
-                                    <select name="fee_type_id" required id="select2" width="100%" class="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
+                                <td class="border-black border px-4 py-2 text-center" colspan="2">
+                                    <select name="fee_type_id" required id="select2" width="50%" class="select2 w-1/2 px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
                                         <option value="">Select Test / Bill Type</option>
-                                        @foreach(\App\Models\FeeType::orderBy('type', 'ASC')->get() as $fee_type)
-
-                                            @if($fee_type->status == 'Return Fee')
-                                                @role('Administrator')
-                                                    <option value="{{$fee_type->id}}" {{ old('fee_type_id') === $fee_type->id ? 'selected' : '' }}>{{ $fee_type->type }}</option>
-                                                @endrole
-                                            @else
-                                                <option value="{{$fee_type->id}}" {{ old('fee_type_id') === $fee_type->id ? 'selected' : '' }}>{{ $fee_type->type }}</option>
-                                            @endif
-
-
-
+                                        @foreach(\App\Models\FeeType::orderBy('type', 'ASC')->where('status','Normal')->get() as $fee_type)
+                                            <option value="{{ $fee_type->id }}" {{ old('fee_type_id') == $fee_type->id ? 'selected' : '' }}>
+                                                {{ $fee_type->type }}
+                                            </option>
                                         @endforeach
                                     </select>
+
+                                    @role('Administrator')
+                                        <select name="status" required id="status" width="50%" class="select2 w-1/2 px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:border-blue-500">
+                                            <option value="">Select status of invoice</option>
+                                            <option value="Normal" selected>Normal</option>
+                                            <option value="Return">Return</option>
+                                        </select>
+                                    @endrole
+
                                     <input type="hidden" value="{{ $patient->id }}" name="patient_id">
                                 </td>
-                                <td class="border-black border px-4 py-2 text-center font-bold" colspan="3">
+                                <td class="border-black border px-4 py-2 text-center font-bold" colspan="2">
                                     <button type="submit" class="mx-2 inline-flex items-center px-4 py-2 bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150" \>
                                         Add
                                     </button>
@@ -176,7 +181,7 @@
 
 
                         <tr class="border-black">
-                            <td class="border-black border px-4 py-2 text-right font-bold text-2xl" colspan="2">Total Amount:</td>
+                            <td class="border-black border px-4 py-2 text-right font-bold text-2xl" colspan="3">Total Amount:</td>
                             <td class="border-black border px-4 py-2 text-center font-bold text-2xl" colspan="2">Rs.{{number_format($total_fee,2)}}</td>
                         </tr>
                         </tbody>
@@ -189,7 +194,7 @@
 
                         @foreach($patient->patient_test_cart as $patient_test_card)
 
-                            @if($patient_test_card->fee_type->id == 2)
+                            @if($patient_test_card->fee_type->id == 2 && $patient_test_card->status == "Normal")
 
                                 <div class="grid grid-cols-3 md:grid-cols-3 px-4 py-4 gap-3">
                                     <div>
@@ -277,7 +282,7 @@
                             @endif
 
 
-                                @if($patient_test_card->fee_type->id == 110)
+                                @if($patient_test_card->fee_type->id == 2 && $patient_test_card->status == "Return")
 
                                     <div class="grid grid-cols-3 md:grid-cols-3 px-4 py-4 gap-3">
                                         <div>
@@ -327,7 +332,7 @@
         <script>
             $(document).ready(function () {
                 $('.js-example-basic-multiple').select2();
-                $('#select2').select2();
+                $('.select2').select2();
 
                 $(document).on('select2:open', () => {
                     document.querySelector('.select2-search__field').focus();
