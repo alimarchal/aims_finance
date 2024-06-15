@@ -3,9 +3,21 @@
         <style>
             @media print {
                 @page {
-                    size: 5.85in 8.5in;
-                    margin-top: -1.4in;
+                    @if(Request::get("thermal") == "Yes")
+                        margin: 0.1cm;
+                    @else
+                        size: 5.85in 8.5in;
+                        margin-top: -1.4in;
+                    @endif
+
+
                 }
+
+                /*@page {*/
+                /*    size: 210mm 297mm;*/
+                /*    !* Chrome sets own margins, we change these printer settings *!*/
+                /*    margin: 27mm 16mm 27mm 16mm;*/
+                /*}*/
 
                 .lightgray {
                     background-color: lightgray;
@@ -273,48 +285,48 @@
     </div>
 
 
-    @section('custom_script')
-        <script>
-            // Execute this code on page load
-            document.addEventListener("DOMContentLoaded", function () {
-                // Store the current window height before opening the print dialog
-                const initialHeight = window.innerHeight;
+{{--    @section('custom_script')--}}
+{{--        <script>--}}
+{{--            // Execute this code on page load--}}
+{{--            document.addEventListener("DOMContentLoaded", function () {--}}
+{{--                // Store the current window height before opening the print dialog--}}
+{{--                const initialHeight = window.innerHeight;--}}
 
-                // Show the print dialog when the page loads
-                window.print();
+{{--                // Show the print dialog when the page loads--}}
+{{--                window.print();--}}
 
-                // Wait for a short period (e.g., 1 second) and then check the window height again
-                setTimeout(function () {
-                    const currentHeight = window.innerHeight;
+{{--                // Wait for a short period (e.g., 1 second) and then check the window height again--}}
+{{--                setTimeout(function () {--}}
+{{--                    const currentHeight = window.innerHeight;--}}
 
-                    // If the window height decreased, it indicates that the print dialog is open
-                    // If the window height remains the same, it means the user pressed "Cancel"
-                    if (currentHeight === initialHeight) {
-                        // Redirect to the specified route
-                        var flag = false;
+{{--                    // If the window height decreased, it indicates that the print dialog is open--}}
+{{--                    // If the window height remains the same, it means the user pressed "Cancel"--}}
+{{--                    if (currentHeight === initialHeight) {--}}
+{{--                        // Redirect to the specified route--}}
+{{--                        var flag = false;--}}
 
-                        {{--redirectToLink("{{ route('patient.index') }}");--}}
-                        @if(1)
-                            flag = true
-                        @else
-                            flag = false;
-                        @endif
+{{--                        --}}{{--redirectToLink("{{ route('patient.index') }}");--}}
+{{--                        @if(1)--}}
+{{--                            flag = true--}}
+{{--                        @else--}}
+{{--                            flag = false;--}}
+{{--                        @endif--}}
 
-                        if (flag == true) {
-                            redirectToLink("{{ route('patient.index') }}");
-                        } else {
-                            redirectToLink("{{ route('patient.index') }}");
-                        }
-                    }
-                }, 1000); // Adjust the delay time as needed
-            });
+{{--                        if (flag == true) {--}}
+{{--                            redirectToLink("{{ route('patient.index') }}");--}}
+{{--                        } else {--}}
+{{--                            redirectToLink("{{ route('patient.index') }}");--}}
+{{--                        }--}}
+{{--                    }--}}
+{{--                }, 1000); // Adjust the delay time as needed--}}
+{{--            });--}}
 
-            // Define the redirectToLink function
-            function redirectToLink(url) {
-                window.location.href = url;
-            }
-        </script>
+{{--            // Define the redirectToLink function--}}
+{{--            function redirectToLink(url) {--}}
+{{--                window.location.href = url;--}}
+{{--            }--}}
+{{--        </script>--}}
 
-    @endsection
+{{--    @endsection--}}
 </x-app-layout>
 

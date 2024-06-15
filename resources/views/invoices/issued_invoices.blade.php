@@ -64,11 +64,17 @@
                                     {{$chit->total_amount}}
                                 </td>
                                 <td class="border-black border px-4 py-2 text-center">
-                                <a href="{{route('patient.patient_invoice',[$chit->patient_id, $chit->id])}}" class="text-center">
+                                <a href="{{route('patient.patient_invoice',[$chit->patient_id, $chit->id])}}" class="text-center inline-block">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 m-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
                                     </svg>
                                 </a>
+
+                                    <a href="{{route('patient.patient_invoice',[$chit->patient_id, $chit->id ,'thermal=Yes'])}}" class="text-center inline-block">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 m-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                                        </svg>
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach

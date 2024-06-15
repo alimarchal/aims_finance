@@ -616,6 +616,7 @@ class PatientController extends Controller
         }
 
 
+//        dd('ss')
 //        dd($invoice->patient_test->groupBy('fee_type_id'));
         return view('patient.invoice', compact('patient', 'patient', 'fee_category_main', 'invoice', 'total_amount', 'department', 'fee_category', 'chitNumber'));
     }
