@@ -263,14 +263,16 @@
                 });
             </script>
         </div>
+            @if(Request::get("thermal") == "Yes")
+                <div class="text-center">
+
+                    <img class="m-auto rounded-lg" style="width: 100px;" src="{{\Illuminate\Support\Facades\Storage::url('paid-5025785_1280.png')}}" alt="{{\Illuminate\Support\Facades\Storage::url('Aimsa8-removebg-preview.png')}}">
+                    <p style="font-size: 12px!important;">This is a computer generated receipt and does not need signature or stamp</p>
+
+                </div>
+            @endif
 
 
-        {{--            <div class="text-center">--}}
-
-        {{--                <img class="m-auto rounded-lg" style="width: 150px;" src="{{\Illuminate\Support\Facades\Storage::url('paid-5025785_1280.png')}}" alt="{{\Illuminate\Support\Facades\Storage::url('Aimsa8-removebg-preview.png')}}">--}}
-        {{--                <p>This is a computer generated receipt and does not need signature or stamp</p>--}}
-
-        {{--            </div>--}}
 
         <br>
         <br>
@@ -285,48 +287,48 @@
     </div>
 
 
-{{--    @section('custom_script')--}}
-{{--        <script>--}}
-{{--            // Execute this code on page load--}}
-{{--            document.addEventListener("DOMContentLoaded", function () {--}}
-{{--                // Store the current window height before opening the print dialog--}}
-{{--                const initialHeight = window.innerHeight;--}}
+    @section('custom_script')
+        <script>
+            // Execute this code on page load
+            document.addEventListener("DOMContentLoaded", function () {
+                // Store the current window height before opening the print dialog
+                const initialHeight = window.innerHeight;
 
-{{--                // Show the print dialog when the page loads--}}
-{{--                window.print();--}}
+                // Show the print dialog when the page loads
+                window.print();
 
-{{--                // Wait for a short period (e.g., 1 second) and then check the window height again--}}
-{{--                setTimeout(function () {--}}
-{{--                    const currentHeight = window.innerHeight;--}}
+                // Wait for a short period (e.g., 1 second) and then check the window height again
+                setTimeout(function () {
+                    const currentHeight = window.innerHeight;
 
-{{--                    // If the window height decreased, it indicates that the print dialog is open--}}
-{{--                    // If the window height remains the same, it means the user pressed "Cancel"--}}
-{{--                    if (currentHeight === initialHeight) {--}}
-{{--                        // Redirect to the specified route--}}
-{{--                        var flag = false;--}}
+                    // If the window height decreased, it indicates that the print dialog is open
+                    // If the window height remains the same, it means the user pressed "Cancel"
+                    if (currentHeight === initialHeight) {
+                        // Redirect to the specified route
+                        var flag = false;
 
-{{--                        --}}{{--redirectToLink("{{ route('patient.index') }}");--}}
-{{--                        @if(1)--}}
-{{--                            flag = true--}}
-{{--                        @else--}}
-{{--                            flag = false;--}}
-{{--                        @endif--}}
+                        redirectToLink("{{ route('patient.index') }}");
+                        @if(1)
+                            flag = true
+                        @else
+                            flag = false;
+                        @endif
 
-{{--                        if (flag == true) {--}}
-{{--                            redirectToLink("{{ route('patient.index') }}");--}}
-{{--                        } else {--}}
-{{--                            redirectToLink("{{ route('patient.index') }}");--}}
-{{--                        }--}}
-{{--                    }--}}
-{{--                }, 1000); // Adjust the delay time as needed--}}
-{{--            });--}}
+                        if (flag == true) {
+                            redirectToLink("{{ route('patient.index') }}");
+                        } else {
+                            redirectToLink("{{ route('patient.index') }}");
+                        }
+                    }
+                }, 1000); // Adjust the delay time as needed
+            });
 
-{{--            // Define the redirectToLink function--}}
-{{--            function redirectToLink(url) {--}}
-{{--                window.location.href = url;--}}
-{{--            }--}}
-{{--        </script>--}}
+            // Define the redirectToLink function
+            function redirectToLink(url) {
+                window.location.href = url;
+            }
+        </script>
 
-{{--    @endsection--}}
+    @endsection
 </x-app-layout>
 
