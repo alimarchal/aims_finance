@@ -621,6 +621,47 @@ class PatientController extends Controller
         return view('patient.invoice', compact('patient', 'patient', 'fee_category_main', 'invoice', 'total_amount', 'department', 'fee_category', 'chitNumber'));
     }
 
+    public function patient_invoice_thermal_print(Patient $patient, Invoice $invoice)
+    {
+        $date_of_day = Carbon::parse($invoice->created_at)->format('Y-m-d');
+        $fee_type_id = $invoice->patient_test_latest->fee_type_id;
+        $patient_test_latest_id = $invoice->patient_test_latest->id;
+
+
+        $result = DB::table('patient_tests')
+            ->where('fee_type_id', $fee_type_id)
+            ->whereDate('created_at', $date_of_day)
+            ->orderByDesc('created_at')
+            ->select('*', DB::raw('ROW_NUMBER() OVER (ORDER BY created_at) AS count_no'))
+            ->get();
+
+        $chitNumber = $result->where('id', $patient_test_latest_id)->first()->count_no;
+
+
+        $total_amount = $invoice->patient_test->sum('total_amount');
+        $department = null;
+        $fee_category = null;
+        $fee_category_main = null;
+        if (!empty($invoice->patient_test_latest->fee_type->feeCategory)) {
+            $department = $invoice->patient_test_latest->fee_type->feeCategory->name;
+        }
+        if (!empty($invoice->patient_test_latest->fee_type)) {
+            $fee_category = $invoice->patient_test_latest->fee_type->type;
+            $fee_cat_id = FeeCategory::find($invoice->patient_test_latest->fee_type->fee_category_id)->id;
+
+            if ($fee_cat_id >= 8 && $fee_cat_id <= 12) {
+                $fee_category_main = "Pathology";
+            } else {
+                $fee_category_main = FeeCategory::find($invoice->patient_test_latest->fee_type->fee_category_id)->name;
+            }
+        }
+
+
+//        dd('ss')
+//        dd($invoice->patient_test->groupBy('fee_type_id'));
+        return view('patient.thermal-print', compact('patient', 'patient', 'fee_category_main', 'invoice', 'total_amount', 'department', 'fee_category', 'chitNumber'));
+    }
+
 
     public function patient_history(Patient $patient)
     {

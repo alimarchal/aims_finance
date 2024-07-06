@@ -70,11 +70,46 @@
                                     </svg>
                                 </a>
 
-                                    <a href="{{route('patient.patient_invoice',[$chit->patient_id, $chit->id ,'thermal=Yes'])}}" class="text-center inline-block">
+
+{{--                                    <a href="{{route('patient.patient_invoice',[$chit->patient_id, $chit->id ,'thermal=Yes'])}}" class="text-center inline-block">--}}
+{{--                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 m-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">--}}
+{{--                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>--}}
+{{--                                        </svg>--}}
+{{--                                    </a>--}}
+
+
+                                    <a href="javascript:;" onclick="openPopup('{{route('patient.patient_invoice_thermal_print',[$chit->patient_id, $chit->id])}}')" class="text-center inline-block">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 m-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
                                         </svg>
                                     </a>
+
+                                    <!-- JavaScript to Handle Popup -->
+                                    <script>
+                                        function openPopup(url) {
+                                            // Window size and features
+                                            const width = 800;
+                                            const height = 600;
+
+                                            // Calculate the position for the window to be centered
+                                            const left = (window.screen.width / 2) - (width / 2);
+                                            const top = (window.screen.height / 2) - (height / 2);
+
+                                            // Define the size and properties of the popup window
+                                            const popupFeatures = `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`;
+
+                                            // Open the new window
+                                            const win = window.open(url, "_blank", popupFeatures);
+
+                                            // Focus on the popup window if it opens successfully
+                                            if (win) {
+                                                win.focus();
+                                            } else {
+                                                alert('Popup blocked by browser.');
+                                            }
+                                        }
+                                    </script>
+
                                 </td>
                             </tr>
                         @endforeach

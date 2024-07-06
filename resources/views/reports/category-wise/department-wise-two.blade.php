@@ -131,153 +131,303 @@
                     @endif
                     <table class="table-auto w-full border-collapse border border-black">
 
-                        <thead>
-                        <tr class="border-black">
-                            <th class="border-black border px-4 py-2" rowspan="2">ID</th>
-                            <th class="border-black border px-4 py-2" rowspan="2">Category</th>
-                            <th class="border-black border px-4 py-2" rowspan="2">Name</th>
-                            <th class="border-black border px-4 py-2 print:hidden" colspan="2">Actual</th>
-                            <th class="border-black border px-4 py-2 print:hidden" colspan="2">Return</th>
-                            <th class="border-black border px-4 py-2" colspan="2">Result</th>
-                            <th class="border-black border px-4 py-2" rowspan="2">HIF</th>
-                            <th class="border-black border px-4 py-2" rowspan="2">Govt</th>
-                            <th class="border-black border px-4 py-2" rowspan="2">Total</th>
+                        @if(request()->input('status') == "Normal")
 
-                        </tr>
-                        <tr class="border-black">
-                            <th class="border-black border px-4 py-2  print:hidden">Entitled</th>
-                            <th class="border-black border px-4 py-2  print:hidden">Non Entitled</th>
-                            <th class="border-black border px-4 py-2  print:hidden">Entitled</th>
-                            <th class="border-black border px-4 py-2  print:hidden">Non Entitled</th>
-                            <th class="border-black border px-4 py-2">Entitled</th>
-                            <th class="border-black border px-4 py-2">Non Entitled</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @php $count = 1;  $return_ent = 0; $return_non_ent = 0; $entitled = 0; $non_entitled = 0; $hif = 0; $govt = 0; $total = 0; @endphp
-                        @foreach($categories as $fee_category_id => $fee_types)
-                            @php
-                                $fee_category = \App\Models\FeeCategory::find($fee_category_id);
-                                $fee_category_name = $fee_category ? $fee_category->name : '';
-                            @endphp
-                            @foreach($fee_types as $fee_type_id => $data)
+                            <thead>
+                            <tr class="border-black">
+                                <th class="border-black border px-4 py-2" rowspan="2">ID</th>
+                                <th class="border-black border px-4 py-2" rowspan="2">Category</th>
+                                <th class="border-black border px-4 py-2" rowspan="2">Name</th>
+                                <th class="border-black border px-4 py-2 print:hidden" colspan="2">Actual</th>
+                                <th class="border-black border px-4 py-2 print:hidden" colspan="2">Return</th>
+                                <th class="border-black border px-4 py-2" colspan="2">Result</th>
+                                <th class="border-black border px-4 py-2 print:hidden" rowspan="2">HIF</th>
+                                <th class="border-black border px-4 py-2" rowspan="2">Govt</th>
+                                <th class="border-black border px-4 py-2" rowspan="2">Total</th>
+
+                            </tr>
+                            <tr class="border-black">
+                                <th class="border-black border px-4 py-2  print:hidden">Entitled</th>
+                                <th class="border-black border px-4 py-2  print:hidden">Non Entitled</th>
+                                <th class="border-black border px-4 py-2  print:hidden">Entitled</th>
+                                <th class="border-black border px-4 py-2  print:hidden">Non Entitled</th>
+                                <th class="border-black border px-4 py-2">Entitled</th>
+                                <th class="border-black border px-4 py-2">Non Entitled</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @php $count = 1;  $return_ent = 0; $return_non_ent = 0; $entitled = 0; $non_entitled = 0; $hif = 0; $govt = 0; $total = 0; @endphp
+                            @foreach($categories as $fee_category_id => $fee_types)
                                 @php
-                                    $fee_type = \App\Models\FeeType::find($fee_type_id);
+                                    $fee_category = \App\Models\FeeCategory::find($fee_category_id);
+                                    $fee_category_name = $fee_category ? $fee_category->name : '';
                                 @endphp
-                                <tr class="border-black">
-                                    <td class="border-black border px-4 py-2 text-center">{{ $count }}</td>
-                                    @if ($loop->first)
-                                        <td class="border-black border px-4 py-2 text-center" rowspan="{{ count($fee_types) }}">{{ $fee_category_name }}</td>
-                                    @endif
-                                    {{--                                    <td class="border-black border px-4 py-2">{{ $fee_type->fee_category_id }}</td>--}}
-                                    <td class="border-black border px-4 py-2">{{ $fee_type->type }}</td>
-
-                                    <td class="border-black border px-4 py-2 text-center print:hidden">
-
-
-                                        @if($fee_type->id == 1 || $fee_type->id == 19 || $fee_type->id == 107 || $fee_type->id == 108)
-                                            @if(request()->has('start_date'))
-                                                <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $data['fee_type_id']]) }}"
-                                                   class="text-blue-500 hover:underline">
-                                                    {{ $data['Entitled'] }}
-                                                </a>
-                                            @else
-                                                <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $data['fee_type_id']]) }}"
-                                                   class="text-blue-500 hover:underline">
-                                                    {{ $data['Entitled'] }}
-                                                </a>
-                                            @endif
-
-                                        @else
-
-                                            @if(request()->has('start_date'))
-                                                <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}"
-                                                   class="text-blue-500 hover:underline">
-                                                    {{ $data['Entitled'] }}
-                                                </a>
-                                            @else
-                                                <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}"
-                                                   class="text-blue-500 hover:underline">
-                                                    {{ $data['Entitled'] }}
-                                                </a>
-                                            @endif
-                                        @endif
-
-
-                                    </td>
-                                    <td class="border-black border px-4 py-2 text-center print:hidden">
-
-
-                                        @if($fee_type->id == 1 || $fee_type->id == 19 || $fee_type->id == 107 || $fee_type->id == 108)
-                                            @if(request()->has('start_date'))
-                                                <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $data['fee_type_id']]) }}"
-                                                   class="text-blue-500 hover:underline">
-                                                    {{ $data['Non Entitled'] }}
-                                                </a>
-                                            @else
-                                                <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $data['fee_type_id']]) }}"
-                                                   class="text-blue-500 hover:underline">
-                                                    {{ $data['Non Entitled'] }}
-                                                </a>
-                                            @endif
-                                        @else
-                                            @if(request()->has('start_date'))
-                                                <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}"
-                                                   class="text-blue-500 hover:underline">
-                                                    {{ $data['Non Entitled'] }}
-                                                </a>
-                                            @else
-                                                <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}"
-                                                   class="text-blue-500 hover:underline">
-                                                    {{ $data['Non Entitled'] }}
-                                                </a>
-                                            @endif
-                                        @endif
-
-
-                                    </td>
-                                    {{--                                     Returned --}}
-                                    <td class="border-black border px-4 py-2 text-center print:hidden">
-                                        {{ $data['Return Entitled'] }}
-                                    </td>
-                                    <td class="border-black border px-4 py-2 text-center print:hidden">
-                                        {{ $data['Return Non Entitled'] }}
-                                    </td>
-
-                                    <td class="border-black border px-4 py-2 text-right">{{ $data['Entitled'] - $data['Return Entitled'] }}</td>
-                                    <td class="border-black border px-4 py-2 text-right">{{ $data['Non Entitled'] - $data['Return Non Entitled'] }}</td>
-
-                                    <td class="border-black border px-4 py-2 text-right">{{ number_format($data['HIF'],2) }}</td>
-                                    <td class="border-black border px-4 py-2 text-right">{{ number_format($data['GOVT'],2) }}</td>
-                                    <td class="border-black border px-4 py-2 text-right">{{ number_format($data['TOTAL'],2) }}</td>
+                                @foreach($fee_types as $fee_type_id => $data)
                                     @php
-                                           $return_ent += $data['Return Entitled'];
-                                           $return_non_ent += $data['Return Non Entitled'];
-                                           $entitled += $data['Entitled'];
-                                           $non_entitled += $data['Non Entitled'];
-                                           $hif +=  $data['HIF'];
-                                           $govt += $data['GOVT'];
-                                           $total += $data['TOTAL'];
+                                        $fee_type = \App\Models\FeeType::find($fee_type_id);
                                     @endphp
+                                    <tr class="border-black">
+                                        <td class="border-black border px-4 py-2 text-center">{{ $count }}</td>
+                                        @if ($loop->first)
+                                            <td class="border-black border px-4 py-2 text-center" rowspan="{{ count($fee_types) }}">{{ $fee_category_name }}</td>
+                                        @endif
+                                        {{--                                    <td class="border-black border px-4 py-2">{{ $fee_type->fee_category_id }}</td>--}}
+                                        <td class="border-black border px-4 py-2">{{ $fee_type->type }}</td>
 
-                                </tr>
-                                @php $count++; @endphp
+                                        <td class="border-black border px-4 py-2 text-center print:hidden">
+
+
+                                            @if($fee_type->id == 1 || $fee_type->id == 19 || $fee_type->id == 107 || $fee_type->id == 108)
+                                                @if(request()->has('start_date'))
+                                                    <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Entitled'] }}
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Entitled'] }}
+                                                    </a>
+                                                @endif
+
+                                            @else
+
+                                                @if(request()->has('start_date'))
+                                                    <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Entitled'] }}
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Entitled'] }}
+                                                    </a>
+                                                @endif
+                                            @endif
+
+
+                                        </td>
+                                        <td class="border-black border px-4 py-2 text-center print:hidden">
+
+
+                                            @if($fee_type->id == 1 || $fee_type->id == 19 || $fee_type->id == 107 || $fee_type->id == 108)
+                                                @if(request()->has('start_date'))
+                                                    <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Non Entitled'] }}
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Non Entitled'] }}
+                                                    </a>
+                                                @endif
+                                            @else
+                                                @if(request()->has('start_date'))
+                                                    <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Non Entitled'] }}
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Non Entitled'] }}
+                                                    </a>
+                                                @endif
+                                            @endif
+
+
+                                        </td>
+                                        {{--                                     Returned --}}
+                                        <td class="border-black border px-4 py-2 text-center print:hidden">
+                                            {{ $data['Return Entitled'] }}
+                                        </td>
+                                        <td class="border-black border px-4 py-2 text-center print:hidden">
+                                            {{ $data['Return Non Entitled'] }}
+                                        </td>
+
+                                        <td class="border-black border px-4 py-2 text-right">{{ $data['Entitled'] - $data['Return Entitled'] }}</td>
+                                        <td class="border-black border px-4 py-2 text-right">{{ $data['Non Entitled'] - $data['Return Non Entitled'] }}</td>
+
+                                        <td class="border-black border px-4 py-2 text-right print:hidden">{{ number_format($data['HIF'],2) }}</td>
+                                        <td class="border-black border px-4 py-2 text-right">{{ number_format($data['GOVT'],2) }}</td>
+                                        <td class="border-black border px-4 py-2 text-right">{{ number_format($data['GOVT'],2) }}</td>
+                                        @php
+                                            $return_ent += $data['Return Entitled'];
+                                            $return_non_ent += $data['Return Non Entitled'];
+                                            $entitled += $data['Entitled'];
+                                            $non_entitled += $data['Non Entitled'];
+                                            $hif +=  $data['HIF'];
+                                            $govt += $data['GOVT'];
+                                            $total += $data['TOTAL'];
+                                        @endphp
+
+                                    </tr>
+                                    @php $count++; @endphp
+                                @endforeach
                             @endforeach
-                        @endforeach
-                        </tbody>
+                            </tbody>
+                            <tfoot>
+                            <tr class="border-black">
+                                <td class="border-black border px-4 py-2 text-right font-bold" colspan="5">Total</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold print:hidden">{{ number_format($return_ent,0) }}</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold print:hidden">{{ number_format($return_non_ent,0) }}</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold print:hidden">{{ number_format($entitled,0) }}</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold print:hidden">{{ number_format($non_entitled,0) }}</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold print:hidden">{{ number_format($hif,2) }}</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($govt,2) }}</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold ">{{ number_format($govt,2) }}</td>
+                            </tr>
+                            </tfoot>
+                        @else
+                            <thead>
+                            <tr class="border-black">
+                                <th class="border-black border px-4 py-2" rowspan="2">ID</th>
+                                <th class="border-black border px-4 py-2" rowspan="2">Category</th>
+                                <th class="border-black border px-4 py-2" rowspan="2">Name</th>
+                                <th class="border-black border px-4 py-2 print:hidden" colspan="2">Actual</th>
+                                <th class="border-black border px-4 py-2 print:hidden" colspan="2">Return</th>
+                                <th class="border-black border px-4 py-2" colspan="2">Result</th>
+                                <th class="border-black border px-4 py-2" rowspan="2">HIF</th>
+                                <th class="border-black border px-4 py-2" rowspan="2">Govt</th>
+                                <th class="border-black border px-4 py-2" rowspan="2">Total</th>
 
-                        <tfoot>
-                        <tr class="border-black">
-                            <td class="border-black border px-4 py-2 text-right font-bold" colspan="5">Total</td>
-                            <td class="border-black border px-4 py-2 text-center font-bold print:hidden">{{ number_format($return_ent,0) }}</td>
-                            <td class="border-black border px-4 py-2 text-center font-bold print:hidden">{{ number_format($return_non_ent,0) }}</td>
-                            <td class="border-black border px-4 py-2 text-center font-bold print:hidden">{{ number_format($entitled,0) }}</td>
-                            <td class="border-black border px-4 py-2 text-center font-bold print:hidden">{{ number_format($non_entitled,0) }}</td>
-                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($hif,2) }}</td>
-                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($govt,2) }}</td>
-                            <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($total,2) }}</td>
-                        </tr>
-                        </tfoot>
+                            </tr>
+                            <tr class="border-black">
+                                <th class="border-black border px-4 py-2  print:hidden">Entitled</th>
+                                <th class="border-black border px-4 py-2  print:hidden">Non Entitled</th>
+                                <th class="border-black border px-4 py-2  print:hidden">Entitled</th>
+                                <th class="border-black border px-4 py-2  print:hidden">Non Entitled</th>
+                                <th class="border-black border px-4 py-2">Entitled</th>
+                                <th class="border-black border px-4 py-2">Non Entitled</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @php $count = 1;  $return_ent = 0; $return_non_ent = 0; $entitled = 0; $non_entitled = 0; $hif = 0; $govt = 0; $total = 0; @endphp
+                            @foreach($categories as $fee_category_id => $fee_types)
+                                @php
+                                    $fee_category = \App\Models\FeeCategory::find($fee_category_id);
+                                    $fee_category_name = $fee_category ? $fee_category->name : '';
+                                @endphp
+                                @foreach($fee_types as $fee_type_id => $data)
+                                    @php
+                                        $fee_type = \App\Models\FeeType::find($fee_type_id);
+                                    @endphp
+                                    <tr class="border-black">
+                                        <td class="border-black border px-4 py-2 text-center">{{ $count }}</td>
+                                        @if ($loop->first)
+                                            <td class="border-black border px-4 py-2 text-center" rowspan="{{ count($fee_types) }}">{{ $fee_category_name }}</td>
+                                        @endif
+                                        {{--                                    <td class="border-black border px-4 py-2">{{ $fee_type->fee_category_id }}</td>--}}
+                                        <td class="border-black border px-4 py-2">{{ $fee_type->type }}</td>
+
+                                        <td class="border-black border px-4 py-2 text-center print:hidden">
+
+
+                                            @if($fee_type->id == 1 || $fee_type->id == 19 || $fee_type->id == 107 || $fee_type->id == 108)
+                                                @if(request()->has('start_date'))
+                                                    <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Entitled'] }}
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 1, 'filter[fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Entitled'] }}
+                                                    </a>
+                                                @endif
+
+                                            @else
+
+                                                @if(request()->has('start_date'))
+                                                    <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Entitled'] }}
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 1, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Entitled'] }}
+                                                    </a>
+                                                @endif
+                                            @endif
+
+
+                                        </td>
+                                        <td class="border-black border px-4 py-2 text-center print:hidden">
+
+
+                                            @if($fee_type->id == 1 || $fee_type->id == 19 || $fee_type->id == 107 || $fee_type->id == 108)
+                                                @if(request()->has('start_date'))
+                                                    <a href="{{ route('chits.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Non Entitled'] }}
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('chits.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_gov]' => 0, 'filter[fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Non Entitled'] }}
+                                                    </a>
+                                                @endif
+                                            @else
+                                                @if(request()->has('start_date'))
+                                                    <a href="{{ route('invoice.issued',['start_date' => request()->input('start_date'), 'end_date' => request()->input('end_date'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Non Entitled'] }}
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('invoice.issued',['start_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'end_date' => \Carbon\Carbon::now()->format('Y-m-d'), 'filter[government_non_government]' => 0, 'filter[patient_test.fee_type_id]' => $data['fee_type_id']]) }}"
+                                                       class="text-blue-500 hover:underline">
+                                                        {{ $data['Non Entitled'] }}
+                                                    </a>
+                                                @endif
+                                            @endif
+
+
+                                        </td>
+                                        {{--                                     Returned --}}
+                                        <td class="border-black border px-4 py-2 text-center print:hidden">
+                                            {{ $data['Return Entitled'] }}
+                                        </td>
+                                        <td class="border-black border px-4 py-2 text-center print:hidden">
+                                            {{ $data['Return Non Entitled'] }}
+                                        </td>
+
+                                        <td class="border-black border px-4 py-2 text-right">{{ $data['Entitled'] - $data['Return Entitled'] }}</td>
+                                        <td class="border-black border px-4 py-2 text-right">{{ $data['Non Entitled'] - $data['Return Non Entitled'] }}</td>
+
+                                        <td class="border-black border px-4 py-2 text-right">{{ number_format($data['HIF'],2) }}</td>
+                                        <td class="border-black border px-4 py-2 text-right">{{ number_format($data['GOVT'],2) }}</td>
+                                        <td class="border-black border px-4 py-2 text-right">{{ number_format($data['TOTAL'],2) }}</td>
+                                        @php
+                                            $return_ent += $data['Return Entitled'];
+                                            $return_non_ent += $data['Return Non Entitled'];
+                                            $entitled += $data['Entitled'];
+                                            $non_entitled += $data['Non Entitled'];
+                                            $hif +=  $data['HIF'];
+                                            $govt += $data['GOVT'];
+                                            $total += $data['TOTAL'];
+                                        @endphp
+
+                                    </tr>
+                                    @php $count++; @endphp
+                                @endforeach
+                            @endforeach
+                            </tbody>
+                            <tfoot>
+                            <tr class="border-black">
+                                <td class="border-black border px-4 py-2 text-right font-bold" colspan="5">Total</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold print:hidden">{{ number_format($return_ent,0) }}</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold print:hidden">{{ number_format($return_non_ent,0) }}</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold print:hidden">{{ number_format($entitled,0) }}</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold print:hidden">{{ number_format($non_entitled,0) }}</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($hif,2) }}</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($govt,2) }}</td>
+                                <td class="border-black border px-4 py-2 text-center font-bold">{{ number_format($total,2) }}</td>
+                            </tr>
+                            </tfoot>
+                        @endif
+
                     </table>
                 </div>
 

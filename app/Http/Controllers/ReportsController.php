@@ -371,6 +371,7 @@ class ReportsController extends Controller
         }
 
 
+
         if ($fee_category_ids !== null) {
             // Split the string into an array of individual IDs
             $fee_category_ids = explode(',', $fee_category_ids);
@@ -393,7 +394,12 @@ class ReportsController extends Controller
         $categories = [];
 
         foreach ($fee_types as $ft) {
+
+
             if ($ft->id == 107 || $ft->id == 108 || $ft->id == 19 || $ft->id == 1) {
+                if ($ft->id == 1){
+//                    dd(Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->sum('amount_hif'),);
+                }
                 $categories[$ft->fee_category_id][$ft->id] = [
                     'Non Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->count(),
                     'Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 1)->count(),
@@ -430,6 +436,8 @@ class ReportsController extends Controller
             }
         }
 
+
+//        dd($categories);
 
         return view('reports.category-wise.department-wise-two', compact('categories', 'fee_types'));
     }
