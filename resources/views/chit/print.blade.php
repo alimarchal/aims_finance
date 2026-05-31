@@ -216,7 +216,7 @@
 {{--                </td>--}}
 {{--            </tr>--}}
             <tr style="border-bottom: 1px solid black; margin: 0px; padding: 0px; font-size: 7px; text-align: center">
-                <td colspan="4">Software Developed By SeeChange Innovative - 0300-8169924</td>
+                <td colspan="4">Software Developed By SeeChange Innovative  - UAN: 0333-999.1441</td>
             </tr>
 
             {{--                <tr>--}}
@@ -287,11 +287,6 @@
                             flag = false;
                         @endif
 
-                        if (flag == true) {
-                            redirectToLink("{{ route('patient.create-opd') }}");
-                        } else {
-                            redirectToLink("{{ route('patient.create-ipd') }}");
-                        }
                     }
                 }, 1000); // Adjust the delay time as needed
             });

@@ -41,7 +41,7 @@ class PatientController extends Controller
                 AllowedFilter::exact('id'),
             ],)
             ->orderByDesc('created_at') // Corrected 'DSEC' to 'DESC'
-            ->paginate(10)
+            ->paginate(3)
             ->withQueryString();
         return view('patient.index', compact('patients'));
     }
@@ -174,7 +174,11 @@ class PatientController extends Controller
                 $govt_amount = 0.00;
                 if ($request->department_id == 7) {
                     $fee_type_id = 108;
-                } else {
+                }
+                if ($request->department_id == 23) {
+                    $fee_type_id = 270;
+                }
+                else {
                     if ($request->department_id == 1) {
                         // For emergency
                         $fee_type_id = 1;
@@ -188,13 +192,24 @@ class PatientController extends Controller
                     }
                 }
             } else {
+
                 if ($request->department_id == 7) {
                     $amount = FeeType::find(108)->amount;
                     $amount_hif = FeeType::find(108)->hif;
                     $fee_type_id = 108;
                     // all amount goes to government
                     $govt_amount = $amount;
-                } else {
+
+
+                } elseif ($request->department_id == 23) {
+
+                    $amount = FeeType::find(270)->amount;
+                    $amount_hif = FeeType::find(270)->hif;
+                    $fee_type_id = 270;
+                    // all amount goes to government
+                    $govt_amount = $amount;
+                }
+                else {
                     if ($request->department_id == 1) {
                         // For emergency
                         $amount = FeeType::find(1)->amount;
@@ -217,12 +232,13 @@ class PatientController extends Controller
                     }
                 }
             }
-
             if ($request->has('ipd_opd')) {
                 $ipd_opd = 0;
             } else {
                 $ipd_opd = 1;
             }
+
+
 
             // this is for opd
             $chit = Chit::create([
@@ -616,8 +632,6 @@ class PatientController extends Controller
         }
 
 
-//        dd('ss')
-//        dd($invoice->patient_test->groupBy('fee_type_id'));
         return view('patient.invoice', compact('patient', 'patient', 'fee_category_main', 'invoice', 'total_amount', 'department', 'fee_category', 'chitNumber'));
     }
 
@@ -722,7 +736,7 @@ class PatientController extends Controller
             $request->merge(['email_alert' => 0]);
         }
 
-        dd($request->all());
+        //dd($request->all());
         $patient->update($request->all());
         return redirect()->route('patient.index')->with('message', 'Patient updated successfully!');
     }

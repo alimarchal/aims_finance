@@ -352,6 +352,9 @@ class ReportsController extends Controller
 
     {
 
+	ini_set('max_execution_time', 300);
+
+
         $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
         $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
         $user = \Auth::user();
@@ -369,7 +372,6 @@ class ReportsController extends Controller
         if ($get_status_values !== null) {
             $status = explode(',', $get_status_values);
         }
-
 
 
         if ($fee_category_ids !== null) {
@@ -394,12 +396,7 @@ class ReportsController extends Controller
         $categories = [];
 
         foreach ($fee_types as $ft) {
-
-
             if ($ft->id == 107 || $ft->id == 108 || $ft->id == 19 || $ft->id == 1) {
-                if ($ft->id == 1){
-//                    dd(Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->sum('amount_hif'),);
-                }
                 $categories[$ft->fee_category_id][$ft->id] = [
                     'Non Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 0)->count(),
                     'Entitled' => Chit::whereBetween('issued_date', [$date_start_at, $date_end_at])->where('fee_type_id', $ft->id)->where('government_non_gov', 1)->count(),
@@ -436,8 +433,6 @@ class ReportsController extends Controller
             }
         }
 
-
-//        dd($categories);
 
         return view('reports.category-wise.department-wise-two', compact('categories', 'fee_types'));
     }

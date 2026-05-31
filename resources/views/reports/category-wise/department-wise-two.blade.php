@@ -279,6 +279,16 @@
                                 <td class="border-black border px-4 py-2 text-center font-bold ">{{ number_format($govt,2) }}</td>
                             </tr>
                             </tfoot>
+
+
+
+
+
+
+
+
+
+
                         @else
                             <thead>
                             <tr class="border-black">
